@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 
-app.get("/", (req, res) => {
+app.get("/", (req:any, res:any) => {
   console.log("test api");
   res.status(200).json("Exciting News: AssuredPay Project is Set to Transform the Future of Business Finance!");
 });
