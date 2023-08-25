@@ -5,7 +5,7 @@
   "main": "dist/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start":"tsc && node dist/app.js",
+    "start": "tsc && node dist/app.js",
     "lint": "eslint . --ext .ts"
   },
   "keywords": [],
@@ -21,6 +21,8 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "body-parser": "^1.20.2",
+    "express": "^4.17.1",
+    "mongoose": "^7.4.4"
   }
 }
