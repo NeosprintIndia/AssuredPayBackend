@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 import "dotenv/config";
 const { generateOTP } = require('../Services/OTP');
 const{generateReferralCode}=require("../Services/referral_code")
-const { sendMail } = require('../services/MAIL');
+const { sendMail } = require('../Services/MAIL');
 const crypto = require('crypto');
 
 
