@@ -10,39 +10,45 @@ const crypto = require('crypto');
 
 
 exports.Register = async (req, res) => {
-  const { business_email,username,business_mobile, password} = req.body;
-  console.log(req.body.refferal_code)
-  let refferal_code=null
-  if(req.body.refferal_code != null)
-  {
-    refferal_code= req.body.refferal_code
-    console.log("Inside ifss")
-    console.log(refferal_code)
-  }
+  try {
+    const { business_email, username, business_mobile, password } = req.body;
+    console.log(req.body.refferal_code);
 
- 
+    let referral_code = null;
 
-  const isExisting = await findUserByEmail_username(business_email,username);
-  if (isExisting) {
-    return res.send('Already existing business or Username');
-  }
+    if (req.body.referral_code !== null) {
+      referral_code = req.body.referral_code;
+      console.log("Inside if");
+      console.log(referral_code);
+    }
 
-  // create new user
-  const newUser = await createUser (business_email, password,business_mobile,username,refferal_code);
-  console.log(newUser)
-  if (!newUser[0]) {
-    return res.status(400).send({
-      message: 'Unable to create new user',
+    const isExisting = await findUserByEmail_username(business_email, username);
+
+    if (isExisting) {
+      return res.status(400).send('Already existing business or Username');
+    }
+
+    const newUser = await createUser(business_email, password, business_mobile, username, referral_code);
+
+    if (!newUser[0]) {
+      return res.status(400).send({
+        message: 'Unable to create new user',
+      });
+    }
+
+    res.send(newUser);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).send({
+      message: 'Internal Server Error',
     });
   }
-  
-  res.send(newUser);
 };
 
 exports.RegisterAdmin=async (req,res) => {
   const { business_email,username,business_mobile, password} = req.body;
   console.log(req.body.refferal_code)
-  let refferal_code=null
+  let refferal_code=null 
   if(req.body.refferal_code != null)
   {
     refferal_code= req.body.refferal_code
@@ -65,7 +71,7 @@ exports.RegisterAdmin=async (req,res) => {
    res.send(newUser);
 
 }
-
+//Find user By email,name,username
 const findUserByEmail_username = async (business_email,username) => {
   const user = await Registration.findOne({
     $and: [
@@ -78,6 +84,19 @@ const findUserByEmail_username = async (business_email,username) => {
   }
   return user;
 };
+// find user by anyone parameter coming
+
+/** const findUserByParams = async (params) => {
+  const user = await Registration.findOne({
+    $or: [
+      { business_email: params.business_email },
+      { username: params.username },
+      { business_name: params.business_name }
+    ]
+  });
+  return user || false;
+};
+ */
 exports.verifyEmail = async (req, res) => {
   const { business_email, otp } = req.body;
   const user = await validateUserSignUp(business_email, otp);
