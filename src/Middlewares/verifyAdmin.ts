@@ -1,5 +1,5 @@
 const jwtadmin = require('jsonwebtoken'); 
-module.exports = (req:any, res:any, next) => {
+module.exports = (req, res, next) => {
   console.log("In token function")
   try {
     console.log(req.headers.token)
