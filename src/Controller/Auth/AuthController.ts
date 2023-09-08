@@ -77,7 +77,11 @@ export const registerAdmin = async (req: Request, res: Response): Promise<void> 
 
   let referral_code: string | null = null;
 
+<<<<<<< Updated upstream
   if (req.body.refferal_code != null) {
+=======
+  if (req.body.refferal_code !== null) {
+>>>>>>> Stashed changes
     referral_code = req.body.refferal_code;
   }
 

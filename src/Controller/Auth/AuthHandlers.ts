@@ -18,7 +18,11 @@ export const performRegistration = async (
 ): Promise<[boolean, any]> => {
   let referralCode: string | null = null;
 
+<<<<<<< Updated upstream
   if (refferal_code !== null) {
+=======
+  if (refferal_code != null) {
+>>>>>>> Stashed changes
     referralCode = refferal_code;
   }
 

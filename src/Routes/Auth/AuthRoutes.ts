@@ -10,6 +10,7 @@ import {
 import VerifyToken from '../../Middlewares/VerifyToken';
 import verifyAdmin from '../../Middlewares/VerifyAdmin';
 
+<<<<<<< Updated upstream
 const authRouter: Router = Router();
 
 authRouter.post('/registerbusiness', register);
@@ -23,3 +24,18 @@ authRouter.post('/forgot-password', forgotPass);
 authRouter.post('/registeradmin', [VerifyToken, verifyAdmin], registerAdmin);
 
 export default authRouter;
+=======
+const router: Router = Router();
+
+router.post('/registerbusiness', register);
+router.post('/verify', verifyEmail);
+router.post('/login', login);
+// Change Password
+router.post('/change-password', changePass);
+// Forgot Password
+router.post('/forgot-password', forgotPass);
+
+router.post('/registeradmin', [VerifyToken, verifyAdmin], registerAdmin);
+
+export default router;
+>>>>>>> Stashed changes

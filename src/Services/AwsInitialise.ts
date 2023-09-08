@@ -1,7 +1,10 @@
 import AWS from 'aws-sdk';
 
 // Function to initialize AWS and return S3 parameters
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 export async function awsinitialise(Key: string, Body: Buffer) {
   AWS.config.update({
     accessKeyId: process.env.YOUR_ACCESS_KEY_ID,
