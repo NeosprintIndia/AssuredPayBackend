@@ -9,10 +9,6 @@ import {  verifyPAN,getGSTDetails,verifyAadharNumber,verifyAadharNumberOTP} from
 router.get('/verifypan',[VerifyToken],verifyPAN)
 router.get('/getgstdetail',[VerifyToken],getGSTDetails)
 router.get('/verifyadhar',[VerifyToken],verifyAadharNumber)
-<<<<<<< Updated upstream
-router.post('/verifyadharotp',[VerifyToken],verifyAadharNumberOTP)
-=======
 router.post('/verifyadharotp',[VerifyToken],verifyAadharNumberOTP)
 
 export default router;
->>>>>>> Stashed changes

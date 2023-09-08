@@ -1,9 +1,10 @@
-const nodemailer = require('nodemailer');  // Import the nodemailer library
-const { MAIL_SETTINGS } = require('../Constants/constants');  // Import mail settings from constants
+import nodemailer from 'nodemailer';  // Import the nodemailer library
+import { MAIL_SETTINGS } from '../Constants/Constants';  // Import mail settings from constants
+
 const transporter = nodemailer.createTransport(MAIL_SETTINGS);  // Create a transporter using mail settings
 
 // Export a function for sending emails
-module.exports.sendMail = async (params) => {
+export const sendMail = async (params: any): Promise<any> => {
   try {
     // Use the transporter to send an email
     let info = await transporter.sendMail({

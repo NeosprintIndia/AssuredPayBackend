@@ -1,9 +1,7 @@
-const otpGenerator = require('otp-generator');  // Import the otp-generator library
-const { OTP_LENGTH, OTP_CONFIG } = require('../Constants/constants');  // Import OTP-related constants
+import * as otpGenerator from 'otp-generator';
+import { OTP_LENGTH, OTP_CONFIG } from '../Constants/Constants';
 
-// Export a function for generating OTP
-module.exports.generateOTP = () => {
-  // Generate an OTP using the otp-generator library with provided length and configuration
-  const OTP = otpGenerator.generate(OTP_LENGTH, OTP_CONFIG);
-  return OTP;  // Return the generated OTP
-};
+export function generateOTP(): string {
+  const OTP: string = otpGenerator.generate(OTP_LENGTH, OTP_CONFIG);
+  return OTP;
+}
