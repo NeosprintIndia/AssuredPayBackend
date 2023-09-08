@@ -1,12 +1,20 @@
 // Import required dependencies
+import express, { Application, Request, Response } from 'express'; // Import the Express framework
+import mongoose from 'mongoose'; // Import Mongoose for MongoDB interaction
+import bodyParser from 'body-parser'; // Middleware for parsing request bodies
+import dotenv from 'dotenv'; // Load environment variables from .env file
 
-const express =require('express');   // Import the Express framework
-const app = express();  // Create an instance of the Express application
-const mongooose = require("mongoose");   // Import Mongoose for MongoDB interaction
-const bodyParser = require('body-parser');  // Middleware for parsing request bodies
-const AuthRoute = require('./Routes/Auth_Routes');  // Import authentication route module
-const KycRoute = require('./Routes/KYC_Routes');  // Import KYC route module
-require('dotenv').config();  // Load environment variables from .env file
+import AuthRoutes from "./Routes/Auth/AuthRoutes"
+import AdminKYCRoutes from "./Routes/Admin/AdminKYCRoutes"
+import UserKYCRoutes from "./Routes/User/UserKYCRoutes"
+import UploadRoutes from "./Routes/Upload/UploadRoutes"
+
+
+
+dotenv.config(); // Load environment variables from .env file
+
+// Create an instance of the Express application
+const app: Application = express();
 
 // Parse various different custom JSON types as JSON
 app.use(bodyParser.json());  // Parse incoming JSON payloads
@@ -14,10 +22,12 @@ app.use(bodyParser.urlencoded({ extended: false }));  // Parse URL-encoded paylo
 app.use(express.json());  // Another way to parse JSON payloads in Express
 
 // Set up routes
-app.use('/user', AuthRoute);  // Mount authentication routes under /user path
-app.use('/kyc', KycRoute);  // Mount KYC routes under /kyc path
+ app.use('/Auth', AuthRoutes);
+app.use('/Admin', AdminKYCRoutes);
+app.use('/User', UserKYCRoutes);
+app.use('/UploadRoutes', UploadRoutes);
 
-const port = 3000;  // Define the port number for the server
+const port: number = 3000; // Define the port number for the server
 
 // Connect to MongoDB
 mongooose
