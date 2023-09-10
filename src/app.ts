@@ -13,10 +13,14 @@ import UploadRoutes from "./Routes/Upload/UploadRoutes"
 
 // Create an instance of the Express application
 const app: Application = express();
-var cors = require('cors');
+
+const cors = require('cors');
+app.use(cors({
+    origin: '*'
+}));
+
 
 // Parse various different custom JSON types as JSON
-app.use(cors());
 app.use(bodyParser.json()); // Parse incoming JSON payloads
 app.use(bodyParser.urlencoded({ extended: false })); // Parse URL-encoded payloads
 app.use(express.json()); // Another way to parse JSON payloads in Express
