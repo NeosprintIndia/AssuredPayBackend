@@ -3,9 +3,9 @@ import Referral from "../../Models/RefferalCode";
 import * as CryptoJS from "crypto-js";
 import * as jwt from 'jsonwebtoken';
 import "dotenv/config";
-import { generateOTP } from '../../Services/otp';
+import { generateOTP } from '../../Services/OtpGen';
 import { generateReferralCode } from "../../Services/referral_code";
-import { sendMail } from '../../Services/mail';
+import { sendMail } from '../../Services/MailTemp';
 import * as crypto from 'crypto';
 
 // Function to handle registration logic
@@ -214,88 +214,115 @@ export const handleForgotPassword = async (email: string): Promise<string | null
     return 'Internal server error';
   }
 }
-
-export const registerAdminUser = async (
+  
+export const searchExisting = async (
   business_email: string,
   username: string,
-  business_mobile: string,
-  password: string,
-  refferal_code: string | null
-): Promise<[boolean, any]> => {
-  try {
-    const isExisting = await findUserByEmailUsername(business_email, username);
-
-    if (isExisting) {
-      return [false, 'Already existing business or Username'];
-    }
-
-    const newUser = await createAdminUser(business_email, password, business_mobile, username, refferal_code);
-
-    if (!newUser[0]) {
-      return [false, 'Unable to create new user'];
-    }
-
-    return [true, newUser];
-  } catch (error) {
-    console.error('Error in registerAdminUser:', error);
-    return [false, 'Unable to sign up, please try again later'];
-  }
-};
-const createAdminUser = async (
-  business_email: string,
-  password: string,
-  business_mobile: string,
-  username: string,
-  refferal_code: string | null
-): Promise<[boolean, any | any]> => {
-  try {
-    const hashedPassword = await CryptoJS.AES.encrypt(password, process.env.PASS_PHRASE).toString();
-    const otpGenerated = await generateOTP();
-    const Refer_code = await generateReferralCode(username, business_mobile);
-    console.log(Refer_code);
-
-    let updatedReferral: any | null = null;
-
-    if (refferal_code !== null) {
-      updatedReferral = await Referral.findOneAndUpdate(
-        { refferal_code },
-        { $inc: { count: 1 } },
-        { new: true }
-      );
-      console.log(updatedReferral);
-      if (!updatedReferral) {
-        return [false, null];
+  business_mobile:string
+): Promise<boolean | any> => {
+    try {
+      console.log(business_email,username,business_mobile)
+      const result = await Registration.find({
+        $or: [
+          { business_email },
+          { business_mobile },
+          { username }
+        ]
+      });
+  
+      console.log(result);
+  
+      if (result.length > 0) {
+       return true
+      } else {
+       return false
       }
+    } catch (error) {
+      return error
     }
+  };
 
-    const newUser = await Registration.create({
-      business_email,
-      business_mobile,
-      password: hashedPassword,
-      username,
-      oldPasswords: [hashedPassword],
-      otp: otpGenerated,
-      role: "Admin",
-    });
-    console.log(newUser);
-
-    const Generate_Referral = await Referral.create({
-      user: newUser._id,
-      refferal_code: Refer_code,
-    });
-    console.log(Generate_Referral);
-
-    await sendMail({
-      to: business_email,
-      OTP: otpGenerated,
-    });
-    return [true, newUser];
-  } catch (error) {
-    console.error("Error in createAdminUser:", error);
-    return [false, 'Unable to sign up, please try again later'];
-  }
-};
-
+  export const registerAdminUser = async (
+    business_email: string,
+    username: string,
+    business_mobile: string,
+    password: string,
+    refferal_code: string | null
+  ): Promise<[boolean, any]> => {
+    try {
+      const isExisting = await findUserByEmailUsername(business_email, username);
+  
+      if (isExisting) {
+        return [false, 'Already existing business or Username'];
+      }
+  
+      const newUser = await createAdminUser(business_email, password, business_mobile, username, refferal_code);
+  
+      if (!newUser[0]) {
+        return [false, 'Unable to create new user'];
+      }
+  
+      return [true, newUser];
+    } catch (error) {
+      console.error('Error in registerAdminUser:', error);
+      return [false, 'Unable to sign up, please try again later'];
+    }
+  };
+  
+  const createAdminUser = async (
+    business_email: string,
+    password: string,
+    business_mobile: string,
+    username: string,
+    refferal_code: string | null
+  ): Promise<[boolean, any | any]> => {
+    try {
+      const hashedPassword = await CryptoJS.AES.encrypt(password, process.env.PASS_PHRASE).toString();
+      const otpGenerated = await generateOTP();
+      const Refer_code = await generateReferralCode(username, business_mobile);
+      console.log(Refer_code);
+  
+      let updatedReferral: any | null = null;
+  
+      if (refferal_code !== null) {
+        updatedReferral = await Referral.findOneAndUpdate(
+          { refferal_code },
+          { $inc: { count: 1 } },
+          { new: true }
+        );
+        console.log(updatedReferral);
+        if (!updatedReferral) {
+          return [false, null];
+        }
+      }
+  
+      const newUser = await Registration.create({
+        business_email,
+        business_mobile,
+        password: hashedPassword,
+        username,
+        oldPasswords: [hashedPassword],
+        otp: otpGenerated,
+        role: "Admin",
+      });
+      console.log(newUser);
+  
+      const Generate_Referral = await Referral.create({
+        user: newUser._id,
+        refferal_code: Refer_code,
+      });
+      console.log(Generate_Referral);
+  
+      await sendMail({
+        to: business_email,
+        OTP: otpGenerated,
+      });
+      return [true, newUser];
+    } catch (error) {
+      console.error("Error in createAdminUser:", error);
+      return [false, 'Unable to sign up, please try again later'];
+    }
+  };
 
 
 
