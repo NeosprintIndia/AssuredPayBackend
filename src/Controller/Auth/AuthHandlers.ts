@@ -109,20 +109,20 @@ console.log(newUser);
 };
 
 
-export const validateUserSignUp = async (_id: string, otp: string): Promise<[boolean, string | any]> => {
+export const validateUserSignUp = async (business_email: string, otp: string): Promise<[boolean, string | any]> => {
   const user = await Registration.findOne({
-    _id,
+    business_email,
   });
 
   if (!user) {
     return [false, 'User not found'];
   }
 
-  if (user._id && user.otp !== otp) {
+  if (user.business_email && user.otp !== otp) {
     return [false, 'Invalid OTP'];
   }
 
-  const updatedUser = await Registration.findByIdAndUpdate(user._id, {
+  const updatedUser = await Registration.findByIdAndUpdate(user.business_email, {
     $set: { active: true },
   });
 

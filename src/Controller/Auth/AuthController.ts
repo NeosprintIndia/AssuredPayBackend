@@ -25,20 +25,22 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
 
 // Controller function to handle verify OTP
-// export const verifyEmail = async (req: Request, res: Response): Promise<void> => {
-//   const { business_email, otp } = req.body;
 
-//   const user = await validateUserSignUp(business_email, otp);
-
-//   res.send(user);
-// };
 export const verifyEmail = async (req: Request, res: Response): Promise<void> => {
-  const { _id, otp } = req.body;
+  const { business_email, otp } = req.body;
 
-  const user = await validateUserSignUp(_id, otp);
+  const user = await validateUserSignUp(business_email, otp);
 
   res.send(user);
 };
+
+// export const verifyEmail = async (req: Request, res: Response): Promise<void> => {
+//   const { _id, otp } = req.body;
+
+//   const user = await validateUserSignUp(_id, otp);
+
+//   res.send(user);
+// };
 
 // Controller function to handle user login
 export const login = async (req: Request, res: Response): Promise<void> => {
@@ -87,15 +89,15 @@ export async function searchExistingController(req: Request, res: Response) {
     const [success, result]=await searchExisting(business_email,username,business_mobile);
     
     if (success) {
-      res.status(200).json(result);
+      res.status(200).json({ success: true, data: result });
       
     } else {
-      res.status(404).json({error: result});
+      res.status(404).json({ success: false, error: result });
       
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ "message": "Internal Server Error" });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 }
 
