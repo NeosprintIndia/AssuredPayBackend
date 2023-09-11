@@ -9,7 +9,7 @@ import {
   searchExistingController,
 } from '../../Controller/Auth/AuthController';
 import VerifyToken from '../../Middlewares/VerifyTokenUser';
-import verifyAdmin from '../../Middlewares/Verifyadmin';
+import verifyAdmin from '../../Middlewares/AdminToken';
 
 const authRouter: Router = Router();
 
