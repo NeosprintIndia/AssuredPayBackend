@@ -100,7 +100,7 @@ const createUser = async (
       OTP: otpGenerated,
     });
 
-    return [true, newUser];
+    return [true, newUser.otp];
   } catch (error) {
     console.error("Error in createUser:", error);
     return [false, error]; // Include the error in the return value
