@@ -50,46 +50,6 @@ export const getGSTDetails = async (req: Request, res: Response): Promise<void> 
     }
   };  
 
-// Route handler function for verifying Aadhar number
-export const verifyAadharNumber = async (req: Request, res: Response): Promise<void> => {
-  
-    try {
-      // Assuming userId is a string
-      const{AadharNumber}=req.body
-      const userId = (req as any).userId as string;
-  
-      // Call the internal function to verify Aadhar number and update reference ID
-      const verificationResult = await verifyAadharNumberInternal(userId,AadharNumber);
-   console.log(verificationResult)
-      if ( verificationResult ) {
-        res.json(verificationResult);
-      } else {
-        res.json(verificationResult);
-      }
-    } catch (error) {
-      console.error('Error in verifyAadharNumber:', error);
-      res.status(500).json({ error: 'An error occurred' });
-    }
-  };  
-
-// Route handler function for verifying Aadhar number OTP
-export const verifyAadharNumberOTP = async (req: Request, res: Response): Promise<void> => {
-    try {
-      // Assuming userId is a string
-      const userId = (req as any).userId as string;
-      const otp = req.body.otp as string;
-      //findOne()
-      //const refId = '4027359'; // You can customize refId as needed
-  
-      // Call the internal function to verify Aadhar number OTP
-      const verificationResult = await verifyAadharNumberOTPInternal(userId, otp);
-  
-      res.json(verificationResult);
-    } catch (error) {
-      console.error('Error in verifyAadharNumberOTP:', error);
-      res.status(500).json({ error: 'An error occurred' });
-    }
-  };  
   //Route handler function to save GST details
   export const saveGSTDetails = async (req: Request, res: Response): Promise<void> => {
     const { Constituion_of_Business,
@@ -130,7 +90,8 @@ export const verifyAadharNumberOTP = async (req: Request, res: Response): Promis
     }
   };
 
-  ////Route handler function to retrieve saved GST details
+   ////Route handler function to retrieve saved GST details
+
   export const getsavedgstdetail = async (req: Request, res: Response): Promise<void> => {
     try {
       // Assuming userId is a string
@@ -145,6 +106,49 @@ export const verifyAadharNumberOTP = async (req: Request, res: Response): Promis
       res.status(500).json({ error: 'An error occurred' });
     }
   };
+
+// Route handler function for verifying Aadhar number
+export const verifyAadharNumber = async (req: Request, res: Response): Promise<void> => {
+  
+    try {
+      // Assuming userId is a string
+      const{AadharNumber}=req.body
+      const userId = (req as any).userId as string;
+  
+      // Call the internal function to verify Aadhar number and update reference ID
+      const verificationResult = await verifyAadharNumberInternal(userId,AadharNumber);
+   console.log(verificationResult)
+      if ( verificationResult ) {
+        res.json(verificationResult);
+      } else {
+        res.json(verificationResult);
+      }
+    } catch (error) {
+      console.error('Error in verifyAadharNumber:', error);
+      res.status(500).json({ error: 'An error occurred' });
+    }
+  };  
+
+// Route handler function for verifying Aadhar number OTP
+export const verifyAadharNumberOTP = async (req: Request, res: Response): Promise<void> => {
+    try {
+      // Assuming userId is a string
+      const userId = (req as any).userId as string;
+      const otp = req.body.otp as string;
+      //findOne()
+      //const refId = '4027359'; // You can customize refId as needed
+  
+      // Call the internal function to verify Aadhar number OTP
+      const verificationResult = await verifyAadharNumberOTPInternal(userId, otp);
+  
+      res.json(verificationResult);
+    } catch (error) {
+      console.error('Error in verifyAadharNumberOTP:', error);
+      res.status(500).json({ error: 'An error occurred' });
+    }
+  };  
+  
+ 
 
   export const getglobalstatus = async (req: Request, res: Response): Promise<void> => {
     const {
