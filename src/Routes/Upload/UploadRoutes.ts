@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import VerifyToken from '../../Middlewares/VerifyToken';
+import VerifyToken from '../../Middlewares/VerifyTokenUser';
 import { uploadAadhars1,uploadAadhars2,uploadPan,uploadGst} from '../../Controller/Upload/UploadController';
 import { uploadMiddleware } from '../../Services/upload';
 

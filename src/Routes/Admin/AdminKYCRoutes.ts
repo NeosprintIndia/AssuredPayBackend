@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import VerifyToken from '../../Middlewares/VerifyToken';
-import VerifyAdmin from '../../Middlewares/VerifyAdmin';
+import VerifyToken from '../../Middlewares/VerifyTokenUser';
+import VerifyAdmin from '../../Middlewares/Verifyadmin';
 
 const router: Router = Router();
 

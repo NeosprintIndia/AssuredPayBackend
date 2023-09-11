@@ -8,8 +8,8 @@ import {
   registerAdmin,
   searchExistingController,
 } from '../../Controller/Auth/AuthController';
-import VerifyToken from '../../Middlewares/VerifyToken';
-import verifyAdmin from '../../Middlewares/VerifyAdmin';
+import VerifyToken from '../../Middlewares/VerifyTokenUser';
+import verifyAdmin from '../../Middlewares/Verifyadmin';
 
 const authRouter: Router = Router();
 
