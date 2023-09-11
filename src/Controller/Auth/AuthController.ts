@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { performRegistration, validateUserSignUp, authenticateUser, changePassword, handleForgotPassword, registerAdminUser } from './AuthHandlers'
+import { performRegistration, validateUserSignUp, authenticateUser, changePassword, handleForgotPassword, registerAdminUser ,searchExisting} from './AuthHandlers'
 
 
 // Controller function to handle the registration request
@@ -70,6 +70,26 @@ export const forgotPass = async (req: Request, res: Response): Promise<void> => 
   }
 };
 
+export async function searchExistingController(req: Request, res: Response) {
+
+  try {
+    const{business_email,business_mobile,username}=req.body
+    console.log(business_email,business_mobile,username)
+    const result=await searchExisting(business_email,username,business_mobile);
+    
+    if (result) {
+      res.status(200).json({ message: 'Found' });
+      
+    } else {
+      res.status(404).json({ message: "Not Found" });
+      
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ "message": "Internal Server Error" });
+  }
+}
+
 
 // Controller function to handle registering an admin user
 export const registerAdmin = async (req: Request, res: Response): Promise<void> => {
@@ -91,3 +111,4 @@ export const registerAdmin = async (req: Request, res: Response): Promise<void> 
     });
   }
 };
+

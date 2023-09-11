@@ -3,12 +3,16 @@ import VerifyToken from '../../Middlewares/VerifyToken';
 
 const router: Router = Router();
 
-import {  verifyPAN,getGSTDetails,verifyAadharNumber,verifyAadharNumberOTP} from '../../Controller/User/UserKYCController';
+import {  getglobalstatus,verifyPAN,getGSTDetails,verifyAadharNumber,verifyAadharNumberOTP,saveGSTDetails,getsavedgstdetail} from '../../Controller/User/UserKYCController';
 
 
 router.get('/verifypan',[VerifyToken],verifyPAN)
 router.get('/getgstdetail',[VerifyToken],getGSTDetails)
-router.get('/verifyadhar',[VerifyToken],verifyAadharNumber)
+router.get('/getsavedgstdetail',[VerifyToken],getsavedgstdetail)
+router.post('/savegstdetail',[VerifyToken],saveGSTDetails)
+router.post('/verifyadhar',[VerifyToken],verifyAadharNumber)
 router.post('/verifyadharotp',[VerifyToken],verifyAadharNumberOTP)
+router.post("/getglobalstatus",[VerifyToken],getglobalstatus) 
+
 
 export default router;

@@ -6,6 +6,7 @@ import {
   changePass,
   forgotPass,
   registerAdmin,
+  searchExistingController,
 } from '../../Controller/Auth/AuthController';
 import VerifyToken from '../../Middlewares/VerifyToken';
 import verifyAdmin from '../../Middlewares/VerifyAdmin';
@@ -15,6 +16,8 @@ const authRouter: Router = Router();
 authRouter.post('/registerbusiness', register);
 authRouter.post('/verify', verifyEmail);
 authRouter.post('/login', login);
+authRouter.post("/searchexisting",searchExistingController)
+
 // Change Password
 authRouter.post('/change-password', changePass);
 // Forgot Password

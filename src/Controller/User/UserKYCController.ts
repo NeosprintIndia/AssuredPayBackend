@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { verifyPANDetails,getGSTDetailsInternal,verifyAadharNumberInternal,verifyAadharNumberOTPInternal} from '../User/UserKYCHandlers';
+import { getGlobalStatusInternal,getGSTDetailsInternalsaved,verifyPANDetails,getGSTDetailsInternal,saveGSTDetailsInternal,verifyAadharNumberInternal,verifyAadharNumberOTPInternal} from '../User/UserKYCHandlers';
 
 
 // Route handler function for verifying PAN
@@ -29,8 +29,21 @@ export const getGSTDetails = async (req: Request, res: Response): Promise<void> 
   
       // Call the internal function to get GST details
       const gstDetails = await getGSTDetailsInternal(gst);
+      const result={
+        "Constituion of Business":gstDetails.body.data.ctb,
+        "Taxpayer Type":gstDetails.body.data.dty,
+        "GSTIN of the entity":gstDetails.body.data.gstin,
+        "Legal Name of Business":gstDetails.body.data.lgnm,
+        "Business PAN": " ",
+        "Date of Registration":gstDetails.body.data.rgdt,
+        "State":gstDetails.body.data.pradr.addr.stcd,
+        "Trade Name":gstDetails.body.data.lgnm,
+        "Place of Business":gstDetails.body.data.pradr.addr.bno+" "+gstDetails.body.data.pradr.addr.st+" "+gstDetails.body.data.pradr.addr.loc+" "+gstDetails.body.data.pradr.addr.dst+" "+gstDetails.body.data.pradr.addr.pncd,
+        "Nature of Place of Business":gstDetails.body.data.pradr.ntr,
+        "Nature of Business Activity":gstDetails.body.data.nba
+      }
   
-      res.json(gstDetails);
+      res.json(result);
     } catch (error) {
       console.error('Error in getGSTDetails:', error);
       res.status(500).json({ error: 'An error occurred' });
@@ -39,14 +52,16 @@ export const getGSTDetails = async (req: Request, res: Response): Promise<void> 
 
 // Route handler function for verifying Aadhar number
 export const verifyAadharNumber = async (req: Request, res: Response): Promise<void> => {
+  
     try {
       // Assuming userId is a string
+      const{AadharNumber}=req.body
       const userId = (req as any).userId as string;
   
       // Call the internal function to verify Aadhar number and update reference ID
-      const verificationResult = await verifyAadharNumberInternal(userId);
-  
-      if (typeof verificationResult === 'string') {
+      const verificationResult = await verifyAadharNumberInternal(userId,AadharNumber);
+   console.log(verificationResult)
+      if ( verificationResult ) {
         res.json(verificationResult);
       } else {
         res.json(verificationResult);
@@ -63,10 +78,11 @@ export const verifyAadharNumberOTP = async (req: Request, res: Response): Promis
       // Assuming userId is a string
       const userId = (req as any).userId as string;
       const otp = req.body.otp as string;
-      const refId = '4027359'; // You can customize refId as needed
+      //findOne()
+      //const refId = '4027359'; // You can customize refId as needed
   
       // Call the internal function to verify Aadhar number OTP
-      const verificationResult = await verifyAadharNumberOTPInternal(userId, otp, refId);
+      const verificationResult = await verifyAadharNumberOTPInternal(userId, otp);
   
       res.json(verificationResult);
     } catch (error) {
@@ -74,3 +90,76 @@ export const verifyAadharNumberOTP = async (req: Request, res: Response): Promis
       res.status(500).json({ error: 'An error occurred' });
     }
   };  
+  //Route handler function to save GST details
+  export const saveGSTDetails = async (req: Request, res: Response): Promise<void> => {
+    const { Constituion_of_Business,
+      Taxpayer_Type,
+      GSTIN_of_the_entity,
+      Legal_Name_of_Business,
+      Business_PAN,
+      Date_of_Registration,
+      State,
+      Trade_Name,
+      Place_of_Business,
+      Nature_of_Place_of_Business,
+      Nature_of_Business_Activity
+      } = req.body;
+      const userId = (req as any).userId;
+    const [success, result] = await saveGSTDetailsInternal(
+      Constituion_of_Business,
+      Taxpayer_Type,
+      GSTIN_of_the_entity,
+      Legal_Name_of_Business,
+      Business_PAN,
+      Date_of_Registration,
+      State,
+      Trade_Name,
+      Place_of_Business,
+      Nature_of_Place_of_Business,
+      Nature_of_Business_Activity,
+      userId
+      
+    );
+  
+    if (success) {
+      res.send(result);
+    } else {
+      res.status(400).send({
+        message: result,
+      });
+    }
+  };
+
+  ////Route handler function to retrieve saved GST details
+  export const getsavedgstdetail = async (req: Request, res: Response): Promise<void> => {
+    try {
+      // Assuming userId is a string
+      const userId = (req as any).userId as string;
+  
+      // Call the internal function to get GST details
+      const savedgstDetails = await getGSTDetailsInternalsaved(userId);
+  
+      res.json(savedgstDetails);
+    } catch (error) {
+      console.error('Error in getGSTDetails:', error);
+      res.status(500).json({ error: 'An error occurred' });
+    }
+  };
+
+  export const getglobalstatus = async (req: Request, res: Response): Promise<void> => {
+    const {
+      globalStatus
+      } = req.body;
+      const userId = (req as any).userId;
+    const [success, result] = await getGlobalStatusInternal(globalStatus,userId);
+  
+    if (success) {
+      res.send(result);
+    } else {
+      res.status(400).send({
+        message: result,
+      });
+    }
+  };
+
+  

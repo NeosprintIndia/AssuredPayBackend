@@ -36,6 +36,7 @@ interface IUserKYC extends Document {
   isAadhaarVerified: boolean;
   isPANVerified: boolean;
   isGSTVerified: boolean;
+  isGSTDetailSave: boolean;
   AdminAadhaarS1Verified: boolean;
   Admin_AadhaarS1_Verification_Clarification: boolean;
   AdminAadhaarS2Verified: boolean;
@@ -46,6 +47,18 @@ interface IUserKYC extends Document {
   GST_Attempt: number;
   Aadhaar_Attempt: number;
   due: string;
+  Constituion_of_Business:string;
+  Taxpayer_Type:string;
+  GSTIN_of_the_entity:string;
+  Legal_Name_of_Business:string;
+  Business_PAN:string;
+  Date_of_Registration: Date;
+  State:string;
+  Trade_Name:string;
+  Place_of_Business:string;
+  Nature_of_Place_of_Business:string;
+  Nature_of_Business_Activity:string;
+  globalStatus:string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -220,6 +233,22 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>({
     type: Number,
     default: 0,
   },
+  globalStatus:{
+    type: String,
+    default:"GSTPG1",
+},
+  isGSTDetailSave:{type:Boolean,default:false},
+  Constituion_of_Business:{type:String},
+  Taxpayer_Type:{type:String},
+  GSTIN_of_the_entity:{type:String},
+  Legal_Name_of_Business:{type:String},
+  Business_PAN:{type:String},
+  Date_of_Registration: {Date},
+  State:{type:String},
+  Trade_Name:{type:String},
+  Place_of_Business:{type:String},
+  Nature_of_Place_of_Business:{type:String},
+  Nature_of_Business_Activity:{type:String},
   due: {
     type: String,
     default: 'New',
