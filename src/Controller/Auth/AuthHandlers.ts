@@ -99,8 +99,9 @@ const createUser = async (
       to: business_email,
       OTP: otpGenerated,
     });
-
-    return [true, newUser.otp];
+// In future Frontend doesnt need otp require only id
+console.log(newUser);
+    return [true, newUser];
   } catch (error) {
     console.error("Error in createUser:", error);
     return [false, error]; // Include the error in the return value
@@ -108,16 +109,16 @@ const createUser = async (
 };
 
 
-export const validateUserSignUp = async (business_email: string, otp: string): Promise<[boolean, string | any]> => {
+export const validateUserSignUp = async (_id: string, otp: string): Promise<[boolean, string | any]> => {
   const user = await Registration.findOne({
-    business_email,
+    _id,
   });
 
   if (!user) {
     return [false, 'User not found'];
   }
 
-  if (user && user.otp !== otp) {
+  if (user._id && user.otp !== otp) {
     return [false, 'Invalid OTP'];
   }
 

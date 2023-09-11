@@ -23,10 +23,19 @@ export const register = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export const verifyEmail = async (req: Request, res: Response): Promise<void> => {
-  const { business_email, otp } = req.body;
 
-  const user = await validateUserSignUp(business_email, otp);
+// Controller function to handle verify OTP
+// export const verifyEmail = async (req: Request, res: Response): Promise<void> => {
+//   const { business_email, otp } = req.body;
+
+//   const user = await validateUserSignUp(business_email, otp);
+
+//   res.send(user);
+// };
+export const verifyEmail = async (req: Request, res: Response): Promise<void> => {
+  const { _id, otp } = req.body;
+
+  const user = await validateUserSignUp(_id, otp);
 
   res.send(user);
 };
@@ -75,13 +84,13 @@ export async function searchExistingController(req: Request, res: Response) {
   try {
     const{business_email,business_mobile,username}=req.body
     console.log(business_email,business_mobile,username)
-    const result=await searchExisting(business_email,username,business_mobile);
+    const [success, result]=await searchExisting(business_email,username,business_mobile);
     
-    if (result) {
-      res.status(200).json({ message: 'Found' });
+    if (success) {
+      res.status(200).json(result);
       
     } else {
-      res.status(404).json({ message: "Not Found" });
+      res.status(404).json({error: result});
       
     }
   } catch (error) {
