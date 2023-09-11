@@ -235,11 +235,20 @@ export const searchExisting = async (
       });
   
       console.log(result);
+     
   
       if (result.length > 0) {
-       return true
+        const finalresult={
+          "found":true,
+          "data":result
+        }
+       return finalresult
       } else {
-       return false
+        const finalresult={
+          "found":false,
+          "data":result
+        }
+       return finalresult
       }
     } catch (error) {
       return error
