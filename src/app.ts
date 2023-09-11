@@ -36,7 +36,7 @@ app.use("/UploadRoutes", UploadRoutes);
 // app.use('/auth', AuthRoute);
 // app.use('/admin', AuthRoute);
 
-const port: number = 3000; // Define the port number for the server
+const port: number = 3010; // Define the port number for the server
 
 // Connect to MongoDB
 mongoose
