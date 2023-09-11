@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { performRegistration, validateUserSignUp, authenticateUser, changePassword, handleForgotPassword, registerAdminUser ,searchExisting} from './AuthHandlers'
+import { performRegistration, validateUserSignUp, authenticateUser, changePassword, handleForgotPassword, registerAdminUser ,searchExisting,resendEmailOtpInternal} from './AuthHandlers'
 
 
 // Controller function to handle the registration request
@@ -100,6 +100,21 @@ export async function searchExistingController(req: Request, res: Response) {
     res.status(500).json({ "message": "Internal Server Error" });
   }
 }
+
+export async function resendEmailOtp(req:Request,res:Response){
+const{email}=req.body;
+const [success, result] = await resendEmailOtpInternal(email)
+if (success) {
+  res.send(result);
+} else {
+  res.status(500).send({
+    message: result,
+  });
+}
+
+
+}
+
 
 
 // Controller function to handle registering an admin user

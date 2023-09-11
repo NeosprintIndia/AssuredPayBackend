@@ -337,6 +337,21 @@ export const searchExisting = async (
     }
   };
 
+ export const resendEmailOtpInternal= async(email:string): Promise<[boolean, any]> => {
+  try {
+    const otpGenerated = await generateOTP();
+    const updatedUser = await Registration.findOneAndUpdate({business_email:email}, {
+      $set: { otp: otpGenerated },
+      
+    },{ new: true } ); 
+    return [true, updatedUser];
+  } catch (error) {
+    console.error("Error in Sending OTP:", error);
+    return [false,"Error"];
+  }
+
+ }
+
 
 
 

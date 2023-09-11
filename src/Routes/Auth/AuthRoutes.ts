@@ -7,6 +7,7 @@ import {
   forgotPass,
   registerAdmin,
   searchExistingController,
+  resendEmailOtp,
 } from '../../Controller/Auth/AuthController';
 
 //Importing Middleware
@@ -22,6 +23,8 @@ authRouter.post('/registerbusiness', register);
 authRouter.post('/verify', verifyEmail);
 authRouter.post('/login', login);
 authRouter.post("/searchexisting",searchExistingController)
+authRouter.post('/resendemailotp', resendEmailOtp);
+
 
 // Change Password
 authRouter.post('/change-password', changePass);
