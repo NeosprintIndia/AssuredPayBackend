@@ -86,18 +86,18 @@ export async function searchExistingController(req: Request, res: Response) {
   try {
     const{business_email,business_mobile,username}=req.body
     console.log(business_email,business_mobile,username)
-    const [success, result]=await searchExisting(business_email,username,business_mobile);
+    const result =await searchExisting(business_email,username,business_mobile);
     
-    if (success) {
-      res.status(200).json({ success: true, data: result });
+    if (result) {
+      res.status(200).json(result);
       
     } else {
-      res.status(404).json({ success: false, error: result });
+      res.status(404).json({error: result});
       
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+    res.status(500).json({ "message": "Internal Server Error" });
   }
 }
 

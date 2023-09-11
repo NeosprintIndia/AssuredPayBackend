@@ -36,6 +36,9 @@ export const performRegistration = async (
     }
   }
 };
+
+
+// Function to handle Exisitng User during registration
 const findUserByEmailUsername = async (
   business_email: string,
   username: string
@@ -108,7 +111,7 @@ console.log(newUser);
   }
 };
 
-
+// Function to validate User via OTP
 export const validateUserSignUp = async (business_email: string, otp: string): Promise<[boolean, string | any]> => {
   const user = await Registration.findOne({
     business_email,
@@ -226,8 +229,8 @@ export const searchExisting = async (
       const result = await Registration.find({
         $or: [
           { business_email },
-          { business_mobile },
-          { username }
+          {username },
+          { business_mobile }
         ]
       });
   
