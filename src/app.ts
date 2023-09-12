@@ -1,4 +1,4 @@
-// Import required dependencies
+//*************** Import required dependencies *******************************************************
 
 import express, { Application, Request, Response } from "express"; // Import the Express framework
 import mongoose from "mongoose"; // Import Mongoose for MongoDB interaction
@@ -11,7 +11,8 @@ import AdminKYCRoutes from "./Routes/Admin/AdminKYCRoutes";
 import UserKYCRoutes from "./Routes/User/UserKYCRoutes";
 import UploadRoutes from "./Routes/Upload/UploadRoutes";
 
-// Create an instance of the Express application
+
+//****************** Create an instance of the Express application ******************************
 
 const app: Application = express();
 
@@ -22,12 +23,14 @@ app.use(
   })
 );
 
-// Parse various different custom JSON types as JSON
+//********************Parse various different custom JSON types as JSON******************************
+
 app.use(bodyParser.json()); // Parse incoming JSON payloads
 app.use(bodyParser.urlencoded({ extended: false })); // Parse URL-encoded payloads
 app.use(express.json()); // Another way to parse JSON payloads in Express
 
-// Set up routes
+//********************************Set up routes*****************************************************
+
 app.use("/Auth", AuthRoutes);
 app.use("/Admin", AdminKYCRoutes);
 app.use("/User", UserKYCRoutes);
@@ -38,7 +41,8 @@ app.use("/UploadRoutes", UploadRoutes);
 
 const port: number = 3010; // Define the port number for the server
 
-// Connect to MongoDB
+//************************* */ Connect to MongoDB****************************************************
+
 mongoose
   .connect(process.env.MONGO_URL, {})
   .then(() => {

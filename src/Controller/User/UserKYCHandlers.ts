@@ -92,48 +92,103 @@ export const verifyAadharNumberOTPInternal = async (
   };
 
    // Function to save GST Details
-  export const saveGSTDetailsInternal = async (
-    Constituion_of_Business:string,
-    Taxpayer_Type:string,
-    GSTIN_of_the_entity:string,
-    Legal_Name_of_Business:string,
-    Business_PAN:string,
-    Date_of_Registration:string,
-    State:string,
-    Trade_Name:string,
-    Place_of_Business:string,
-    Nature_of_Place_of_Business:string,
-    Nature_of_Business_Activity:string,
+  export const saveAadharDetailsInternal = async (
+    aadharNumber:string,
+    aadharCO:string,
+    aadharGender:string,
+    nameInAadhaar:string,
+    aadharDOB:string,
+    aadharPhotoLink:string,
+    aadharCountry:string,
+    distInAadhar:string,
+    aadharHouse:string,
+    aadharPincode:string,
+    aadharPO:string,
+    aadharState:string,
+    aadharStreet:string,
+    aadharSubDistrict:string,
+    cityInAadhar:string,
+    addressInAadhar:string,
     userId:string
     ): Promise<any> => {
     try {
-    const gstDetails =await UserKYC1.create(
+    const aadharDetails =await UserKYC1.create(
   { 
-      "Constituion_of_Business":Constituion_of_Business,
-      "Taxpayer_Type":Taxpayer_Type,
-      "GSTIN_of_the_entity":GSTIN_of_the_entity,
-      "Legal_Name_of_Business":Legal_Name_of_Business,
-      "Business_PAN":Business_PAN,
-     "Date_of_Registration": Date_of_Registration,
-     "State": State,
-      "Trade_Name":Trade_Name,
-      "Place_of_Business":Place_of_Business,
-      "Nature_of_Place_of_Business":Nature_of_Place_of_Business,
-      "Nature_of_Business_Activity":Nature_of_Business_Activity,
+      "aadharNumber":aadharNumber,
+      "aadharCO":aadharCO,
+      "aadharGender":aadharGender,
+      "nameInAadhaar":nameInAadhaar,
+      "aadharDOB":aadharDOB,
+     "aadharPhotoLink": aadharPhotoLink,
+     "aadharCountry": aadharCountry,
+      "distInAadhar":distInAadhar,
+      "aadharHouse":aadharHouse,
+      "aadharPincode":aadharPincode,
+      "aadharPO":aadharPO,
+      "aadharState":aadharState,
+      "aadharStreet":aadharStreet,
+      "aadharSubDistrict":aadharSubDistrict,
+      "cityInAadhar":cityInAadhar,
+      "addressInAadhar":addressInAadhar,
       "user":userId,
-      "isGSTDetailSave":true
+      "isAadharDetailSave":true
      }
     
     
     );
    
-      return [true, gstDetails];
+      return [true, aadharDetails];
     } catch (error) {
       console.error("Error in Saving Details:", error);
       return [false, error]; 
     }
     
   };
+
+     // Function to save GST Details
+     export const saveGSTDetailsInternal = async (
+      Constituion_of_Business:string,
+      Taxpayer_Type:string,
+      GSTIN_of_the_entity:string,
+      Legal_Name_of_Business:string,
+      Business_PAN:string,
+      Date_of_Registration:string,
+      State:string,
+      Trade_Name:string,
+      Place_of_Business:string,
+      Nature_of_Place_of_Business:string,
+      Nature_of_Business_Activity:string,
+      userId:string
+      ): Promise<any> => {
+      try {
+      const gstDetails =await UserKYC1.create(
+    { 
+        "Constituion_of_Business":Constituion_of_Business,
+        "Taxpayer_Type":Taxpayer_Type,
+        "GSTIN_of_the_entity":GSTIN_of_the_entity,
+        "Legal_Name_of_Business":Legal_Name_of_Business,
+        "Business_PAN":Business_PAN,
+       "Date_of_Registration": Date_of_Registration,
+       "State": State,
+        "Trade_Name":Trade_Name,
+        "Place_of_Business":Place_of_Business,
+        "Nature_of_Place_of_Business":Nature_of_Place_of_Business,
+        "Nature_of_Business_Activity":Nature_of_Business_Activity,
+        "user":userId,
+        "isGSTDetailSave":true
+       }
+      
+      
+      );
+     
+        return [true, gstDetails];
+      } catch (error) {
+        console.error("Error in Saving Details:", error);
+        return [false, error]; 
+      }
+      
+    };
+  
 
   // Function to get saved GST Details
   export const getGSTDetailsInternalsaved = async (userId: string): Promise<any> => {

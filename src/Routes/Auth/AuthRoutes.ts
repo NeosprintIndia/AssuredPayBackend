@@ -10,14 +10,14 @@ import {
   resendEmailOtp,
 } from '../../Controller/Auth/AuthController';
 
-//Importing Middleware
+//*********************Importing Middleware******************************************************
 
 import VerifyToken from '../../Middlewares/VerifyTokenUser';
 import verifyAdmin from '../../Middlewares/AdminToken';
 
 const authRouter: Router = Router();
 
-// Routes for User Till login
+//********************* Routes for User Till login**********************************************
 
 authRouter.post('/registerbusiness', register);
 authRouter.post('/verify', verifyEmail);
@@ -31,7 +31,7 @@ authRouter.post('/change-password', changePass);
 // Forgot Password
 authRouter.post('/forgot-password', forgotPass);
 
-//Routes for Admin 
+//********************************Routes for Admin************************************************* 
 
 authRouter.post('/registeradmin', [VerifyToken, verifyAdmin], registerAdmin);
 

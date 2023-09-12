@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { handleS1FileUpload,handleS2FileUpload,handlePanFileUpload,handleGSTFileUpload} from '../Upload/UploadHandler';
 
-// Route handler function for uploading Aadhar card
+//**************************** Route handler function for uploading Aadhar card****************************
 export const uploadAadhars1 = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = (req as any).userId; // Use type casting to access userId
@@ -17,7 +17,7 @@ export const uploadAadhars1 = async (req: Request, res: Response): Promise<void>
   }
 };
 
-// Route handler function for uploading Aadhar card
+// ****************************Route handler function for uploading Aadhar card****************************
 export const uploadAadhars2 = async (req: Request, res: Response): Promise<void> => {
     try {
       const userId = (req as any).userId; // Use type casting to access userId
@@ -33,7 +33,7 @@ export const uploadAadhars2 = async (req: Request, res: Response): Promise<void>
     }
   };
 
-  // Route handler function for uploading Aadhar card
+  // ****************************Route handler function for uploading Aadhar card****************************
 export const uploadPan = async (req: Request, res: Response): Promise<void> => {
     try {
       const userId = (req as any).userId; // Use type casting to access userId

@@ -1,5 +1,14 @@
 import { Request, Response } from 'express';
-import { getGlobalStatusInternal,getGSTDetailsInternalsaved,verifyPANDetails,getGSTDetailsInternal,saveGSTDetailsInternal,verifyAadharNumberInternal,verifyAadharNumberOTPInternal} from '../User/UserKYCHandlers';
+import { 
+  getGlobalStatusInternal,
+  getGSTDetailsInternalsaved,
+  verifyPANDetails,
+  getGSTDetailsInternal,
+  saveGSTDetailsInternal,
+  verifyAadharNumberInternal,
+  verifyAadharNumberOTPInternal,
+  saveAadharDetailsInternal,
+} from '../User/UserKYCHandlers';
 
 
 // Route handler function for verifying PAN
@@ -117,7 +126,7 @@ export const verifyAadharNumber = async (req: Request, res: Response): Promise<v
   
       // Call the internal function to verify Aadhar number and update reference ID
       const verificationResult = await verifyAadharNumberInternal(userId,AadharNumber);
-   console.log(verificationResult)
+       console.log(verificationResult)
       if ( verificationResult ) {
         res.json(verificationResult);
       } else {
@@ -140,14 +149,84 @@ export const verifyAadharNumberOTP = async (req: Request, res: Response): Promis
   
       // Call the internal function to verify Aadhar number OTP
       const verificationResult = await verifyAadharNumberOTPInternal(userId, otp);
+      const result={
+        "aadharNumber":"",
+        "aadharCO":verificationResult.body.data.care_of,
+        "aadharGender":verificationResult.body.data.gender,
+        "nameInAadhaar":verificationResult.body.data.name,
+        "aadharDOB": verificationResult.body.data.dob,
+        "aadharPhotoLink":verificationResult.body.data.photo_link,
+        "aadharCountry":verificationResult.body.data.split_address.country,
+        "distInAadhar":verificationResult.body.data.split_address.dist,
+        "aadharHouse":verificationResult.body.data.split_address.house,
+        "aadharPincode":verificationResult.body.data.split_address.pincode,
+        "aadharPO":verificationResult.body.data.split_address.po,
+        "aadharState":verificationResult.body.data.split_address.state,
+        "aadharStreet":verificationResult.body.data.split_address.street,
+        "aadharSubDistrict":verificationResult.body.data.split_address.subdist,
+        "cityInAadhar":verificationResult.body.data.split_address.vtc,
+        "addressInAadhar":verificationResult.body.data.split_address.country,
+      }
   
-      res.json(verificationResult);
+      res.json(result);
     } catch (error) {
       console.error('Error in verifyAadharNumberOTP:', error);
       res.status(500).json({ error: 'An error occurred' });
     }
   };  
   
+  // Route handler function for saving Aadhar details
+
+  export const saveAadharDetails = async (req: Request, res: Response): Promise<void> => {
+    const { 
+      aadharNumber,
+      aadharCO,
+      aadharGender,
+      nameInAadhaar,
+      aadharDOB,
+      aadharPhotoLink,
+      aadharCountry,
+      distInAadhar,
+      aadharHouse,
+      aadharPincode,
+      aadharPO,
+      aadharState,
+      aadharStreet,
+      aadharSubDistrict,
+      cityInAadhar,
+      addressInAadhar,
+      } = req.body;
+      const userId = (req as any).userId;
+    const [success, result] = await saveAadharDetailsInternal(
+      aadharNumber,
+      aadharCO,
+      aadharGender,
+      nameInAadhaar,
+      aadharDOB,
+      aadharPhotoLink,
+      aadharCountry,
+      distInAadhar,
+      aadharHouse,
+      aadharPincode,
+      aadharPO,
+      aadharState,
+      aadharStreet,
+      aadharSubDistrict,
+      cityInAadhar,
+      addressInAadhar,
+      userId
+      
+    );
+  
+    if (success) {
+      res.send(result);
+    } else {
+      res.status(400).send({
+        message: result,
+      });
+    }
+  };
+
  
 
   export const getglobalstatus = async (req: Request, res: Response): Promise<void> => {

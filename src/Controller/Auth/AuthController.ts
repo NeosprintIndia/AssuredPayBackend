@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { performRegistration, validateUserSignUp, authenticateUser, changePassword, handleForgotPassword, registerAdminUser ,searchExisting,resendEmailOtpInternal} from './AuthHandlers'
 
 
-// Controller function to handle the registration request
+// *********************Controller function to handle the registration request***********************
 export const register = async (req: Request, res: Response): Promise<void> => {
   const { business_email, username, business_mobile, password, refferal_code } = req.body;
 
@@ -23,15 +23,20 @@ export const register = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-
-// Controller function to handle verify OTP
+//********************* Controller function to handle verify OTP*********************
 
 export const verifyEmail = async (req: Request, res: Response): Promise<void> => {
   const { business_email, otp } = req.body;
 
-  const user = await validateUserSignUp(business_email, otp);
-
-  res.send(user);
+  const [success,result] = await validateUserSignUp(business_email, otp);
+ 
+  if (success) {
+    res.send(result);
+  } else {
+    res.status(500).send({
+      message: result,
+    });
+  }
 };
 
 // export const verifyEmail = async (req: Request, res: Response): Promise<void> => {
@@ -42,7 +47,7 @@ export const verifyEmail = async (req: Request, res: Response): Promise<void> =>
 //   res.send(user);
 // };
 
-// Controller function to handle user login
+// *********************Controller function to handle user login*********************
 export const login = async (req: Request, res: Response): Promise<void> => {
   const { business_email, password } = req.body;
 
@@ -55,7 +60,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// Controller function to handle changing the user's password
+//********************* Controller function to handle changing the user's password*********************
 export const changePass = async (req: Request, res: Response): Promise<void> => {
   const { business_email, oldPassword, newPassword } = req.body;
 
@@ -68,7 +73,7 @@ export const changePass = async (req: Request, res: Response): Promise<void> => 
   }
 };
 
-// Controller function to handle forgot password request
+//********************* Controller function to handle forgot password request*********************
 export const forgotPass = async (req: Request, res: Response): Promise<void> => {
   const email = req.body.business_email;
 
@@ -80,7 +85,7 @@ export const forgotPass = async (req: Request, res: Response): Promise<void> => 
     res.status(200).json({ message: 'Password has been sent to an email' });
   }
 };
-
+//********************* Controller function to handle Existing Search*********************
 export async function searchExistingController(req: Request, res: Response) {
 
   try {
@@ -100,15 +105,14 @@ export async function searchExistingController(req: Request, res: Response) {
     res.status(500).json({ "message": "Internal Server Error" });
   }
 }
-
+//********************* Controller function to handle Resend Mail OTP*********************
 export async function resendEmailOtp(req:Request,res:Response){
 const{email}=req.body;
 const [success, result] = await resendEmailOtpInternal(email)
 if (success) {
-  res.send(result);
+  res.send({result,Active:true}); //Active keyword to check at frontend message send successfully
 } else {
-  res.status(500).send({
-    message: result,
+  res.status(500).send({result,Active:false
   });
 }
 
@@ -117,7 +121,7 @@ if (success) {
 
 
 
-// Controller function to handle registering an admin user
+////********************* Controller function to handle registering an admin user*********************
 export const registerAdmin = async (req: Request, res: Response): Promise<void> => {
   const { business_email, username, business_mobile, password } = req.body;
 

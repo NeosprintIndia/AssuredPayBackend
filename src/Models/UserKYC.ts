@@ -15,17 +15,13 @@ interface IUserKYC extends Document {
   GSTFILE: string;
   PAN_Company_number: string;
   PANFile: string;
-  aadharNumber: string;
+  
   aadhar_ref_id: string;
   image_on_aadhaar: string;
   aadharFileUrl: string;
   aadharBackUrl: string;
-  addressInAadhar: string;
+ 
   localityInAadhar: string;
-  aadharpincode: string;
-  cityInAadhar: string;
-  distInAadhar: string;
-  nameInAadhaar: string;
   selfie: string[];
   shopImage: string[];
   shopAddStatus: string;
@@ -37,6 +33,7 @@ interface IUserKYC extends Document {
   isPANVerified: boolean;
   isGSTVerified: boolean;
   isGSTDetailSave: boolean;
+  isAadharDetailSave: boolean;
   AdminAadhaarS1Verified: boolean;
   Admin_AadhaarS1_Verification_Clarification: boolean;
   AdminAadhaarS2Verified: boolean;
@@ -58,6 +55,22 @@ interface IUserKYC extends Document {
   Place_of_Business:string;
   Nature_of_Place_of_Business:string;
   Nature_of_Business_Activity:string;
+  aadharNumber: string;
+  aadharCO:string;
+  aadharGender:string;
+  nameInAadhaar: string;
+  aadharDOB:string;
+  aadharPhotoLink:string;
+  aadharCountry:string;
+  distInAadhar:string;
+  aadharHouse:string;
+  aadharPincode:string;
+  aadharPO:string;
+  aadharState:string;
+  aadharStreet:string;
+  aadharSubDistrict:string;
+  cityInAadhar: string;
+  addressInAadhar: string;
   globalStatus:string;
   createdAt: Date;
   updatedAt: Date;
@@ -149,7 +162,7 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>({
     type: String,
     default: '',
   },
-  aadharpincode: {
+  aadharPincode: {
     type: String,
     default: '',
   },
@@ -237,6 +250,17 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>({
     type: String,
     default:"GSTPG1",
 },
+aadharSubDistrict:{type:String},
+aadharStreet:{type:String},
+aadharState:{type:String},
+aadharPO:{type:String},
+aadharHouse:{type:String},
+aadharCountry:{type:String},
+aadharPhotoLink:{type:String},
+aadharDOB:{type:String},
+aadharCO:{type:String},
+aadharGender:{type:String},
+isAadharDetailSave: {type:Boolean,default:false},
   isGSTDetailSave:{type:Boolean,default:false},
   Constituion_of_Business:{type:String},
   Taxpayer_Type:{type:String},

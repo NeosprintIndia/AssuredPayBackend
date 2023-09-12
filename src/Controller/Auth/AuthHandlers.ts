@@ -8,7 +8,7 @@ import { generateReferralCode } from "../../Services/referral_code";
 import { sendMail } from '../../Services/MailTemp';
 import * as crypto from 'crypto';
 
-// Function to handle registration logic
+// ****************************Function to handle registration logic****************************
 export const performRegistration = async (
   business_email: string,
   username: string,
@@ -38,7 +38,7 @@ export const performRegistration = async (
 };
 
 
-// Function to handle Exisitng User during registration
+// **********************Function to handle Exisitng User during registration************************
 const findUserByEmailUsername = async (
   business_email: string,
   username: string
@@ -111,11 +111,13 @@ console.log(newUser);
   }
 };
 
-// Function to validate User via OTP
+// ****************************Function to validate User via OTP****************************
 export const validateUserSignUp = async (business_email: string, otp: string): Promise<[boolean, string | any]> => {
   const user = await Registration.findOne({
-    business_email,
+    business_email:business_email
   });
+
+  console.log(user)
 
   if (!user) {
     return [false, 'User not found'];
@@ -125,9 +127,10 @@ export const validateUserSignUp = async (business_email: string, otp: string): P
     return [false, 'Invalid OTP'];
   }
 
-  const updatedUser = await Registration.findByIdAndUpdate(user.business_email, {
-    $set: { active: true },
-  });
+  const updatedUser = await Registration.findOneAndUpdate({business_email:user.business_email}, {
+    $set: { active: true }
+   
+  }, { new: true });
 
   return [true, updatedUser];
 };
@@ -155,7 +158,7 @@ export const authenticateUser = async (business_email: string, password: string)
   }
 };
 
-// Function to handle changing the user's password
+//**************************** Function to handle changing the user's password****************************
 export const changePassword = async (business_email: string, oldPassword: string, newPassword: string): Promise<string | null> => {
   try {
     const user = await Registration.findOne({ business_email });
@@ -182,13 +185,13 @@ export const changePassword = async (business_email: string, oldPassword: string
   }
 };
 
-
+ //********************* Handler function to Generate Temp Password********************* 
 function generateTemporaryPassword(): string {
   return crypto.randomBytes(8).toString('hex'); // 16 characters long hexadecimal string
 }
 
 
-// Function to handle forgot password logic
+//**************************** Function to handle forgot password logic****************************
 export const handleForgotPassword = async (email: string): Promise<string | null> => {
   try {
     // Check if the user exists in the database
@@ -218,7 +221,7 @@ export const handleForgotPassword = async (email: string): Promise<string | null
     return 'Internal server error';
   }
 }
-  
+ //********************* Handler function to handle Existing Search********************* 
 export const searchExisting = async (
   business_email: string,
   username: string,
@@ -336,7 +339,7 @@ export const searchExisting = async (
       return [false, 'Unable to sign up, please try again later'];
     }
   };
-
+//*********************Handler function to handle Resend Mail OTP*********************
  export const resendEmailOtpInternal= async(email:string): Promise<[boolean, any]> => {
   try {
     const otpGenerated = await generateOTP();
