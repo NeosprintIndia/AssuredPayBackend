@@ -14,9 +14,10 @@ import {
 // Route handler function for verifying PAN
 export const verifyPAN = async (req: Request, res: Response): Promise<void> => {
     try {
+      const PanNumber = req.body.PanNumber as string;
       const id = (req as any).userId as string; // Assuming userId is a string
   
-      const verificationResult = await verifyPANDetails(id);
+      const verificationResult = await verifyPANDetails(PanNumber,id);
   
       if (typeof verificationResult === 'string') {
         res.json(verificationResult);

@@ -13,7 +13,7 @@ interface IUserKYC extends Document {
   isGST: boolean;
   GSTNumber: string;
   GSTFILE: string;
-  PAN_Company_number: string;
+  PAN_number: string;
   PANFile: string;
   
   aadhar_ref_id: string;
@@ -126,7 +126,7 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>({
     type: String,
     default: '',
   },
-  PAN_Company_number: {
+  PAN_number: {
     type: String,
     default: '',
   },

@@ -24,7 +24,6 @@ app.use(
 );
 
 //********************Parse various different custom JSON types as JSON******************************
-
 app.use(bodyParser.json()); // Parse incoming JSON payloads
 app.use(bodyParser.urlencoded({ extended: false })); // Parse URL-encoded payloads
 app.use(express.json()); // Another way to parse JSON payloads in Express

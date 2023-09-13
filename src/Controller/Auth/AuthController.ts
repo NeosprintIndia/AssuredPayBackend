@@ -62,7 +62,8 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
 //********************* Controller function to handle changing the user's password*********************
 export const changePass = async (req: Request, res: Response): Promise<void> => {
-  const { business_email, oldPassword, newPassword } = req.body;
+  const {business_email,oldPassword,newPassword} = req.body;
+  console.log(business_email,oldPassword,newPassword)
 
   const errorMessage = await changePassword(business_email, oldPassword, newPassword);
 
@@ -75,9 +76,9 @@ export const changePass = async (req: Request, res: Response): Promise<void> => 
 
 //********************* Controller function to handle forgot password request*********************
 export const forgotPass = async (req: Request, res: Response): Promise<void> => {
-  const email = req.body.business_email;
+  const {business_email} = req.body;
 
-  const errorMessage = await handleForgotPassword(email);
+  const errorMessage = await handleForgotPassword(business_email);
 
   if (errorMessage) {
     res.status(errorMessage === 'Internal server error' ? 500 : 404).json({ message: errorMessage });

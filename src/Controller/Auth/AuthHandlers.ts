@@ -161,22 +161,29 @@ export const authenticateUser = async (business_email: string, password: string)
 //**************************** Function to handle changing the user's password****************************
 export const changePassword = async (business_email: string, oldPassword: string, newPassword: string): Promise<string | null> => {
   try {
-    const user = await Registration.findOne({ business_email });
+    console.log("IN TRY BLOCK");
+    const user = await Registration.findOne({ business_email: business_email });
+    console.log(user);
 
     if (!user) {
       return 'User not found';
     }
 
-    if (!user.comparePassword(oldPassword)) {
+    const plainpass = CryptoJS.AES.decrypt(user.password, process.env.PASS_PHRASE).toString(CryptoJS.enc.Utf8);
+
+    console.log(plainpass)
+
+    if (oldPassword !== plainpass) {
       return 'Invalid old password';
     }
 
-    if (user.oldPasswords.includes(newPassword)) {
+    if (plainpass===newPassword) {
       return 'New password cannot be an old password';
     }
-
-    user.oldPasswords.push(user.password);
-    user.password = newPassword;
+     // Encrypt the new password before saving it
+    const encryptedNewPassword = CryptoJS.AES.encrypt(newPassword, process.env.PASS_PHRASE).toString();
+    // Note: Assuming that user.password is an array, not plain text
+    user.password=encryptedNewPassword;
     await user.save();
 
     return null; // Password changed successfully
@@ -192,10 +199,10 @@ function generateTemporaryPassword(): string {
 
 
 //**************************** Function to handle forgot password logic****************************
-export const handleForgotPassword = async (email: string): Promise<string | null> => {
+export const handleForgotPassword = async (business_email: string): Promise<string | null> => {
   try {
     // Check if the user exists in the database
-    const user = await Registration.findOne({ business_email: email });
+    const user = await Registration.findOne({ business_email: business_email });
 
     if (!user) {
       return 'User not found';
@@ -203,6 +210,7 @@ export const handleForgotPassword = async (email: string): Promise<string | null
 
     // Generate a temporary password
     const tempPassword = generateTemporaryPassword();
+    console.log(tempPassword)
 
     // Update the user's password in the database
     user.oldPasswords.push(tempPassword);
@@ -211,7 +219,7 @@ export const handleForgotPassword = async (email: string): Promise<string | null
 
     // Send an email with the temporary password
     await sendMail({
-      to: email,
+      to: business_email,
       OTP: tempPassword,
     });
 

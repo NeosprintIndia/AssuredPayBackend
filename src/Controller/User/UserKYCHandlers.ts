@@ -1,8 +1,10 @@
+import { set } from 'mongoose';
 import UserKYC1 from '../../Models/UserKYC'; // Import your UserKYC1 model
+import Registration from '../../Models/UserRegister';
 import {PAN_KYC_SB,GST_KYC_SB,Aadhaar_KYC_S1,Aadhaar_KYC_S2} from '../../Services/sandbox'; // Import your sandbox module
 // Function to verify PAN details
 
-export const verifyPANDetails = async (id: string): Promise<any| string> => {
+export const verifyPANDetails = async (PanNumber:string,id: string): Promise<any| string> => {
     try {
       const user = await UserKYC1.findOne({
         user: id,
@@ -11,22 +13,31 @@ export const verifyPANDetails = async (id: string): Promise<any| string> => {
       if (!user) {
         return 'User not found';
       }
+
+      const aadharFullName=user.nameInAadhaar
+      const myArray =aadharFullName.split(" ");
+
+      console.log(myArray[0])
   
-      const pan = user.PAN_Company_number;
-      const businessName = user.business_name;
+     // const pan = user.PAN_Company_number;
+     // const businessName = user.business_name;
   
-      const result = await PAN_KYC_SB({ id_number: pan });
-      const fullName = result.body.data.full_name;
+      const result = await PAN_KYC_SB({ id_number: PanNumber });
+      //console.log(result)
+      const panFirstName = result.body.data.first_name.trim();
+      const panNumber=result.body.data.pan;
+      
   
-      if (businessName === fullName) {
+      if (myArray[0].toLowerCase() === panFirstName.toLowerCase()) {
         const updatedUser = await UserKYC1.findOneAndUpdate(
           { user: id },
-          { $set: { isPANVerified: true } }
-        );
+          { $set: { isPANVerified: true,
+            PAN_number:panNumber }},
+          { new:true });
   
         return updatedUser;
       } else {
-        return "Your PAN details don't match with the business name provided";
+        return "Your PAN details don't match with the Aadhar name provided";
       }
     } catch (error) {
       throw error;
@@ -112,8 +123,9 @@ export const verifyAadharNumberOTPInternal = async (
     userId:string
     ): Promise<any> => {
     try {
-    const aadharDetails =await UserKYC1.create(
-  { 
+    const user = await Registration.findOne({ _id:userId });
+    const aadharDetails =await UserKYC1.findOneAndUpdate({user:user._id},
+     { $set:{ 
       "aadharNumber":aadharNumber,
       "aadharCO":aadharCO,
       "aadharGender":aadharGender,
@@ -132,7 +144,7 @@ export const verifyAadharNumberOTPInternal = async (
       "addressInAadhar":addressInAadhar,
       "user":userId,
       "isAadharDetailSave":true
-     }
+     }}, { new: true }
     
     
     );
