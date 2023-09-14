@@ -15,7 +15,7 @@ import {
 
 
 router.get('/verifypan',[VerifyToken],verifyPAN)
-router.get('/getgstdetail',[VerifyToken],getGSTDetails)
+router.post('/getgstdetail',[VerifyToken],getGSTDetails)
 router.get('/getsavedgstdetail',[VerifyToken],getsavedgstdetail)
 router.post('/savegstdetail',[VerifyToken],saveGSTDetails)
 router.post('/verifyadhar',[VerifyToken],verifyAadharNumber)

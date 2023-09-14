@@ -161,29 +161,37 @@ export const authenticateUser = async (business_email: string, password: string)
 //**************************** Function to handle changing the user's password****************************
 export const changePassword = async (business_email: string, oldPassword: string, newPassword: string): Promise<string | null> => {
   try {
-    console.log("IN TRY BLOCK");
     const user = await Registration.findOne({ business_email: business_email });
-    console.log(user);
 
     if (!user) {
       return 'User not found';
     }
 
-    const plainpass = CryptoJS.AES.decrypt(user.password, process.env.PASS_PHRASE).toString(CryptoJS.enc.Utf8);
+    // Decrypt all old passwords and check if the oldPassword matches any of them
+    const oldPasswords = user.oldPasswords || []; // Ensure oldPasswords is initialized as an array
+    const plainOldPasswords = oldPasswords.map((encryptedPassword) => {
+      return CryptoJS.AES.decrypt(encryptedPassword, process.env.PASS_PHRASE).toString(CryptoJS.enc.Utf8);
+    });
 
-    console.log(plainpass)
-
-    if (oldPassword !== plainpass) {
+    if (!plainOldPasswords.includes(oldPassword)) {
       return 'Invalid old password';
     }
 
-    if (plainpass===newPassword) {
+    if (plainOldPasswords.includes(newPassword)) {
       return 'New password cannot be an old password';
     }
-     // Encrypt the new password before saving it
+
+    // Encrypt the new password before saving it
     const encryptedNewPassword = CryptoJS.AES.encrypt(newPassword, process.env.PASS_PHRASE).toString();
-    // Note: Assuming that user.password is an array, not plain text
-    user.password=encryptedNewPassword;
+    
+    // Add the new password to the oldPasswords array and limit it to the 5 latest passwords
+    oldPasswords.push(encryptedNewPassword);
+    if (oldPasswords.length > 5) {
+      oldPasswords.shift(); // Remove the oldest password
+    }
+
+    // Update the user's oldPasswords field and save the user
+    user.oldPasswords = oldPasswords;
     await user.save();
 
     return null; // Password changed successfully
@@ -210,11 +218,12 @@ export const handleForgotPassword = async (business_email: string): Promise<stri
 
     // Generate a temporary password
     const tempPassword = generateTemporaryPassword();
+    const encryptedNewPassword = CryptoJS.AES.encrypt(tempPassword, process.env.PASS_PHRASE).toString();
     console.log(tempPassword)
 
     // Update the user's password in the database
-    user.oldPasswords.push(tempPassword);
-    user.password = tempPassword;
+    user.oldPasswords.push(encryptedNewPassword);
+    user.password = encryptedNewPassword;
     await user.save();
 
     // Send an email with the temporary password
@@ -266,88 +275,7 @@ export const searchExisting = async (
     }
   };
 
-  export const registerAdminUser = async (
-    business_email: string,
-    username: string,
-    business_mobile: string,
-    password: string,
-    refferal_code: string | null
-  ): Promise<[boolean, any]> => {
-    try {
-      const isExisting = await findUserByEmailUsername(business_email, username);
-  
-      if (isExisting) {
-        return [false, 'Already existing business or Username'];
-      }
-  
-      const newUser = await createAdminUser(business_email, password, business_mobile, username, refferal_code);
-  
-      if (!newUser[0]) {
-        return [false, 'Unable to create new user'];
-      }
-  
-      return [true, newUser];
-    } catch (error) {
-      console.error('Error in registerAdminUser:', error);
-      return [false, 'Unable to sign up, please try again later'];
-    }
-  };
-  
-  const createAdminUser = async (
-    business_email: string,
-    password: string,
-    business_mobile: string,
-    username: string,
-    refferal_code: string | null
-  ): Promise<[boolean, any | any]> => {
-    try {
-      const hashedPassword = await CryptoJS.AES.encrypt(password, process.env.PASS_PHRASE).toString();
-      const otpGenerated = await generateOTP();
-      const Refer_code = await generateReferralCode(username, business_mobile);
-      console.log(Refer_code);
-  
-      let updatedReferral: any | null = null;
-  
-      if (refferal_code !== null) {
-        updatedReferral = await Referral.findOneAndUpdate(
-          { refferal_code },
-          { $inc: { count: 1 } },
-          { new: true }
-        );
-        console.log(updatedReferral);
-        if (!updatedReferral) {
-          return [false, null];
-        }
-      }
-  
-      const newUser = await Registration.create({
-        business_email,
-        business_mobile,
-        password: hashedPassword,
-        username,
-        oldPasswords: [hashedPassword],
-        otp: otpGenerated,
-        role: "Admin",
-      });
-      console.log(newUser);
-  
-      const Generate_Referral = await Referral.create({
-        user: newUser._id,
-        refferal_code: Refer_code,
-      });
-      console.log(Generate_Referral);
-  
-      await sendMail({
-        to: business_email,
-        OTP: otpGenerated,
-      });
-      return [true, newUser];
-    } catch (error) {
-      console.error("Error in createAdminUser:", error);
-      return [false, 'Unable to sign up, please try again later'];
-    }
-  };
-//*********************Handler function to handle Resend Mail OTP*********************
+ //*********************Handler function to handle Resend Mail OTP*********************
  export const resendEmailOtpInternal= async(email:string): Promise<[boolean, any]> => {
   try {
     const otpGenerated = await generateOTP();
@@ -363,6 +291,133 @@ export const searchExisting = async (
 
  }
 
+ export const registerAdminUser = async (
+  business_email: string,
+  username: string,
+  business_mobile: string,
+  password: string,
+  refferal_code: string | null
+): Promise<[boolean, any]> => {
+  try {
+    const isExisting = await findUserByEmailUsername(business_email, username);
+
+    if (isExisting) {
+      return [false, 'Already existing business or Username'];
+    }
+
+    const newUser = await createAdminUser(business_email, password, business_mobile, username, refferal_code);
+
+    if (!newUser[0]) {
+      return [false, 'Unable to create new user'];
+    }
+
+    return [true, newUser];
+  } catch (error) {
+    console.error('Error in registerAdminUser:', error);
+    return [false, 'Unable to sign up, please try again later'];
+  }
+};
+
+const createAdminUser = async (
+  business_email: string,
+  password: string,
+  business_mobile: string,
+  username: string,
+  refferal_code: string | null
+): Promise<[boolean, any | any]> => {
+  try {
+    const hashedPassword = await CryptoJS.AES.encrypt(password, process.env.PASS_PHRASE).toString();
+    const otpGenerated = await generateOTP();
+    const Refer_code = await generateReferralCode(username, business_mobile);
+    console.log(Refer_code);
+
+    let updatedReferral: any | null = null;
+
+    if (refferal_code !== null) {
+      updatedReferral = await Referral.findOneAndUpdate(
+        { refferal_code },
+        { $inc: { count: 1 } },
+        { new: true }
+      );
+      console.log(updatedReferral);
+      if (!updatedReferral) {
+        return [false, null];
+      }
+    }
+
+    const newUser = await Registration.create({
+      business_email,
+      business_mobile,
+      password: hashedPassword,
+      username,
+      oldPasswords: [hashedPassword],
+      otp: otpGenerated,
+      role: "Admin",
+    });
+    console.log(newUser);
+
+    const Generate_Referral = await Referral.create({
+      user: newUser._id,
+      refferal_code: Refer_code,
+    });
+    console.log(Generate_Referral);
+
+    await sendMail({
+      to: business_email,
+      OTP: otpGenerated,
+    });
+    return [true, newUser];
+  } catch (error) {
+    console.error("Error in createAdminUser:", error);
+    return [false, 'Unable to sign up, please try again later'];
+  }
+};
+
+export const authenticateAdmin = async (business_email: string, password: string): Promise<[boolean, string | any]> => {
+  try {
+    const user = await Registration.findOne({ business_email });
+
+    if (!user) {
+      return [false, 'Wrong Credential'];
+    }
+
+    const hashedPassword = CryptoJS.AES.decrypt(user.password, process.env.PASS_PHRASE);
+    const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
+
+    if (originalPassword !== password) {
+      return [false, 'Wrong Password'];
+    }
+    const otpGenerated = await generateOTP();
+    const updatedUser = await Registration.findOneAndUpdate({business_email:business_email}, {
+      $set: { otp: otpGenerated },
+      
+    },{ new: true } ); 
+
+    //const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '3D' });
+
+    return [true, { updatedUser }];
+  } catch (error) {
+    return [false, error.message];
+  }
+};
+
+export const validateAdminLogin = async (business_email: string, otp: string): Promise<[boolean, string | any]> => {
+  const user = await Registration.findOne({
+    business_email:business_email
+  });
+
+  console.log(user)
+
+  if (!user) {
+    return [false, 'User not found'];
+  }
+
+  if (user.business_email && user.otp !== otp) {
+    return [false, 'Invalid OTP'];
+  }
+
+  return [true, user];
+};
 
 
 

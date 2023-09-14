@@ -54,9 +54,9 @@ const RegisterUserSchema: Schema<IRegisterUser> = new Schema({
 });
 
 // Define the methods
-RegisterUserSchema.methods.comparePassword = function (candidatePassword: string) {
-  return candidatePassword === this.password;
-};
+// RegisterUserSchema.methods.comparePassword = async function (candidatePassword: string,password:string) {
+//   return bycrypt.compare(candidatePassword, password);
+// };
 
 // Define the model
 const User: Model<IRegisterUser> = mongoose.model<IRegisterUser>("RegisterUser", RegisterUserSchema);

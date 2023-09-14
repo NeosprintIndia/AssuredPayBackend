@@ -1,5 +1,15 @@
 import { Request, Response } from 'express';
-import { performRegistration, validateUserSignUp, authenticateUser, changePassword, handleForgotPassword, registerAdminUser ,searchExisting,resendEmailOtpInternal} from './AuthHandlers'
+import { 
+  performRegistration, 
+  validateUserSignUp, 
+  authenticateUser, 
+  changePassword, 
+  handleForgotPassword, 
+  registerAdminUser ,
+  searchExisting,
+  resendEmailOtpInternal,
+  authenticateAdmin,
+  validateAdminLogin,} from './AuthHandlers'
 
 
 // *********************Controller function to handle the registration request***********************
@@ -120,11 +130,12 @@ if (success) {
 
 }
 
+//************************************ADMIN*********************************** */
 
 
 ////********************* Controller function to handle registering an admin user*********************
 export const registerAdmin = async (req: Request, res: Response): Promise<void> => {
-  const { business_email, username, business_mobile, password } = req.body;
+  const { business_email,username,business_mobile, password } = req.body;
 
   let referral_code: string | null = null;
 
@@ -143,3 +154,28 @@ export const registerAdmin = async (req: Request, res: Response): Promise<void> 
   }
 };
 
+export const loginAdmin = async (req: Request, res: Response): Promise<void> => {
+  const { business_email, password } = req.body;
+
+  const [success, result] = await authenticateAdmin(business_email, password);
+
+  if (success) {
+    res.status(200).json(result);
+  } else {
+    res.status(400).json({ error: result });
+  }
+};
+
+export const adminOTPVerify = async (req: Request, res: Response): Promise<void> => {
+  const { business_email, otp } = req.body;
+
+  const [success,result] = await validateAdminLogin(business_email, otp);
+ 
+  if (success) {
+    res.send(result);
+  } else {
+    res.status(500).send({
+      message: result,
+    });
+  }
+};
