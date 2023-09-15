@@ -62,3 +62,23 @@ export const approveAdminAadharS1 = async (req: Request, res: Response): Promise
       res.status(500).send('Internal server error');
     }
   };
+
+  // export const setAllLimits = async (req: Request, res: Response): Promise<void> => {
+  //   const { business_email,username,business_mobile, password } = req.body;
+  
+  //   let referral_code: string | null = null;
+  
+  //   if (req.body.refferal_code != null) {
+  //     referral_code = req.body.refferal_code;
+  //   }
+  
+  //   const [success, result] = await registerAdminUser(business_email, username, business_mobile, password, referral_code);
+  
+  //   if (success) {
+  //     res.send({result,Active:true});
+  //   } else {
+  //     res.status(400).send({
+  //       message: result,Active:false
+  //     });
+  //   }
+  // };

@@ -55,7 +55,7 @@ export const getGSTDetails = async (req: Request, res: Response): Promise<void> 
         "Nature_of_Place_of_Business":gstDetails.body.data.pradr.ntr,
         "Nature_of_Business_Activity":gstDetails.body.data.nba
       }
-    
+    console.log(result)
   
       res.json({result,Active:true});
 
@@ -98,7 +98,7 @@ export const getGSTDetails = async (req: Request, res: Response): Promise<void> 
     );
   
     if (success) {
-      res.send({result,Active:true});
+      res.send({result,Active_:true});
     } 
     else {
       res.status(400).send({
