@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import VerifyToken from '../../Middlewares/verifyTokenUsers';
 import { uploadAadhars1,uploadAadhars2,uploadPan,uploadGst} from '../../Controller/Upload/uploadController';
-import { uploadMiddleware } from '../../Services/upload';
+import { uploadMiddleware } from '../../Services/uploads';
 
 const router: Router = Router();
 

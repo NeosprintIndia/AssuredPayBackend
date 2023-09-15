@@ -3,9 +3,9 @@ import Referral from "../../Models/refferalCodes";
 import * as CryptoJS from "crypto-js";
 import * as jwt from 'jsonwebtoken';
 import "dotenv/config";
-import { generateOTP } from '../../Services/otpGenrator';
-import { generateReferralCode } from "../../Services/referralCode";
-import { sendMail } from '../../Services/mailTemporary';
+import { generateOTP } from '../../Services/otpGenrators';
+import { generateReferralCode } from "../../Services/referralCodes";
+import { sendMail } from '../../Services/mailTemporarys';
 import * as crypto from 'crypto';
 
 // ****************************Function to handle registration logic****************************

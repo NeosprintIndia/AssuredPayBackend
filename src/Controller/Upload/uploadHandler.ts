@@ -1,4 +1,4 @@
-import { awsinitialise } from '../../Services/awsInitialises'; 
+import { awsinitialise } from '../../Services/awsInitialise'; 
 import UserKYC1 from '../../Models/userKYCs';
 // Function to handle file upload and AWS S3 upload
 

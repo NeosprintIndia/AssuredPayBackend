@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import VerifyToken from '../../Middlewares/verifyTokenUsers';
 import VerifyAdmin from '../../Middlewares/adminTokens';
-import { uploadMiddleware } from '../../Services/upload';
+import { uploadMiddleware } from '../../Services/uploads';
 
 
 const router: Router = Router();
