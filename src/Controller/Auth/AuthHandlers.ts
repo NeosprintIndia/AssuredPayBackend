@@ -1,11 +1,11 @@
-import Registration from '../../Models/UserRegister';
-import Referral from "../../Models/RefferalCode";
+import Registration from '../../Models/userRegisteration';
+import Referral from "../../Models/refferalCode";
 import * as CryptoJS from "crypto-js";
 import * as jwt from 'jsonwebtoken';
 import "dotenv/config";
-import { generateOTP } from '../../Services/OtpGen';
-import { generateReferralCode } from "../../Services/referral_code";
-import { sendMail } from '../../Services/MailTemp';
+import { generateOTP } from '../../Services/otpGenrator';
+import { generateReferralCode } from "../../Services/referralCode";
+import { sendMail } from '../../Services/mailTemporary';
 import * as crypto from 'crypto';
 
 // ****************************Function to handle registration logic****************************
@@ -50,7 +50,7 @@ const findUserByEmailUsername = async (
     ],
   });
   if (!user) {
-    return false;
+    return {Active:false};
   }
   return user;
 };
@@ -135,13 +135,15 @@ export const validateUserSignUp = async (business_email: string, otp: string): P
   return [true, updatedUser];
 };
 
-export const authenticateUser = async (business_email: string, password: string): Promise<[boolean, string | any]> => {
+export const authenticateUser = async (username: string, password: string): Promise<[boolean, string | any]> => {
   try {
-    const user = await Registration.findOne({ business_email });
+    const user = await Registration.findOne({ "username": username });
 
     if (!user) {
       return [false, 'Wrong Credential'];
     }
+
+
 
     const hashedPassword = CryptoJS.AES.decrypt(user.password, process.env.PASS_PHRASE);
     const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
@@ -149,19 +151,20 @@ export const authenticateUser = async (business_email: string, password: string)
     if (originalPassword !== password) {
       return [false, 'Wrong Password'];
     }
+    
 
     const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '3D' });
 
-    return [true, { token, user }];
+    return [true, { "token":token}];
   } catch (error) {
     return [false, error.message];
   }
 };
 
 //**************************** Function to handle changing the user's password****************************
-export const changePassword = async (business_email: string, oldPassword: string, newPassword: string): Promise<string | null> => {
+export const changePassword = async (username: string, oldPassword: string, newPassword: string): Promise<string | null> => {
   try {
-    const user = await Registration.findOne({ business_email: business_email });
+    const user = await Registration.findOne({ username: username });
 
     if (!user) {
       return 'User not found';
@@ -207,10 +210,10 @@ function generateTemporaryPassword(): string {
 
 
 //**************************** Function to handle forgot password logic****************************
-export const handleForgotPassword = async (business_email: string): Promise<string | null> => {
+export const handleForgotPassword = async (username: string): Promise<string | null> => {
   try {
     // Check if the user exists in the database
-    const user = await Registration.findOne({ business_email: business_email });
+    const user = await Registration.findOne({ username: username });
 
     if (!user) {
       return 'User not found';
@@ -228,7 +231,7 @@ export const handleForgotPassword = async (business_email: string): Promise<stri
 
     // Send an email with the temporary password
     await sendMail({
-      to: business_email,
+      to: user.business_email,
       OTP: tempPassword,
     });
 
@@ -290,7 +293,7 @@ export const searchExisting = async (
   }
 
  }
-
+//****************************Admin Access Starts*****************************************
  export const registerAdminUser = async (
   business_email: string,
   username: string,
@@ -302,7 +305,7 @@ export const searchExisting = async (
     const isExisting = await findUserByEmailUsername(business_email, username);
 
     if (isExisting) {
-      return [false, 'Already existing business or Username'];
+      return [false,'Already existing business or Username'];
     }
 
     const newUser = await createAdminUser(business_email, password, business_mobile, username, refferal_code);
@@ -389,11 +392,14 @@ export const authenticateAdmin = async (business_email: string, password: string
     }
     const otpGenerated = await generateOTP();
     const updatedUser = await Registration.findOneAndUpdate({business_email:business_email}, {
-      $set: { otp: otpGenerated },
+      $set: { MFA: otpGenerated },
       
     },{ new: true } ); 
 
-    //const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '3D' });
+      await sendMail({
+        to: user.business_email,
+        otp: otpGenerated,
+      })
 
     return [true, { updatedUser }];
   } catch (error) {
@@ -401,7 +407,7 @@ export const authenticateAdmin = async (business_email: string, password: string
   }
 };
 
-export const validateAdminLogin = async (business_email: string, otp: string): Promise<[boolean, string | any]> => {
+export const validateMFA = async (business_email: string, otp: string): Promise<[boolean, string | any]> => {
   const user = await Registration.findOne({
     business_email:business_email
   });
@@ -412,11 +418,12 @@ export const validateAdminLogin = async (business_email: string, otp: string): P
     return [false, 'User not found'];
   }
 
-  if (user.business_email && user.otp !== otp) {
+  if (user.business_email && user.MFA !== otp) {
     return [false, 'Invalid OTP'];
   }
+  const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '3D' });
 
-  return [true, user];
+  return [true,  { "token":token} ];
 };
 
 

@@ -8,7 +8,7 @@ import {
   verifyAadharNumberInternal,
   verifyAadharNumberOTPInternal,
   saveAadharDetailsInternal,
-} from '../User/UserKYCHandlers';
+} from '../User/userKYCHandlers';
 
 
 // Route handler function for verifying PAN
@@ -20,13 +20,13 @@ export const verifyPAN = async (req: Request, res: Response): Promise<void> => {
       const verificationResult = await verifyPANDetails(PanNumber,id);
   
       if (typeof verificationResult === 'string') {
-        res.json(verificationResult);
+        res.json({verificationResult,Active:true});
       } else {
-        res.json(verificationResult);
+        res.json({verificationResult,Active:false});
       }
     } catch (error) {
-      console.error('Error in verifyPAN:', error);
-      res.status(500).json({ error: 'An error occurred' });
+      console.error({message:'Error in verifyPAN:', error,Active:false});
+      res.status(500).json({ error: 'An error occurred',Active:false });
     }
   };
 
@@ -36,27 +36,33 @@ export const getGSTDetails = async (req: Request, res: Response): Promise<void> 
       // Assuming userId is a string
       const userId = (req as any).userId as string;
       const gst = req.body.GSTNumber as string;
+     
   
       // Call the internal function to get GST details
-      const gstDetails = await getGSTDetailsInternal(gst);
+      const gstDetails =await getGSTDetailsInternal(gst)
+      const inputString=gstDetails.body.data.gstin
+      const pan = inputString.substring(2, inputString.length - 3);
       const result={
-        "Constituion of Business":gstDetails.body.data.ctb,
-        "Taxpayer Type":gstDetails.body.data.dty,
-        "GSTIN of the entity":gstDetails.body.data.gstin,
-        "Legal Name of Business":gstDetails.body.data.lgnm,
-        "Business PAN": " ",
-        "Date of Registration":gstDetails.body.data.rgdt,
+        "Constituion_of_Business":gstDetails.body.data.ctb,
+        "Taxpayer_Type": gstDetails.body.data.dty,
+        "GSTIN_of_the_entity":gstDetails.body.data.gstin,
+        "Legal_Name_of_Business":gstDetails.body.data.lgnm,
+        "Business_PAN": pan,
+        "Date_of_Registration":gstDetails.body.data.rgdt,
         "State":gstDetails.body.data.pradr.addr.stcd,
-        "Trade Name":gstDetails.body.data.lgnm,
-        "Place of Business":gstDetails.body.data.pradr.addr.bno+" "+gstDetails.body.data.pradr.addr.st+" "+gstDetails.body.data.pradr.addr.loc+" "+gstDetails.body.data.pradr.addr.dst+" "+gstDetails.body.data.pradr.addr.pncd,
-        "Nature of Place of Business":gstDetails.body.data.pradr.ntr,
-        "Nature of Business Activity":gstDetails.body.data.nba
+        "Trade_Name":gstDetails.body.data.lgnm,
+        "Place_of_Business":gstDetails.body.data.pradr.addr.bno+" "+gstDetails.body.data.pradr.addr.st+" "+gstDetails.body.data.pradr.addr.loc+" "+gstDetails.body.data.pradr.addr.dst+" "+gstDetails.body.data.pradr.addr.pncd,
+        "Nature_of_Place_of_Business":gstDetails.body.data.pradr.ntr,
+        "Nature_of_Business_Activity":gstDetails.body.data.nba
       }
+    
   
-      res.json(result);
-    } catch (error) {
-      console.error('Error in getGSTDetails:', error);
-      res.status(500).json({ error: 'An error occurred' });
+      res.json({result,Active:true});
+
+    } catch (error)
+     {
+      console.error({message:'Error in getGSTDetails:', error,Active:false});
+      res.status(500).json({ error: 'An error occurred',Active:false });
     }
   };  
 
@@ -92,10 +98,11 @@ export const getGSTDetails = async (req: Request, res: Response): Promise<void> 
     );
   
     if (success) {
-      res.send(result);
-    } else {
+      res.send({result,Active:true});
+    } 
+    else {
       res.status(400).send({
-        message: result,
+        message: result,Active:false
       });
     }
   };
@@ -110,10 +117,10 @@ export const getGSTDetails = async (req: Request, res: Response): Promise<void> 
       // Call the internal function to get GST details
       const savedgstDetails = await getGSTDetailsInternalsaved(userId);
   
-      res.json(savedgstDetails);
+      res.json({savedgstDetails,Active:true});
     } catch (error) {
       console.error('Error in getGSTDetails:', error);
-      res.status(500).json({ error: 'An error occurred' });
+      res.status(500).json({ error: 'An error occurred',Active:false });
     }
   };
 
@@ -134,8 +141,8 @@ export const verifyAadharNumber = async (req: Request, res: Response): Promise<v
         res.json(verificationResult);
       }
     } catch (error) {
-      console.error('Error in verifyAadharNumber:', error);
-      res.status(500).json({ error: 'An error occurred' });
+      console.error({message:'Error in verifyAadharNumber:', error,Active:false});
+      res.status(500).json({ error: 'An error occurred',Active:false });
     }
   };  
 
@@ -169,10 +176,10 @@ export const verifyAadharNumberOTP = async (req: Request, res: Response): Promis
         "addressInAadhar":verificationResult.body.data.split_address.country,
       }
   
-      res.json(result);
+      res.json({result,Active:true});
     } catch (error) {
       console.error('Error in verifyAadharNumberOTP:', error);
-      res.status(500).json({ error: 'An error occurred' });
+      res.status(500).json({ error: 'An error occurred',Active:false });
     }
   };  
   
@@ -220,10 +227,10 @@ export const verifyAadharNumberOTP = async (req: Request, res: Response): Promis
     );
   
     if (success) {
-      res.send(result);
+      res.send({result,Active:true});
     } else {
       res.status(400).send({
-        message: result,
+        message: result,Active:false
       });
     }
   };
@@ -238,10 +245,10 @@ export const verifyAadharNumberOTP = async (req: Request, res: Response): Promis
     const [success, result] = await getGlobalStatusInternal(globalStatus,userId);
   
     if (success) {
-      res.send(result);
+      res.send({result,Active:true});
     } else {
       res.status(400).send({
-        message: result,
+        message: result,Active:false
       });
     }
   };

@@ -1,37 +1,35 @@
-//*************** Import required dependencies *******************************************************
+//******************** Import required dependencies *******************************************************
+import express, { Application, Request, Response } from "express"; 
+import mongoose from "mongoose"; 
+import bodyParser from "body-parser"; 
+import dotenv from "dotenv"; 
 
-import express, { Application, Request, Response } from "express"; // Import the Express framework
-import mongoose from "mongoose"; // Import Mongoose for MongoDB interaction
-import bodyParser from "body-parser"; // Middleware for parsing request bodies
-import dotenv from "dotenv"; // Load environment variables from .env file
-//import xlsx from'xlsx';
-
-dotenv.config(); // Load environment variables from .env file
-import AuthRoutes from "./Routes/Auth/AuthRoutes";
-import AdminRoutes from "./Routes/Admin/AdminRoutes";
-import UserKYCRoutes from "./Routes/User/UserKYCRoutes";
-import UploadRoutes from "./Routes/Upload/UploadRoutes";
+dotenv.config(); 
+import authRoutes from "./Routes/Auth/authRoutes";
+import adminRoutes from "./Routes/Admin/adminRoutes";
+import userKYCRoutes from "./Routes/User/userKYCRoutes";
+import uploadRoutes from "./Routes/Upload/uploadRoutes";
 
 
 
 //****************** Create an instance of the Express application ******************************
 
 const app: Application = express();
-
 const cors = require("cors");
 app.use(cors({origin: "*",}));
 
 //********************Parse various different custom JSON types as JSON******************************
-app.use(bodyParser.json()); // Parse incoming JSON payloads
-app.use(bodyParser.urlencoded({ extended: false })); // Parse URL-encoded payloads
-app.use(express.json()); // Another way to parse JSON payloads in Express
+
+app.use(bodyParser.json()); 
+app.use(bodyParser.urlencoded({ extended: false })); 
+app.use(express.json()); 
 
 //********************************Set up routes*****************************************************
 
-app.use("/Auth", AuthRoutes);
-app.use("/Admin", AdminRoutes);
-app.use("/User", UserKYCRoutes);
-app.use("/UploadRoutes", UploadRoutes);
+app.use("/auth", authRoutes);
+app.use("/admin", adminRoutes);
+app.use("/userkyc", userKYCRoutes);
+app.use("/uploadRoutes", uploadRoutes);
 
 // Define the port number for the server**************************************************
 
@@ -42,13 +40,12 @@ const port: number = 3010;
 mongoose
   .connect(process.env.MONGO_URL, {})
   .then(() => {
-    console.log("Connected to MongoDB"); // Successful connection log
+    console.log("Connected to MongoDB"); 
   })
   .catch((error) => {
-    console.error("Error connecting to MongoDB:", error); // Connection error log
+    console.error("Error connecting to MongoDB:", error); 
   });
 
 // Start the server
-app.listen(port, () => {
-  console.log(`Express is listening at http://localhost:${port}`); // Server start log
+app.listen(port, () => {console.log(`Express is listening at http://localhost:${port}`);
 });

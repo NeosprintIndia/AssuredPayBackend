@@ -12,6 +12,7 @@ interface IRegisterUser extends Document {
   active: boolean;
   role: string;
   otp: string;
+  MFA: string;
   comparePassword(candidatePassword: string): boolean;
 }
 
@@ -49,14 +50,11 @@ const RegisterUserSchema: Schema<IRegisterUser> = new Schema({
   },
   otp: {
     type: String,
-    required: true,
+  },
+  MFA: {
+    type: String,
   },
 });
-
-// Define the methods
-// RegisterUserSchema.methods.comparePassword = async function (candidatePassword: string,password:string) {
-//   return bycrypt.compare(candidatePassword, password);
-// };
 
 // Define the model
 const User: Model<IRegisterUser> = mongoose.model<IRegisterUser>("RegisterUser", RegisterUserSchema);

@@ -9,7 +9,8 @@ import {
   searchExisting,
   resendEmailOtpInternal,
   authenticateAdmin,
-  validateAdminLogin,} from './AuthHandlers'
+  validateMFA,
+ } from './authHandlers'
 
 
 // *********************Controller function to handle the registration request***********************
@@ -25,11 +26,9 @@ export const register = async (req: Request, res: Response): Promise<void> => {
   );
 
   if (success) {
-    res.send(result);
+    res.send({result,Active:true});
   } else {
-    res.status(400).send({
-      message: result,
-    });
+    res.status(400).send({ message: result,Active:false});
   }
 };
 
@@ -41,10 +40,10 @@ export const verifyEmail = async (req: Request, res: Response): Promise<void> =>
   const [success,result] = await validateUserSignUp(business_email, otp);
  
   if (success) {
-    res.send(result);
+    res.send({result,Active:true});
   } else {
     res.status(500).send({
-      message: result,
+      message: result,Active:false
     });
   }
 };
@@ -59,41 +58,41 @@ export const verifyEmail = async (req: Request, res: Response): Promise<void> =>
 
 // *********************Controller function to handle user login*********************
 export const login = async (req: Request, res: Response): Promise<void> => {
-  const { business_email, password } = req.body;
+  const { username, password } = req.body;
 
-  const [success, result] = await authenticateUser(business_email, password);
+  const [success, result] = await authenticateUser(username, password);
 
   if (success) {
-    res.status(200).json(result);
+    res.status(200).json({result,Active:true});
   } else {
-    res.status(400).json({ error: result });
+    res.status(400).json({ error: result,Active:false });
   }
 };
 
 //********************* Controller function to handle changing the user's password*********************
 export const changePass = async (req: Request, res: Response): Promise<void> => {
-  const {business_email,oldPassword,newPassword} = req.body;
-  console.log(business_email,oldPassword,newPassword)
+  const {username,oldPassword,newPassword} = req.body;
+  console.log(username,oldPassword,newPassword)
 
-  const errorMessage = await changePassword(business_email, oldPassword, newPassword);
+  const errorMessage = await changePassword(username, oldPassword, newPassword);
 
   if (errorMessage) {
-    res.status(errorMessage === 'Internal server error' ? 500 : errorMessage === 'User not found' ? 404 : 401).json({ message: errorMessage });
+    res.status(errorMessage === 'Internal server error' ? 500 : errorMessage === 'User not found' ? 404 : 401).json({ message: errorMessage, Active:false });
   } else {
-    res.status(200).json({ message: 'Password changed successfully' });
+    res.status(200).json({ message: 'Password changed successfully', Active:true});
   }
 };
 
 //********************* Controller function to handle forgot password request*********************
 export const forgotPass = async (req: Request, res: Response): Promise<void> => {
-  const {business_email} = req.body;
+  const {username} = req.body;
 
-  const errorMessage = await handleForgotPassword(business_email);
+  const errorMessage = await handleForgotPassword(username);
 
   if (errorMessage) {
-    res.status(errorMessage === 'Internal server error' ? 500 : 404).json({ message: errorMessage });
+    res.status(errorMessage === 'Internal server error' ? 500 : 404).json({ message: errorMessage,Active:false });
   } else {
-    res.status(200).json({ message: 'Password has been sent to an email' });
+    res.status(200).json({ message: 'Password has been sent to an email',Active:true });
   }
 };
 //********************* Controller function to handle Existing Search*********************
@@ -105,15 +104,15 @@ export async function searchExistingController(req: Request, res: Response) {
     const result =await searchExisting(business_email,username,business_mobile);
     
     if (result) {
-      res.status(200).json(result);
+      res.status(200).json({result,Active:true});
       
     } else {
-      res.status(404).json({error: result});
+      res.status(404).json({error: result,Active:false});
       
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ "message": "Internal Server Error" });
+    res.status(500).json({ "message": "Internal Server Error",Active:false });
   }
 }
 //********************* Controller function to handle Resend Mail OTP*********************
@@ -146,10 +145,10 @@ export const registerAdmin = async (req: Request, res: Response): Promise<void> 
   const [success, result] = await registerAdminUser(business_email, username, business_mobile, password, referral_code);
 
   if (success) {
-    res.send(result);
+    res.send({result,Active:true});
   } else {
     res.status(400).send({
-      message: result,
+      message: result,Active:false
     });
   }
 };
@@ -160,22 +159,22 @@ export const loginAdmin = async (req: Request, res: Response): Promise<void> => 
   const [success, result] = await authenticateAdmin(business_email, password);
 
   if (success) {
-    res.status(200).json(result);
+    res.status(200).json({result,Active:true});
   } else {
-    res.status(400).json({ error: result });
+    res.status(400).json({ error: result,Active:false});
   }
 };
 
 export const adminOTPVerify = async (req: Request, res: Response): Promise<void> => {
   const { business_email, otp } = req.body;
 
-  const [success,result] = await validateAdminLogin(business_email, otp);
+  const [success,result] = await validateMFA(business_email, otp);
  
   if (success) {
-    res.send(result);
+    res.send({result,Active:true});
   } else {
     res.status(500).send({
-      message: result,
+      message: result,Active:false
     });
   }
 };

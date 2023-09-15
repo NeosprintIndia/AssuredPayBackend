@@ -8,12 +8,14 @@ import {
   registerAdmin,
   searchExistingController,
   resendEmailOtp,
-} from '../../Controller/Auth/AuthController';
+  adminOTPVerify,
+  loginAdmin
+} from '../../Controller/Auth/authController';
 
 //*********************Importing Middleware******************************************************
 
-import VerifyToken from '../../Middlewares/VerifyTokenUser';
-import verifyAdmin from '../../Middlewares/AdminToken';
+import VerifyTokenUser from '../../Middlewares/verifyTokenUser';
+import verifyAdminToken from '../../Middlewares/adminToken';
 
 const authRouter: Router = Router();
 
@@ -24,12 +26,13 @@ authRouter.post('/verify', verifyEmail);
 authRouter.post('/login', login);
 authRouter.post("/searchexisting",searchExistingController)
 authRouter.post('/resendemailotp', resendEmailOtp);
-authRouter.post('/change-password', changePass);// Change Password
-authRouter.post('/forgot-password', forgotPass);// Forgot Password
+authRouter.post('/change-password', changePass);
+authRouter.post('/forgot-password', forgotPass);
 
 //********************************Routes for Admin Till login***************************************
-authRouter.post('/registeradmin', [VerifyToken, verifyAdmin], registerAdmin);
-authRouter.post('/verifyadmin')
+authRouter.post('/registeradmin', verifyAdminToken, registerAdmin);
+authRouter.post('/loginadmin',loginAdmin);
+authRouter.post('/verifyadmin',adminOTPVerify);
 
 
 export default authRouter;

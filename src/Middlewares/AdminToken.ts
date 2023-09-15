@@ -19,15 +19,25 @@ export default (req: CustomRequest, res: Response, next: NextFunction): void => 
     const decodedToken: any = jwt.verify(token, process.env.JWT_SECRET);
 
     console.log(decodedToken);
+    const role= decodedToken.role
     const userId = decodedToken.userId;
     req.userId = userId;
 
+    
+
     if (!userId) {
       throw new Error('Invalid user ID');
-    } else {
+    } 
+    if (role!=="Admin") {
+      throw new Error('User is not Admin');
+      
+    } 
+    else {
       next();
     }
+    
+
   } catch (e) {
-    res.sendStatus(403);
+    res.status(403).json({message:"Unauthorized",Active:false});
   }
 };
