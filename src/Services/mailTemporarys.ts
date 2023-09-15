@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';  // Import the nodemailer library
-import { MAIL_SETTINGS } from '../Constants/globalConstants';  // Import mail settings from constants
+import { MAIL_SETTINGS } from '../Constants/globalConstant';  // Import mail settings from constants
 
 const transporter = nodemailer.createTransport(MAIL_SETTINGS);  // Create a transporter using mail settings
 
