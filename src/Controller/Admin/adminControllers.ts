@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import xlsx from "xlsx"
-import {getAllKYCRecordsInternal,approveAdminAadharS1Internal} from './adminHandler';
-import CouponCode from '../../Models/couponCode';
+import {getAllKYCRecordsInternal,approveAdminAadharS1Internal} from './adminHandlers';
+import CouponCode from '../../Models/couponCodes';
 // Route handler function for retrieving all KYC records
 export const getAllKYCRecords = async (req: Request, res: Response): Promise<void> => {
     try {

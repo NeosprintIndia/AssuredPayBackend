@@ -10,12 +10,12 @@ import {
   resendEmailOtp,
   adminOTPVerify,
   loginAdmin
-} from '../../Controller/Auth/authController';
+} from '../../Controller/Auth/authControllers';
 
 //*********************Importing Middleware******************************************************
 
-import VerifyTokenUser from '../../Middlewares/verifyTokenUser';
-import verifyAdminToken from '../../Middlewares/adminToken';
+import VerifyTokenUser from '../../Middlewares/verifyTokenUsers';
+import verifyAdminToken from '../../Middlewares/adminTokens';
 
 const authRouter: Router = Router();
 

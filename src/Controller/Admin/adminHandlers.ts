@@ -1,4 +1,4 @@
-import UserKYC1 from '../../Models/userKYC'; // Import your UserKYC1 model
+import UserKYC1 from '../../Models/userKYCs'; // Import your UserKYC1 model
 
 
 // Function to retrieve all KYC records

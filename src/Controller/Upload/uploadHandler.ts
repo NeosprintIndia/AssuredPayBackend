@@ -1,5 +1,5 @@
 import { awsinitialise } from '../../Services/awsInitialises'; 
-import UserKYC1 from '../../Models/userKYC';
+import UserKYC1 from '../../Models/userKYCs';
 // Function to handle file upload and AWS S3 upload
 
 export const handleS1FileUpload = async (userId: string, originalName: string, buffer: Buffer) => {

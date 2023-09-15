@@ -10,7 +10,7 @@ import {
   resendEmailOtpInternal,
   authenticateAdmin,
   validateMFA,
- } from './authHandlers'
+ } from './authHandler'
 
 
 // *********************Controller function to handle the registration request***********************

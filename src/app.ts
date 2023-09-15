@@ -5,10 +5,10 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv"; 
 
 dotenv.config(); 
-import authRoutes from "./Routes/Auth/authRoutes";
-import adminRoutes from "./Routes/Admin/adminRoutes";
-import userKYCRoutes from "./Routes/User/userKYCRoutes";
-import uploadRoutes from "./Routes/Upload/uploadRoutes";
+import authRoutes from "./Routes/Auth/authRoute";
+import adminRoutes from "./Routes/Admin/adminRoute";
+import userKYCRoutes from "./Routes/User/userKYCRoute";
+import uploadRoutes from "./Routes/Upload/uploadRoute";
 
 
 

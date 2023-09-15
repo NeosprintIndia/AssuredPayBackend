@@ -1,5 +1,5 @@
-import Registration from '../../Models/userRegisteration';
-import Referral from "../../Models/refferalCode";
+import Registration from '../../Models/userRegisterations';
+import Referral from "../../Models/refferalCodes";
 import * as CryptoJS from "crypto-js";
 import * as jwt from 'jsonwebtoken';
 import "dotenv/config";

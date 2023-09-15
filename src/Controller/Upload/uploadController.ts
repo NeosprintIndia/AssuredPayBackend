@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { handleS1FileUpload,handleS2FileUpload,handlePanFileUpload,handleGSTFileUpload} from './uploadHandlers';
+import { handleS1FileUpload,handleS2FileUpload,handlePanFileUpload,handleGSTFileUpload} from './uploadHandler';
 
 //**************************** Route handler function for uploading Aadhar card****************************
 export const uploadAadhars1 = async (req: Request, res: Response): Promise<void> => {

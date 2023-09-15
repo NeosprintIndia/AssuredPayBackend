@@ -1,6 +1,6 @@
 import { set } from 'mongoose';
-import UserKYC1 from '../../Models/userKYC'; // Import your UserKYC1 model
-import Registration from '../../Models/userRegisteration';
+import UserKYC1 from '../../Models/userKYCs'; // Import your UserKYC1 model
+import Registration from '../../Models/userRegisterations';
 import {PAN_KYC_SB,GST_KYC_SB,Aadhaar_KYC_S1,Aadhaar_KYC_S2} from '../../Services/sandbox'; // Import your sandbox module
 // Function to verify PAN details
 

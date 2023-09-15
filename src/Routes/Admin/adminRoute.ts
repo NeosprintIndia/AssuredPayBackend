@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import VerifyToken from '../../Middlewares/verifyTokenUser';
-import VerifyAdmin from '../../Middlewares/adminToken';
+import VerifyToken from '../../Middlewares/verifyTokenUsers';
+import VerifyAdmin from '../../Middlewares/adminTokens';
 import { uploadMiddleware } from '../../Services/upload';
 
 
@@ -10,7 +10,7 @@ import {
     getAllKYCRecords,
     couponCode,
     //setAllLimits,
-} from '../../Controller/Admin/adminController';
+} from '../../Controller/Admin/adminControllers';
 
 router.get('/getallkyc',[VerifyToken,VerifyAdmin],getAllKYCRecords);
 router.post('/couponupload',[uploadMiddleware],couponCode)

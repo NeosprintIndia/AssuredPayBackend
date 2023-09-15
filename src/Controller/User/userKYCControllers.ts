@@ -8,7 +8,7 @@ import {
   verifyAadharNumberInternal,
   verifyAadharNumberOTPInternal,
   saveAadharDetailsInternal,
-} from '../User/userKYCHandlers';
+} from './userKYCHandler';
 
 
 // Route handler function for verifying PAN
