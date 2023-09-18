@@ -327,10 +327,10 @@ export const searchExisting = async (
         found: false,
         data: result,   
       };
-      return [false,finalresult];
+      return [true,finalresult];
     }
   } catch (error) {
-    return error;
+    return [false,error];
   }
 };
 
