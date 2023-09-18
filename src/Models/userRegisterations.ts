@@ -13,6 +13,7 @@ interface IRegisterUser extends Document {
   role: string;
   otp: string;
   MFA: string;
+  refferedBy:string;
   comparePassword(candidatePassword: string): boolean;
 }
 
@@ -54,6 +55,7 @@ const RegisterUserSchema: Schema<IRegisterUser> = new Schema({
   MFA: {
     type: String,
   },
+  refferedBy:{type:String, default:""}
 });
 
 // Define the model

@@ -29,7 +29,7 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
 app.use("/userkyc", userKYCRoutes);
-app.use("/uploadRoutes", uploadRoutes);
+app.use("/uploadRoutes", uploadRoutes); // Rename Routes to docs
 
 // Define the port number for the server**************************************************
 

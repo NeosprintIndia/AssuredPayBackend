@@ -55,7 +55,7 @@ export const uploadPan = async (req: Request, res: Response): Promise<void> => {
       const originalName = (req as any).file.originalname as string;
       const buffer =(req as any).file.buffer as Buffer;
   
-      await handlePanFileUpload(userId, originalName, buffer);
+      await handleGSTFileUpload(userId, originalName, buffer);
   
       res.status(200).send({message:'File uploaded successfully',Active:true});
     } catch (error) {

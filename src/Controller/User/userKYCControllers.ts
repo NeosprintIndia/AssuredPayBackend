@@ -17,12 +17,12 @@ export const verifyPAN = async (req: Request, res: Response): Promise<void> => {
       const PanNumber = req.body.PanNumber as string;
       const id = (req as any).userId as string; // Assuming userId is a string
   
-      const verificationResult = await verifyPANDetails(PanNumber,id);
+      const [success, result] = await verifyPANDetails(PanNumber,id);
   
-      if (typeof verificationResult === 'string') {
-        res.json({verificationResult,Active:true});
+      if (success) {
+        res.status(200).send({result,Active:true});
       } else {
-        res.json({verificationResult,Active:false});
+        res.status(400).send({ message: result,Active:false});
       }
     } catch (error) {
       console.error({message:'Error in verifyPAN:', error,Active:false});
@@ -39,25 +39,30 @@ export const getGSTDetails = async (req: Request, res: Response): Promise<void> 
      
   
       // Call the internal function to get GST details
-      const gstDetails =await getGSTDetailsInternal(gst)
-      const inputString=gstDetails.body.data.gstin
+       const [success, result] =await getGSTDetailsInternal(gst)
+      const inputString=result.body.data.gstin
       const pan = inputString.substring(2, inputString.length - 3);
-      const result={
-        "Constituion_of_Business":gstDetails.body.data.ctb,
-        "Taxpayer_Type": gstDetails.body.data.dty,
-        "GSTIN_of_the_entity":gstDetails.body.data.gstin,
-        "Legal_Name_of_Business":gstDetails.body.data.lgnm,
+      const results={
+        "Constituion_of_Business":result.body.data.ctb,
+        "Taxpayer_Type": result.body.data.dty,
+        "GSTIN_of_the_entity":result.body.data.gstin,
+        "Legal_Name_of_Business":result.body.data.lgnm,
         "Business_PAN": pan,
-        "Date_of_Registration":gstDetails.body.data.rgdt,
-        "State":gstDetails.body.data.pradr.addr.stcd,
-        "Trade_Name":gstDetails.body.data.lgnm,
-        "Place_of_Business":gstDetails.body.data.pradr.addr.bno+" "+gstDetails.body.data.pradr.addr.st+" "+gstDetails.body.data.pradr.addr.loc+" "+gstDetails.body.data.pradr.addr.dst+" "+gstDetails.body.data.pradr.addr.pncd,
-        "Nature_of_Place_of_Business":gstDetails.body.data.pradr.ntr,
-        "Nature_of_Business_Activity":gstDetails.body.data.nba
+        "Date_of_Registration":result.body.data.rgdt,
+        "State":result.body.data.pradr.addr.stcd,
+        "Trade_Name":result.body.data.lgnm,
+        "Place_of_Business":result.body.data.pradr.addr.bno+" "+result.body.data.pradr.addr.st+" "+result.body.data.pradr.addr.loc+" "+result.body.data.pradr.addr.dst+" "+result.body.data.pradr.addr.pncd,
+        "Nature_of_Place_of_Business":result.body.data.pradr.ntr,
+        "Nature_of_Business_Activity":result.body.data.nba
       }
     console.log(result)
   
-      res.json({result,Active:true});
+    
+      if (success) {
+        res.status(200).send({results,Active:true});
+      } else {
+        res.status(400).send({ message: results,Active:false});
+      }
 
     } catch (error)
      {
@@ -98,7 +103,7 @@ export const getGSTDetails = async (req: Request, res: Response): Promise<void> 
     );
   
     if (success) {
-      res.send({result,Active_:true});
+      res.status(200).send({result,Active_:true});
     } 
     else {
       res.status(400).send({
@@ -115,9 +120,12 @@ export const getGSTDetails = async (req: Request, res: Response): Promise<void> 
       const userId = (req as any).userId as string;
   
       // Call the internal function to get GST details
-      const savedgstDetails = await getGSTDetailsInternalsaved(userId);
-  
-      res.json({savedgstDetails,Active:true});
+      const [success, result] = await getGSTDetailsInternalsaved(userId);
+      if (success) {
+        res.status(200).send({result,Active:true});
+      } else {
+        res.status(400).send({ message: result,Active:false});
+      }
     } catch (error) {
       console.error('Error in getGSTDetails:', error);
       res.status(500).json({ error: 'An error occurred',Active:false });
@@ -133,12 +141,11 @@ export const verifyAadharNumber = async (req: Request, res: Response): Promise<v
       const userId = (req as any).userId as string;
   
       // Call the internal function to verify Aadhar number and update reference ID
-      const verificationResult = await verifyAadharNumberInternal(userId,AadharNumber);
-       console.log(verificationResult)
-      if ( verificationResult ) {
-        res.json(verificationResult);
+      const [success, result] = await verifyAadharNumberInternal(userId,AadharNumber);
+       if (success) {
+        res.status(200).send({result,Active:true});
       } else {
-        res.json(verificationResult);
+        res.status(400).send({ message: result,Active:false});
       }
     } catch (error) {
       console.error({message:'Error in verifyAadharNumber:', error,Active:false});
@@ -156,27 +163,30 @@ export const verifyAadharNumberOTP = async (req: Request, res: Response): Promis
       //const refId = '4027359'; // You can customize refId as needed
   
       // Call the internal function to verify Aadhar number OTP
-      const verificationResult = await verifyAadharNumberOTPInternal(userId, otp);
-      const result={
+      const [success, result] = await verifyAadharNumberOTPInternal(userId, otp);
+      const results={
         "aadharNumber":"",
-        "aadharCO":verificationResult.body.data.care_of,
-        "aadharGender":verificationResult.body.data.gender,
-        "nameInAadhaar":verificationResult.body.data.name,
-        "aadharDOB": verificationResult.body.data.dob,
-        "aadharPhotoLink":verificationResult.body.data.photo_link,
-        "aadharCountry":verificationResult.body.data.split_address.country,
-        "distInAadhar":verificationResult.body.data.split_address.dist,
-        "aadharHouse":verificationResult.body.data.split_address.house,
-        "aadharPincode":verificationResult.body.data.split_address.pincode,
-        "aadharPO":verificationResult.body.data.split_address.po,
-        "aadharState":verificationResult.body.data.split_address.state,
-        "aadharStreet":verificationResult.body.data.split_address.street,
-        "aadharSubDistrict":verificationResult.body.data.split_address.subdist,
-        "cityInAadhar":verificationResult.body.data.split_address.vtc,
-        "addressInAadhar":verificationResult.body.data.split_address.country,
+        "aadharCO":result.body.data.care_of,
+        "aadharGender":result.body.data.gender,
+        "nameInAadhaar":result.body.data.name,
+        "aadharDOB": result.body.data.dob,
+        "aadharPhotoLink":result.body.data.photo_link,
+        "aadharCountry":result.body.data.split_address.country,
+        "distInAadhar":result.body.data.split_address.dist,
+        "aadharHouse":result.body.data.split_address.house,
+        "aadharPincode":result.body.data.split_address.pincode,
+        "aadharPO":result.body.data.split_address.po,
+        "aadharState":result.body.data.split_address.state,
+        "aadharStreet":result.body.data.split_address.street,
+        "aadharSubDistrict":result.body.data.split_address.subdist,
+        "cityInAadhar":result.body.data.split_address.vtc,
+        "addressInAadhar":result.body.data.split_address.country,
       }
-  
-      res.json({result,Active:true});
+      if (success) {
+        res.status(200).send({results,Active:true});
+      } else {
+        res.status(400).send({ message: results,Active:false});
+      }
     } catch (error) {
       console.error('Error in verifyAadharNumberOTP:', error);
       res.status(500).json({ error: 'An error occurred',Active:false });
@@ -227,7 +237,7 @@ export const verifyAadharNumberOTP = async (req: Request, res: Response): Promis
     );
   
     if (success) {
-      res.send({result,Active:true});
+      res.status(200).send({result,Active:true});
     } else {
       res.status(400).send({
         message: result,Active:false

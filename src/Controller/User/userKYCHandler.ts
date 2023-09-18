@@ -11,19 +11,15 @@ export const verifyPANDetails = async (PanNumber:string,id: string): Promise<any
       });
   
       if (!user) {
-        return 'User not found';
+        return [ false,'User not found'];
       }
 
       const aadharFullName=user.nameInAadhaar
       const myArray =aadharFullName.split(" ");
 
-      console.log(myArray[0])
-  
-     // const pan = user.PAN_Company_number;
-     // const businessName = user.business_name;
   
       const result = await PAN_KYC_SB({ id_number: PanNumber });
-      //console.log(result)
+    
       const panFirstName = result.body.data.first_name.trim();
       const panNumber=result.body.data.pan;
       
@@ -35,9 +31,9 @@ export const verifyPANDetails = async (PanNumber:string,id: string): Promise<any
             PAN_number:panNumber }},
           { new:true });
   
-        return updatedUser;
+        return [true,updatedUser];
       } else {
-        return "Your PAN details don't match with the Aadhar name provided";
+        return [false,"Your PAN details don't match with the Aadhar name provided"];
       }
     } catch (error) {
       throw error;
@@ -48,28 +44,17 @@ export const verifyPANDetails = async (PanNumber:string,id: string): Promise<any
 export const getGSTDetailsInternal = async (gst: string): Promise<any> => {
     try {
       const result = await GST_KYC_SB({ id_number: gst });
-      return result;
+      return [true,result];
     } catch (error) {
-      throw error;
+      return[false,error] ;
     }
   };  
 
 // Function to verify Aadhar number and update the reference ID
 export const verifyAadharNumberInternal = async (userId: string,AadharNumber:string): Promise<any | string> => {
     try {
-      // const user = await UserKYC1.findOne({
-      //   user: userId,
-      // });
-  
-      // if (!user) {
-      //   return 'User not found';
-      // }
-  
-      // const aadhar = user.aadharNumber;
-      // console.log(aadhar);
   
       const result = await Aadhaar_KYC_S1({ id_number: AadharNumber });
-      console.log(result)
       const refID = (result as any).body.data.ref_id;
   
       const updatedUser = await UserKYC1.findOneAndUpdate(
@@ -78,9 +63,9 @@ export const verifyAadharNumberInternal = async (userId: string,AadharNumber:str
       );
   
       console.log(updatedUser);
-      return updatedUser;
+      return [true,updatedUser];
     } catch (error) {
-      throw error;
+      return[false,error];
     }
   };
   
@@ -96,9 +81,9 @@ export const verifyAadharNumberOTPInternal = async (
       const refId=result1.aadhar_ref_id
       const result = await Aadhaar_KYC_S2({ otp, refId });
        console.log(result);
-      return result;
+      return [true,result];
     } catch (error) {
-      throw error;
+     return[false,error];
     }
   };
 
@@ -206,9 +191,9 @@ export const verifyAadharNumberOTPInternal = async (
   export const getGSTDetailsInternalsaved = async (userId: string): Promise<any> => {
     try {
       const result = await UserKYC1.findOne({ user: userId });
-      return result;
+      return[true, result];
     } catch (error) {
-      throw error;
+      return[false,error] ;
     }
   };  
   

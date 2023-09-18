@@ -16,6 +16,7 @@ import {
 // *********************Controller function to handle the registration request***********************
 export const register = async (req: Request, res: Response): Promise<void> => {
   const { business_email, username, business_mobile, password, refferal_code } = req.body;
+  console.log("API Hit")
 
   const [success, result] = await performRegistration(
     business_email,
@@ -24,9 +25,10 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     password,
     refferal_code
   );
+  
 
   if (success) {
-    res.send({result,Active:true});
+    res.status(200).send({result,Active:true});
   } else {
     res.status(400).send({ message: result,Active:false});
   }
@@ -40,21 +42,12 @@ export const verifyEmail = async (req: Request, res: Response): Promise<void> =>
   const [success,result] = await validateUserSignUp(business_email, otp);
  
   if (success) {
-    res.send({result,Active:true});
+    res.status(200).send({result,Active:true});
   } else {
-    res.status(500).send({
-      message: result,Active:false
-    });
+    res.status(404).send({message: result,Active:false});
   }
 };
 
-// export const verifyEmail = async (req: Request, res: Response): Promise<void> => {
-//   const { _id, otp } = req.body;
-
-//   const user = await validateUserSignUp(_id, otp);
-
-//   res.send(user);
-// };
 
 // *********************Controller function to handle user login*********************
 export const login = async (req: Request, res: Response): Promise<void> => {
@@ -63,9 +56,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   const [success, result] = await authenticateUser(username, password);
 
   if (success) {
-    res.status(200).json({result,Active:true});
+    res.status(200).send({result,Active:true});
   } else {
-    res.status(400).json({ error: result,Active:false });
+    res.status(400).send({ error: result,Active:false });
   }
 };
 
@@ -86,6 +79,7 @@ export const changePass = async (req: Request, res: Response): Promise<void> => 
 //********************* Controller function to handle forgot password request*********************
 export const forgotPass = async (req: Request, res: Response): Promise<void> => {
   const {username} = req.body;
+  console.log(username)
 
   const errorMessage = await handleForgotPassword(username);
 
@@ -101,18 +95,18 @@ export async function searchExistingController(req: Request, res: Response) {
   try {
     const{business_email,business_mobile,username}=req.body
     console.log(business_email,business_mobile,username)
-    const result =await searchExisting(business_email,username,business_mobile);
+    const [success, result] =await searchExisting(business_email,username,business_mobile);
     
-    if (result) {
-      res.status(200).json({result,Active:true});
+    if (success) {
+      res.status(200).send({result});
       
     } else {
-      res.status(404).json({error: result,Active:false});
+      res.status(404).send({error: result});
       
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ "message": "Internal Server Error",Active:false });
+    res.status(500).send({ "message": "Internal Server Error" });
   }
 }
 //********************* Controller function to handle Resend Mail OTP*********************
@@ -120,10 +114,9 @@ export async function resendEmailOtp(req:Request,res:Response){
 const{email}=req.body;
 const [success, result] = await resendEmailOtpInternal(email)
 if (success) {
-  res.send({result,Active:true}); //Active keyword to check at frontend message send successfully
+  res.status(200).send(result); 
 } else {
-  res.status(500).send({result,Active:false
-  });
+  res.status(500).send(result);
 }
 
 
@@ -145,11 +138,9 @@ export const registerAdmin = async (req: Request, res: Response): Promise<void> 
   const [success, result] = await registerAdminUser(business_email, username, business_mobile, password, referral_code);
 
   if (success) {
-    res.send({result,Active:true});
+    res.status(200).send({result,Active:true});
   } else {
-    res.status(400).send({
-      message: result,Active:false
-    });
+    res.status(400).send({message: result,Active:false});
   }
 };
 
@@ -171,10 +162,8 @@ export const adminOTPVerify = async (req: Request, res: Response): Promise<void>
   const [success,result] = await validateMFA(business_email, otp);
  
   if (success) {
-    res.send({result,Active:true});
+    res.status(200).send({result,Active:true});
   } else {
-    res.status(500).send({
-      message: result,Active:false
-    });
+    res.status(500).send({message: result,Active:false});
   }
 };

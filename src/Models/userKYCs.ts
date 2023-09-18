@@ -275,7 +275,7 @@ isAadharDetailSave: {type:Boolean,default:false},
   Nature_of_Business_Activity:{type:String},
   due: {
     type: String,
-    default: 'New',
+    default: 'New'
   },
 }, {
   timestamps: true,

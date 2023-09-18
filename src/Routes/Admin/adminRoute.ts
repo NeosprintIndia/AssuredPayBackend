@@ -9,12 +9,19 @@ const router: Router = Router();
 import { 
     getAllKYCRecords,
     couponCode,
-    //setAllLimits,
+    setAllLimits,
+    getconfiguration,
+    getuserbusinessdetail,
+    approvebusinessdetail
 } from '../../Controller/Admin/adminControllers';
 
-router.get('/getallkyc',[VerifyToken,VerifyAdmin],getAllKYCRecords);
-router.post('/couponupload',[uploadMiddleware],couponCode)
-//router.post('/setLimits',VerifyAdmin,setAllLimits)
+router.get('/getallkyc',getAllKYCRecords);
+router.post('/couponupload',[VerifyAdmin,uploadMiddleware],couponCode)
+router.post('/setLimits',VerifyAdmin,setAllLimits)
+router.get('/getconfiguration',VerifyAdmin,getconfiguration)
+router.post("/userbusinessdetail",getuserbusinessdetail)
+router.post("/approvebusinessdetail",approvebusinessdetail)
+
 
 
 export default router;

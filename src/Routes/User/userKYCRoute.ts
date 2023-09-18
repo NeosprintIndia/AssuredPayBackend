@@ -14,7 +14,7 @@ import {
     saveAadharDetails } from '../../Controller/User/userKYCControllers';
 
 
-router.get('/verifypan',[VerifyToken],verifyPAN)
+router.post('/verifypan',[VerifyToken],verifyPAN)
 router.post('/getgstdetail',[VerifyToken],getGSTDetails)
 router.get('/getsavedgstdetail',[VerifyToken],getsavedgstdetail)
 router.post('/savegstdetail',[VerifyToken],saveGSTDetails)

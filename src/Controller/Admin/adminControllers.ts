@@ -1,13 +1,22 @@
 import { Request, Response } from 'express';
 import xlsx from "xlsx"
-import {getAllKYCRecordsInternal,approveAdminAadharS1Internal} from './adminHandlers';
+import {getAllKYCRecordsInternal,
+  approveAdminAadharS1Internal,
+  setLimitInternal,
+  getAllConfigurationInternal,
+  getuserbusinessdetailInternal,
+  approvebusinessdetailInternal} from './adminHandlers';
 import CouponCode from '../../Models/couponCodes';
 // Route handler function for retrieving all KYC records
 export const getAllKYCRecords = async (req: Request, res: Response): Promise<void> => {
     try {
       // Call the internal function to retrieve all KYC records
-      const kycRecords = await getAllKYCRecordsInternal();
-      res.json({kycRecords,Active:true});
+      const [success, result] = await getAllKYCRecordsInternal();
+      if (success) {
+        res.status(200).send({result,Active:true});
+      } else {
+        res.status(400).send({ message: result,Active:false});
+      }
     } catch (error) {
       console.error('Error in getAllKYCRecords:', error);
       res.status(500).json({ error: 'An error occurred' ,Active:false});
@@ -20,9 +29,13 @@ export const approveAdminAadharS1 = async (req: Request, res: Response): Promise
       const { AdminAadhaarS1Verified, id } = req.body;
   
       // Call the internal function to approve Admin Aadhar S1 verification
-      const approvalResult = await approveAdminAadharS1Internal(id, AdminAadhaarS1Verified);
+      const [success, result] = await approveAdminAadharS1Internal(id, AdminAadhaarS1Verified);
   
-      res.json({approvalResult,Active:true});
+      if (success) {
+        res.status(200).send({result,Active:true});
+      } else {
+        res.status(400).send({ message: result,Active:false});
+      }
     } catch (error) {
       console.error('Error in approveAdminAadharS1:', error);
       res.status(500).json({ error: 'An error occurred', Active:false });
@@ -32,8 +45,6 @@ export const approveAdminAadharS1 = async (req: Request, res: Response): Promise
   export const couponCode = async (req: Request, res: Response): Promise<void> => {
     try {
       //const userId = (req as any).userId;     // Use type casting to access userId
-      const originalName = (req as any).file.originalname as string;
-      const buffer =(req as any).file.buffer as Buffer;
 
       // Parse the uploaded Excel file
     const workbook = xlsx.read((req as any).file.buffer, { type: 'buffer' });
@@ -63,22 +74,83 @@ export const approveAdminAadharS1 = async (req: Request, res: Response): Promise
     }
   };
 
-  // export const setAllLimits = async (req: Request, res: Response): Promise<void> => {
-  //   const { business_email,username,business_mobile, password } = req.body;
+  export const setAllLimits = async (req: Request, res: Response): Promise<void> => {
+    const{gstLimit,
+      aadharLimit,
+      panLimit,
+      cin,
+      termsOfService,
+privacyPolicy,
+disclaimer,
+enrollmentFees
+      }=req.body
+
+   const [success, result] = await setLimitInternal(gstLimit,
+    aadharLimit,
+    panLimit,
+    cin,
+    termsOfService,
+    privacyPolicy,
+    disclaimer,
+    enrollmentFees);
   
-  //   let referral_code: string | null = null;
+    if (success) {
+      res.send({result,Active:true});
+    } else {
+      res.status(400).send({
+        message: result,Active:false
+      });
+    }
+  };
+
+  export const getconfiguration = async (req: Request, res: Response): Promise<void> => {
+    try {
+      // Call the internal function to retrieve all KYC records
+      const [success, result] = await getAllConfigurationInternal();
+      if (success) {
+        res.send({result,Active:true});
+      } else {
+        res.status(400).send({
+          message: result,Active:false
+        });
+      }
+    } catch (error) {
+      console.error('Error in fetching Configuration:', error);
+      res.status(500).json({ error: 'An error occurred' ,Active:false});
+    }
+  };
+
+  export const getuserbusinessdetail = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const {  id } = req.body;
+
+      
+      // Call the internal function to retrieve user KYC records
+      const [success, result] = await getuserbusinessdetailInternal(id);
+      if (success) {
+        res.status(200).send({result,Active:true});
+      } else {
+        res.status(400).send({ message: result,Active:false});
+      }
+    } catch (error) {
+      console.error('Error in getting Business Detail:', error);
+      res.status(500).json({ error: 'An error occurred' ,Active:false});
+    }
+  };
+
+  export const approvebusinessdetail = async (req: Request, res: Response): Promise<void> => {
+
+      const { status, id } = req.body;
+      console.log( status, id)
   
-  //   if (req.body.refferal_code != null) {
-  //     referral_code = req.body.refferal_code;
-  //   }
-  
-  //   const [success, result] = await registerAdminUser(business_email, username, business_mobile, password, referral_code);
-  
-  //   if (success) {
-  //     res.send({result,Active:true});
-  //   } else {
-  //     res.status(400).send({
-  //       message: result,Active:false
-  //     });
-  //   }
-  // };
+      // Call the internal function to approve Admin Aadhar S1 verification
+      const [success,result] = await approvebusinessdetailInternal(id,status);
+      
+  if (success) {
+    res.send({result,Active:true});
+  } else {
+    res.status(500).send({
+      message: result,Active:false
+    });
+  }
+  };

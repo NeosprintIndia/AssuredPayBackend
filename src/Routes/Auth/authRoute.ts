@@ -12,18 +12,19 @@ import {
   loginAdmin
 } from '../../Controller/Auth/authControllers';
 
-//*********************Importing Middleware******************************************************
+import { allowedRegistrationProperties, allowedPropertiesForVerify, allowedPropertiesForLogin } from '../../Services/AllowedProperties';
+import { registrationValidator, handleValidationErrors,checkForUnexpectedProperties } from '../../Services/Validators'
 
-import VerifyTokenUser from '../../Middlewares/verifyTokenUsers';
+//*********************Importing Middleware******************************************************
 import verifyAdminToken from '../../Middlewares/adminTokens';
 
 const authRouter: Router = Router();
 
 //********************* Routes for User Till login**********************************************
 
-authRouter.post('/registerbusiness', register);
-authRouter.post('/verify', verifyEmail);
-authRouter.post('/login', login);
+authRouter.post('/registerbusiness',checkForUnexpectedProperties(allowedRegistrationProperties),registrationValidator,handleValidationErrors,register);
+authRouter.post('/verify', checkForUnexpectedProperties(allowedPropertiesForVerify),verifyEmail);
+authRouter.post('/login', checkForUnexpectedProperties(allowedPropertiesForLogin),login);
 authRouter.post("/searchexisting",searchExistingController)
 authRouter.post('/resendemailotp', resendEmailOtp);
 authRouter.post('/change-password', changePass);
