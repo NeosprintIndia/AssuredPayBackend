@@ -41,20 +41,21 @@ export const getGSTDetails = async (req: Request, res: Response): Promise<void> 
       // Call the internal function to get GST details
        const [success, result] =await getGSTDetailsInternal(gst)
       const inputString=result.body.data.gstin
+      const data = result.body.data;
       const pan = inputString.substring(2, inputString.length - 3);
-      const results={
-        "Constituion_of_Business":result.body.data.ctb,
-        "Taxpayer_Type": result.body.data.dty,
-        "GSTIN_of_the_entity":result.body.data.gstin,
-        "Legal_Name_of_Business":result.body.data.lgnm,
+      const results = {
+        "Constitution_of_Business": data.ctb,
+        "Taxpayer_Type": data.dty,
+        "GSTIN_of_the_entity": data.gstin,
+        "Legal_Name_of_Business": data.lgnm,
         "Business_PAN": pan,
-        "Date_of_Registration":result.body.data.rgdt,
-        "State":result.body.data.pradr.addr.stcd,
-        "Trade_Name":result.body.data.lgnm,
-        "Place_of_Business":result.body.data.pradr.addr.bno+" "+result.body.data.pradr.addr.st+" "+result.body.data.pradr.addr.loc+" "+result.body.data.pradr.addr.dst+" "+result.body.data.pradr.addr.pncd,
-        "Nature_of_Place_of_Business":result.body.data.pradr.ntr,
-        "Nature_of_Business_Activity":result.body.data.nba
-      }
+        "Date_of_Registration": data.rgdt,
+        "State": data.pradr.addr.stcd,
+        "Trade_Name": data.lgnm,
+        "Place_of_Business": `${data.pradr.addr.bno} ${data.pradr.addr.st} ${data.pradr.addr.loc} ${data.pradr.addr.dst} ${data.pradr.addr.pncd}`,
+        "Nature_of_Place_of_Business": data.pradr.ntr,
+        "Nature_of_Business_Activity": data.nba
+      };
     console.log(result)
   
     
@@ -159,29 +160,28 @@ export const verifyAadharNumberOTP = async (req: Request, res: Response): Promis
       // Assuming userId is a string
       const userId = (req as any).userId as string;
       const otp = req.body.otp as string;
-      //findOne()
-      //const refId = '4027359'; // You can customize refId as needed
   
       // Call the internal function to verify Aadhar number OTP
       const [success, result] = await verifyAadharNumberOTPInternal(userId, otp);
-      const results={
-        "aadharNumber":"",
-        "aadharCO":result.body.data.care_of,
-        "aadharGender":result.body.data.gender,
-        "nameInAadhaar":result.body.data.name,
-        "aadharDOB": result.body.data.dob,
-        "aadharPhotoLink":result.body.data.photo_link,
-        "aadharCountry":result.body.data.split_address.country,
-        "distInAadhar":result.body.data.split_address.dist,
-        "aadharHouse":result.body.data.split_address.house,
-        "aadharPincode":result.body.data.split_address.pincode,
-        "aadharPO":result.body.data.split_address.po,
-        "aadharState":result.body.data.split_address.state,
-        "aadharStreet":result.body.data.split_address.street,
-        "aadharSubDistrict":result.body.data.split_address.subdist,
-        "cityInAadhar":result.body.data.split_address.vtc,
-        "addressInAadhar":result.body.data.split_address.country,
-      }
+      const data = result.body.data;
+    const results = {
+      "aadharNumber": "",
+      "aadharCO": data.care_of,
+      "aadharGender": data.gender,
+      "nameInAadhaar": data.name,
+      "aadharDOB": data.dob,
+      "aadharPhotoLink": data.photo_link,
+      "aadharCountry": data.split_address.country,
+      "distInAadhar": data.split_address.dist,
+      "aadharHouse": data.split_address.house,
+      "aadharPincode": data.split_address.pincode,
+      "aadharPO": data.split_address.po,
+      "aadharState": data.split_address.state,
+      "aadharStreet": data.split_address.street,
+      "aadharSubDistrict": data.split_address.subdist,
+      "cityInAadhar": data.split_address.vtc,
+      "addressInAadhar": data.split_address.country,
+    };
       if (success) {
         res.status(200).send({results,Active:true});
       } else {

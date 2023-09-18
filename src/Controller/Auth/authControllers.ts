@@ -114,9 +114,9 @@ export async function resendEmailOtp(req:Request,res:Response){
 const{email}=req.body;
 const [success, result] = await resendEmailOtpInternal(email)
 if (success) {
-  res.status(200).send(result); 
+  res.status(200).send({result,Active:true}); 
 } else {
-  res.status(500).send(result);
+  res.status(500).send({result,Active:false});
 }
 
 
