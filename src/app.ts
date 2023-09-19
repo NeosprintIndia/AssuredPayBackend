@@ -1,5 +1,5 @@
 //******************** Import required dependencies *******************************************************
-import express, { Application, Request, Response } from "express"; 
+import express, { Application } from "express"; 
 import mongoose from "mongoose"; 
 import bodyParser from "body-parser"; 
 import dotenv from "dotenv"; 
@@ -20,7 +20,10 @@ app.use(cors({origin: "*",}));
 
 //********************Parse various different custom JSON types as JSON******************************
 
-app.use(bodyParser.json()); 
+app.use(bodyParser.json({
+  //parameterLimit: 100000,
+  limit: '50mb'
+})); 
 app.use(bodyParser.urlencoded({ extended: false })); 
 app.use(express.json()); 
 
@@ -29,7 +32,7 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
 app.use("/userkyc", userKYCRoutes);
-app.use("/uploadRoutes", uploadRoutes); // Rename Routes to docs
+app.use("/uploadRoutes", uploadRoutes); 
 
 // Define the port number for the server**************************************************
 

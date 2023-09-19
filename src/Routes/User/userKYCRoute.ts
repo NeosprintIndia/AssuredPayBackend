@@ -23,7 +23,6 @@ router.post('/savegstdetail',[VerifyToken],saveGSTDetails)
 router.post('/verifyadhar',[VerifyToken],verifyAadharNumber)
 router.post('/verifyadharotp',[VerifyToken],verifyAadharNumberOTP)
 router.post('/saveaadhardetail',[VerifyToken],saveAadharDetails)
-
 router.post("/getglobalstatus",[VerifyToken],getglobalstatus) 
 
 
