@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { generateUUID } from '../../Services/generateUUID'
 import { 
   getGlobalStatusInternal,
   getGSTDetailsInternalsaved,
@@ -8,6 +9,7 @@ import {
   verifyAadharNumberInternal,
   verifyAadharNumberOTPInternal,
   saveAadharDetailsInternal,
+  userreferencenumberInternal,
 } from './userKYCHandler';
 
 
@@ -26,6 +28,23 @@ export const verifyPAN = async (req: Request, res: Response): Promise<void> => {
       }
     } catch (error) {
       console.error({message:'Error in verifyPAN:', error,Active:false});
+      res.status(500).json({ error: 'An error occurred',Active:false });
+    }
+  };
+
+  export const userreferencenumber = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const id = (req as any).userId as string;
+      const generatedUUID = await generateUUID();
+      console.log(generatedUUID)
+      const [success, result] = await userreferencenumberInternal(id,generatedUUID);
+      if (success) {
+        res.status(200).send({result,Active:true});
+      } else {
+        res.status(400).send({ message: result,Active:false});
+      }
+    } catch (error) {
+      console.error({message:'Error in Generating Reference Number:', error,Active:false});
       res.status(500).json({ error: 'An error occurred',Active:false });
     }
   };
@@ -139,6 +158,7 @@ export const verifyAadharNumber = async (req: Request, res: Response): Promise<v
     try {
       // Assuming userId is a string
       const{AadharNumber}=req.body
+      console.log("View Aadhar",AadharNumber)
       const userId = (req as any).userId as string;
   
       // Call the internal function to verify Aadhar number and update reference ID
@@ -170,7 +190,6 @@ export const verifyAadharNumberOTP = async (req: Request, res: Response): Promis
       "aadharGender": data.gender,
       "nameInAadhaar": data.name,
       "aadharDOB": data.dob,
-      "aadharPhotoLink": data.photo_link,
       "aadharCountry": data.split_address.country,
       "distInAadhar": data.split_address.dist,
       "aadharHouse": data.split_address.house,
@@ -182,8 +201,9 @@ export const verifyAadharNumberOTP = async (req: Request, res: Response): Promis
       "cityInAadhar": data.split_address.vtc,
       "addressInAadhar": data.split_address.country,
     };
+    const aadharphotoLink=data.photo_link;
       if (success) {
-        res.status(200).send({results,Active:true});
+        res.status(200).send({results,aadharphotoLink,Active:true});
       } else {
         res.status(400).send({ message: results,Active:false});
       }

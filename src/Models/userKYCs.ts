@@ -52,6 +52,7 @@ interface IUserKYC extends Document {
   Date_of_Registration: Date;
   State:string;
   Trade_Name:string;
+  uuid:string;
   Place_of_Business:string;
   Nature_of_Place_of_Business:string;
   Nature_of_Business_Activity:string;
@@ -249,6 +250,10 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>({
   globalStatus:{
     type: String,
     default:"GSTPG1",
+},
+uuid: {
+  type: String,
+  unique: true,
 },
 aadharSubDistrict:{type:String},
 aadharStreet:{type:String},

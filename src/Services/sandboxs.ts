@@ -124,6 +124,8 @@ export const GST_KYC_SB = async(dynamicData: { id_number: string }) => {
 
 export const Aadhaar_KYC_S1 = async(dynamicData: { id_number: string }) => {
 
+  console.log(dynamicData,"dynamicData")
+
   const adminData = await adminGetData()
   const token = adminData.sandbox_token
   const instance = axios.create({
@@ -142,6 +144,7 @@ export const Aadhaar_KYC_S1 = async(dynamicData: { id_number: string }) => {
     data: {
       aadhaar_number: dynamicData.id_number,
     },
+ 
   };
 
   console.log(config);

@@ -26,6 +26,39 @@ const registrationValidator = [
     .withMessage('Referral code must be alphanumeric.')
 ];
 
+const loginValidator = [
+  check('username')
+    .isLength({ min: 4 })
+    .withMessage('Username must be at least 4 characters long.'),
+
+    check('password')
+    .isLength({ min: 8 }) // At least 8 characters long
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/) // Contains at least one uppercase letter, one lowercase letter, one digit, and one special character
+    .withMessage('Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one digit, and one special character.'),
+];
+
+const changepasswordValidator = [
+  check('username')
+    .isLength({ min: 4 })
+    .withMessage('Username must be at least 4 characters long.'),
+
+    check('oldPassword')
+    .isLength({ min: 8 }) // At least 8 characters long
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/) // Contains at least one uppercase letter, one lowercase letter, one digit, and one special character
+    .withMessage('Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one digit, and one special character.'),
+
+    check('newPassword')
+    .isLength({ min: 8 }) // At least 8 characters long
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/) // Contains at least one uppercase letter, one lowercase letter, one digit, and one special character
+    .withMessage('Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one digit, and one special character.'),
+];
+
+const forgotpasswordValidator = [
+  check('username')
+    .isLength({ min: 4 })
+    .withMessage('Username must be at least 4 characters long.'),
+];
+
 // Middleware to handle validation errors
 const handleValidationErrors = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
@@ -53,6 +86,9 @@ const checkForUnexpectedProperties = (allowedProperties: string[]) => {
 
 export {
   registrationValidator,
+  loginValidator,
+  changepasswordValidator,
+  forgotpasswordValidator,
   handleValidationErrors,
   checkForUnexpectedProperties 
 };

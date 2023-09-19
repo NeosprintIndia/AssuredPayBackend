@@ -11,10 +11,12 @@ import {
     verifyAadharNumberOTP,
     saveGSTDetails,
     getsavedgstdetail,
-    saveAadharDetails } from '../../Controller/User/userKYCControllers';
+    saveAadharDetails,
+    userreferencenumber } from '../../Controller/User/userKYCControllers';
 
 
 router.post('/verifypan',[VerifyToken],verifyPAN)
+router.post('/generateuuid',VerifyToken,userreferencenumber)
 router.post('/getgstdetail',[VerifyToken],getGSTDetails)
 router.get('/getsavedgstdetail',[VerifyToken],getsavedgstdetail)
 router.post('/savegstdetail',[VerifyToken],saveGSTDetails)

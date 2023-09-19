@@ -77,5 +77,27 @@ export const handleS1FileUpload = async (userId: string, originalName: string, b
       });
     });
   };
+
+  export const handledocsInternal = async (userId: string, originalName: string, buffer: Buffer,filename:any) => {
+    const { params, s3 } = await awsinitialise(originalName, buffer);
+    console.log(params, s3 )
+  
+    return new Promise<void>((resolve, reject) => {
+      s3.upload(params, async (err, data) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+        } else {
+          const updatedUserKYC1 = await UserKYC1.findOneAndUpdate(
+            { user: userId },
+            { $set: { filename: data.Location } }
+          );
+          resolve();
+        }
+      });
+    });
+  };
+
+
   
   

@@ -10,7 +10,7 @@ export async function awsinitialise(Key: string, Body: Buffer) {
 
   const s3 = new AWS.S3();
   const params: AWS.S3.PutObjectRequest = {
-    Bucket: 'testbucketassurepay',
+    Bucket: 'apassetbucket',
     Key: Key,
     Body: Body,
   };

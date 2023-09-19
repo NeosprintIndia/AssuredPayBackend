@@ -68,6 +68,18 @@ export const verifyAadharNumberInternal = async (userId: string,AadharNumber:str
       return[false,error];
     }
   };
+
+  export const userreferencenumberInternal = async (id: string,generatedUUID:string): Promise<any | string> => {
+    try { 
+      const updatedUser = await UserKYC1.findOneAndUpdate(
+        { user: id },
+        { $set: { uuid: generatedUUID } },{ new: true }
+      );
+      return [true,updatedUser];
+    } catch (error) {
+      return[false,error];
+    }
+  };
   
   // Function to verify Aadhar number OTP
 export const verifyAadharNumberOTPInternal = async (

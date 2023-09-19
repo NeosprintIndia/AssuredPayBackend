@@ -12,8 +12,17 @@ import {
   loginAdmin
 } from '../../Controller/Auth/authControllers';
 
-import { allowedRegistrationProperties, allowedPropertiesForVerify, allowedPropertiesForLogin } from '../../Services/AllowedProperties';
-import { registrationValidator, handleValidationErrors,checkForUnexpectedProperties } from '../../Services/Validators'
+import {
+   allowedRegistrationProperties,
+   allowedPropertiesForLogin,
+   allowedPropertiesForchangepassword,
+   allowedPropertiesForforgotpassword } from '../../Services/AllowedProperties';
+import { registrationValidator, 
+  handleValidationErrors,
+  checkForUnexpectedProperties,
+  loginValidator,
+  changepasswordValidator,
+  forgotpasswordValidator,} from '../../Services/Validators'
 
 //*********************Importing Middleware******************************************************
 import verifyAdminToken from '../../Middlewares/adminTokens';
@@ -23,12 +32,12 @@ const authRouter: Router = Router();
 //********************* Routes for User Till login**********************************************
 
 authRouter.post('/registerbusiness',checkForUnexpectedProperties(allowedRegistrationProperties),registrationValidator,handleValidationErrors,register);
-authRouter.post('/verify', checkForUnexpectedProperties(allowedPropertiesForVerify),verifyEmail);
-authRouter.post('/login', checkForUnexpectedProperties(allowedPropertiesForLogin),login);
+authRouter.post('/verify', verifyEmail); // NO validation Till Service is finalized
+authRouter.post('/login', checkForUnexpectedProperties(allowedPropertiesForLogin),loginValidator,handleValidationErrors,login);
 authRouter.post("/searchexisting",searchExistingController)
-authRouter.post('/resendemailotp', resendEmailOtp);
-authRouter.post('/change-password', changePass);
-authRouter.post('/forgot-password', forgotPass);
+authRouter.post('/resendemailotp', resendEmailOtp); // NO validation till Service is finalized
+authRouter.post('/change-password',checkForUnexpectedProperties(allowedPropertiesForchangepassword),changepasswordValidator,handleValidationErrors, changePass);
+authRouter.post('/forgot-password',checkForUnexpectedProperties(allowedPropertiesForforgotpassword),forgotpasswordValidator,handleValidationErrors, forgotPass);
 
 //********************************Routes for Admin Till login***************************************
 authRouter.post('/registeradmin', verifyAdminToken, registerAdmin);
