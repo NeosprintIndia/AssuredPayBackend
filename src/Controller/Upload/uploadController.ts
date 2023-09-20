@@ -76,7 +76,7 @@ export const uploadPan = async (req: Request, res: Response): Promise<void> => {
   
       res.status(200).send({message:'File uploaded successfully',Active:true});
     } catch (error) {
-      console.error({message:'Error in upload GST:', error,Active:false});
+      console.error({message:'Error in upload Document', error,Active:false});
       res.status(500).send({message:'Internal server error',Active:false});
     }
   };

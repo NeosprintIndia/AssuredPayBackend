@@ -21,23 +21,23 @@ const globalSettingSchema: Schema<IReferralCode> = new Schema<IReferralCode>({
  
   gstLimit: {
     type: Number,
-    default:0
+    default:3
   },
   aadharLimit: {
     type: Number,
-    default:0
+    default:3
 },
 panLimit: {
     type: Number,
-    default:0
+    default:3
 },
 cin: {
     type: Number,
-    default:0
+    default:3
 },
 enrollmentFees: {
     type: Number,
-    default:0
+    default:50000
 },
 termsOfService:{type:String},
 privacyPolicy:{type:String},

@@ -16,7 +16,7 @@ import {
 
 router.get('/getallkyc',VerifyAdmin,getAllKYCRecords);
 router.post('/couponupload',[VerifyAdmin,uploadMiddleware],couponCode)
-router.post('/setLimits',VerifyAdmin,setAllLimits)
+router.post('/setLimits',setAllLimits)
 router.get('/getconfiguration',VerifyAdmin,getconfiguration)
 router.post("/userbusinessdetail",VerifyAdmin,getuserbusinessdetail)
 router.post("/approvebusinessdetail",VerifyAdmin,approvebusinessdetail)

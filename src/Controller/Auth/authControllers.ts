@@ -62,7 +62,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-//********************* Controller function to handle changing the user's password*********************
+//********************* Controller function to handle changing the user's /Admin password*********************
 export const changePass = async (req: Request, res: Response): Promise<void> => {
   const {username,oldPassword,newPassword} = req.body;
   console.log(username,oldPassword,newPassword)
@@ -76,7 +76,7 @@ export const changePass = async (req: Request, res: Response): Promise<void> => 
   }
 };
 
-//********************* Controller function to handle forgot password request*********************
+//********************* Controller function to handle forgot password for admin/user request*********************
 export const forgotPass = async (req: Request, res: Response): Promise<void> => {
   const {username} = req.body;
   console.log(username)

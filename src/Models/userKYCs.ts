@@ -177,6 +177,7 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>({
   },
   nameInAadhaar: {
     type: String,
+    default:""
   },
   selfie: [String],
   shopImage: [String],

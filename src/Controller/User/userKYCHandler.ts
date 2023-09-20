@@ -1,4 +1,5 @@
-import { set } from 'mongoose';
+//import { set } from 'mongoose';
+import globalSetting from "../../Models/globalAdminSettings"
 import UserKYC1 from '../../Models/userKYCs'; // Import your UserKYC1 model
 import Registration from '../../Models/userRegisterations';
 import {PAN_KYC_SB,GST_KYC_SB,Aadhaar_KYC_S1,Aadhaar_KYC_S2} from '../../Services/sandboxs'; // Import your sandbox module
@@ -14,22 +15,32 @@ export const verifyPANDetails = async (PanNumber:string,id: string): Promise<any
         return [ false,'User not found'];
       }
 
+
       const aadharFullName=user.nameInAadhaar
       const myArray =aadharFullName.split(" ");
-
-  
+       
+      
+      const maxLimit=await globalSetting.findOne({id:"globalSetting"})
+      const maxPanLimit=maxLimit.panLimit
+      const userLimit=user.PAN_Attempt
+      
+      if(userLimit>=maxPanLimit){
+        return [false,"Your PAN Verification Attempt exceeded "];
+      }
       const result = await PAN_KYC_SB({ id_number: PanNumber });
     
       const panFirstName = result.body.data.first_name.trim();
       const panNumber=result.body.data.pan;
-      
+      const newAttempt=user.PAN_Attempt
   
       if (myArray[0].toLowerCase() === panFirstName.toLowerCase()) {
         const updatedUser = await UserKYC1.findOneAndUpdate(
           { user: id },
           { $set: { isPANVerified: true,
-            PAN_number:panNumber }},
+            PAN_number:panNumber,PAN_Attempt:newAttempt }},
           { new:true });
+
+          
   
         return [true,updatedUser];
       } else {

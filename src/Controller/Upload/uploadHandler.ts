@@ -78,9 +78,9 @@ export const handleS1FileUpload = async (userId: string, originalName: string, b
     });
   };
 
-  export const handledocsInternal = async (userId: string, originalName: string, buffer: Buffer,filename:any) => {
+  export const handledocsInternal = async (userId: string, originalName: string, buffer:Buffer,filename:any) => {
     const { params, s3 } = await awsinitialise(originalName, buffer);
-    console.log(params, s3 )
+    console.log("filename",filename)
   
     return new Promise<void>((resolve, reject) => {
       s3.upload(params, async (err, data) => {
@@ -88,9 +88,10 @@ export const handleS1FileUpload = async (userId: string, originalName: string, b
           console.error(err);
           reject(err);
         } else {
-          const updatedUserKYC1 = await UserKYC1.findOneAndUpdate(
+          //const updatedUserKYC1 = 
+          await UserKYC1.findOneAndUpdate(
             { user: userId },
-            { $set: { filename: data.Location } }
+            { $set: { filename: data.Location } },{new:true}
           );
           resolve();
         }
