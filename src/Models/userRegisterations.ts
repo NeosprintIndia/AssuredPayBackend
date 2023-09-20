@@ -19,10 +19,11 @@ interface IRegisterUser extends Document {
 
 // Define the schema
 const RegisterUserSchema: Schema<IRegisterUser> = new Schema({
-  business_email: { type: String, required: true },
-  business_mobile: { type: String, required: true, unique: true },
-
-  // Create Username of at least 4 char
+  business_email: { type: String,
+     required: true },
+  business_mobile: { type: String, 
+    required: true, 
+    unique: true },
   username: {
     type: String,
     required: true,

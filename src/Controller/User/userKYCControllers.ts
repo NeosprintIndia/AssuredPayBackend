@@ -73,7 +73,7 @@ export const getGSTDetails = async (req: Request, res: Response): Promise<void> 
         "Trade_Name": data.lgnm,
         "Place_of_Business": `${data.pradr.addr.bno} ${data.pradr.addr.st} ${data.pradr.addr.loc} ${data.pradr.addr.dst} ${data.pradr.addr.pncd}`,
         "Nature_of_Place_of_Business": data.pradr.ntr,
-        "Nature_of_Business_Activity": data.nba
+        "Nature_of_Business_Activity": data.nba[0]
       };
     console.log(result)
   
