@@ -14,7 +14,7 @@ interface IUserKYC extends Document {
   GSTNumber: string;
   GSTFILE: string;
   PAN_number: string;
-  PANFile: string;  
+  PANFile: string;
   aadhar_ref_id: string;
   image_on_aadhaar: string;
   aadharFileUrl: string;
@@ -42,43 +42,41 @@ interface IUserKYC extends Document {
   GST_Attempt: number;
   Aadhaar_Attempt: number;
   due: string;
-  Constituion_of_Business:string;
-  Taxpayer_Type:string;
-  GSTIN_of_the_entity:string;
-  Legal_Name_of_Business:string;
-  Business_PAN:string;
+  Constituion_of_Business: string;
+  Taxpayer_Type: string;
+  GSTIN_of_the_entity: string;
+  Legal_Name_of_Business: string;
+  Business_PAN: string;
   Date_of_Registration: Date;
-  State:string;
-  Trade_Name:string;
-  uuid:string;
-  Place_of_Business:string;
-  Nature_of_Place_of_Business:string;
-  Nature_of_Business_Activity:string;
+  State: string;
+  Trade_Name: string;
+  userRequestReference: string;
+  Place_of_Business: string;
+  Nature_of_Place_of_Business: string;
+  Nature_of_Business_Activity: string;
   aadharNumber: string;
-  aadharCO:string;
-  aadharGender:string;
+  aadharCO: string;
+  aadharGender: string;
   nameInAadhaar: string;
-  aadharDOB:string;
-  aadharPhotoLink:string;
-  aadharCountry:string;
-  distInAadhar:string;
-  aadharHouse:string;
-  aadharPincode:string;
-  aadharPO:string;
-  aadharState:string;
-  aadharStreet:string;
-  aadharSubDistrict:string;
+  aadharDOB: string;
+  aadharPhotoLink: string;
+  aadharCountry: string;
+  distInAadhar: string;
+  aadharHouse: string;
+  aadharPincode: string;
+  aadharPO: string;
+  aadharState: string;
+  aadharStreet: string;
+  aadharSubDistrict: string;
   cityInAadhar: string;
   addressInAadhar: string;
-  globalStatus:string;
+  globalStatus: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
 // Define the reference interface for the user field
-interface IUser extends Document {
-  _id: Types.ObjectId;
-}
+interface IUser extends Document {_id: Types.ObjectId }
 
 // Define the schema
 const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>({
@@ -175,7 +173,7 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>({
   },
   nameInAadhaar: {
     type: String,
-    default:""
+    default: ""
   },
   selfie: [String],
   shopImage: [String],
@@ -246,37 +244,36 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>({
     type: Number,
     default: 0,
   },
-  globalStatus:{
+  globalStatus: {
     type: String,
-    default:"GSTPG1",
-},
-uuid: {
-  type: String,
-  unique: true,
-},
-aadharSubDistrict:{type:String},
-aadharStreet:{type:String},
-aadharState:{type:String},
-aadharPO:{type:String},
-aadharHouse:{type:String},
-aadharCountry:{type:String},
-aadharPhotoLink:{type:String},
-aadharDOB:{type:String},
-aadharCO:{type:String},
-aadharGender:{type:String},
-isAadharDetailSave: {type:Boolean,default:false},
-  isGSTDetailSave:{type:Boolean,default:false},
-  Constituion_of_Business:{type:String},
-  Taxpayer_Type:{type:String},
-  GSTIN_of_the_entity:{type:String},
-  Legal_Name_of_Business:{type:String},
-  Business_PAN:{type:String},
-  Date_of_Registration: {Date},
-  State:{type:String},
-  Trade_Name:{type:String},
-  Place_of_Business:{type:String},
-  Nature_of_Place_of_Business:{type:String},
-  Nature_of_Business_Activity:{type:String},
+    default: "GSTPG1",
+  },
+  userRequestReference: {
+    type: String,
+  },
+  aadharSubDistrict: { type: String },
+  aadharStreet: { type: String },
+  aadharState: { type: String },
+  aadharPO: { type: String },
+  aadharHouse: { type: String },
+  aadharCountry: { type: String },
+  aadharPhotoLink: { type: String },
+  aadharDOB: { type: String },
+  aadharCO: { type: String },
+  aadharGender: { type: String },
+  isAadharDetailSave: { type: Boolean, default: false },
+  isGSTDetailSave: { type: Boolean, default: false },
+  Constituion_of_Business: { type: String },
+  Taxpayer_Type: { type: String },
+  GSTIN_of_the_entity: { type: String },
+  Legal_Name_of_Business: { type: String },
+  Business_PAN: { type: String },
+  Date_of_Registration: { Date },
+  State: { type: String },
+  Trade_Name: { type: String },
+  Place_of_Business: { type: String },
+  Nature_of_Place_of_Business: { type: String },
+  Nature_of_Business_Activity: { type: String },
   due: {
     type: String,
     default: 'New'

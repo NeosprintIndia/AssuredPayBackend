@@ -84,7 +84,7 @@ export const verifyAadharNumberInternal = async (userId: string,AadharNumber:str
     try { 
       const updatedUser = await UserKYC1.findOneAndUpdate(
         { user: id },
-        { $set: { uuid: generatedUUID } },{ new: true }
+        { $set: { userRequestReference: generatedUUID } },{ new: true }
       );
       return [true,updatedUser];
     } catch (error) {
@@ -181,6 +181,8 @@ export const verifyAadharNumberOTPInternal = async (
       userId:string
       ): Promise<any> => {
       try {
+
+        
       const gstDetails =await UserKYC1.create(
     { 
         "Constituion_of_Business":Constituion_of_Business,
@@ -188,8 +190,8 @@ export const verifyAadharNumberOTPInternal = async (
         "GSTIN_of_the_entity":GSTIN_of_the_entity,
         "Legal_Name_of_Business":Legal_Name_of_Business,
         "Business_PAN":Business_PAN,
-       "Date_of_Registration": Date_of_Registration,
-       "State": State,
+        "Date_of_Registration": Date_of_Registration,
+        "State": State,
         "Trade_Name":Trade_Name,
         "Place_of_Business":Place_of_Business,
         "Nature_of_Place_of_Business":Nature_of_Place_of_Business,
@@ -197,8 +199,6 @@ export const verifyAadharNumberOTPInternal = async (
         "user":userId,
         "isGSTDetailSave":true
        }
-      
-      
       );
      
         return [true, gstDetails];
