@@ -73,8 +73,6 @@ const createUser = async (
     ).toString();
     const otpGenerated = await generateOTP();
     const Refer_code = await generateReferralCode(username, business_mobile);
-    console.log(Refer_code);
-
     let updatedReferral = null;
     var referredBy = "";
     if (refferal_code !== null) {
@@ -83,15 +81,11 @@ const createUser = async (
         { $inc: { count: 1 } },
         { new: true }
       );
-
-      console.log("updatedReferral", updatedReferral);
-      console.log("updatedReferral.user", updatedReferral.user);
       if (!updatedReferral) {
         return [false, null];
       }
       const referralUser = updatedReferral.user;
       const referUserProfile = await UserKYC.findOne({ user: referralUser });
-      console.log("referUserProfile", referUserProfile);
       if (referUserProfile) {
         referredBy = (referUserProfile as any).Legal_Name_of_Business;
       }
@@ -136,8 +130,6 @@ export const validateUserSignUp = async (
     business_email: business_email,
   });
 
-  console.log(user);
-
   if (!user) {
     return [false, "User not found"];
   }
@@ -153,8 +145,13 @@ export const validateUserSignUp = async (
     },
     { new: true }
   );
+  const token = jwt.sign(
+    { userId: user._id, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: "3D" }
+  );
 
-  return [true, updatedUser];
+  return [true,token];
 };
 
 export const authenticateUser = async (
@@ -211,7 +208,7 @@ export const changePassword = async (
         process.env.PASS_PHRASE
       ).toString(CryptoJS.enc.Utf8);
     });
-    console.log("Old password");
+
     let OP = plainOldPasswords[plainOldPasswords.length - 1];
     if (OP != oldPassword) {
       return "Invalid old password";
@@ -266,7 +263,6 @@ export const handleForgotPassword = async (
       tempPassword,
       process.env.PASS_PHRASE
     ).toString();
-    console.log(tempPassword);
 
     // Update the user's password in the database
     const oldPasswords = user.oldPasswords || [];
@@ -314,23 +310,21 @@ export const searchExisting = async (
     }
     const result = await Registration.find(searchExist);
 
-    console.log(result);
-
     if (result.length > 0) {
       const finalresult = {
         found: true,
         data: result,
       };
-      return [true,finalresult];
+      return [true, finalresult];
     } else {
       const finalresult = {
         found: false,
-        data: result,   
+        data: result,
       };
-      return [true,finalresult];
+      return [true, finalresult];
     }
   } catch (error) {
-    return [false,error];
+    return [false, error];
   }
 };
 
@@ -345,7 +339,7 @@ export const resendEmailOtpInternal = async (
       { $set: { otp: otpGenerated } },
       { new: true }
     );
-    console.log(updatedUser);
+
     if (updatedUser) return [true, updatedUser];
     else {
       return [false, updatedUser];
@@ -379,12 +373,12 @@ export const registerAdminUser = async (
     );
 
     if (!newUser[0]) {
-      return [false, "Unable to create new user"];
+      return [false, "Unable to create new Admin"];
     }
 
     return [true, newUser];
   } catch (error) {
-    console.error("Error in registerAdminUser:", error);
+    console.error("Error in register Admin User:", error);
     return [false, "Unable to sign up, please try again later"];
   }
 };
@@ -403,8 +397,6 @@ const createAdminUser = async (
     ).toString();
     const otpGenerated = await generateOTP();
     const Refer_code = await generateReferralCode(username, business_mobile);
-    console.log(Refer_code);
-
     let updatedReferral: any | null = null;
 
     if (refferal_code !== null) {
@@ -428,13 +420,12 @@ const createAdminUser = async (
       otp: otpGenerated,
       role: "Admin",
     });
-    console.log(newUser);
 
     const Generate_Referral = await Referral.create({
       user: newUser._id,
       refferal_code: Refer_code,
     });
-    console.log(Generate_Referral);
+    //console.log(Generate_Referral);
 
     await sendMail({
       to: business_email,
@@ -494,8 +485,6 @@ export const validateMFA = async (
   const user = await Registration.findOne({
     business_email: business_email,
   });
-
-  console.log(user);
 
   if (!user) {
     return [false, "User not found"];

@@ -14,13 +14,11 @@ interface IUserKYC extends Document {
   GSTNumber: string;
   GSTFILE: string;
   PAN_number: string;
-  PANFile: string;
-  
+  PANFile: string;  
   aadhar_ref_id: string;
   image_on_aadhaar: string;
   aadharFileUrl: string;
   aadharBackUrl: string;
- 
   localityInAadhar: string;
   selfie: string[];
   shopImage: string[];
