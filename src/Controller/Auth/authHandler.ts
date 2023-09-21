@@ -151,7 +151,7 @@ export const validateUserSignUp = async (
     { expiresIn: "3D" }
   );
 
-  return [true, { token: token }];
+  return [true, token ];
 };
 
 export const authenticateUser = async (
