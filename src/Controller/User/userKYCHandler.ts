@@ -58,24 +58,7 @@ export const getGSTDetailsInternal = async (gst: string,userId:string): Promise<
       const user = await UserKYC1.findOne({
         user: userId,
       });
-      const maxLimit=await globalSetting.findOne({id:"globalSetting"})
-      const maxGSTLimit=maxLimit.gstLimit
-      const userLimit=user.GST_Attempt
-
-      console.log("maxGSTLimit",maxGSTLimit)
-      console.log("userLimit",userLimit)
-      
-      if(userLimit>=maxGSTLimit){
-        return [false,"Your GST Verification Attempt exceeded "];
-      }
       const result = await GST_KYC_SB({ id_number: gst });
-      const newAttempt=user.GST_Attempt+1
-       await UserKYC1.findOneAndUpdate(
-        { user: userId },
-        { $set: {GST_Attempt:newAttempt }},
-        { new:true });
-
-        console.log("GST_Attempt",newAttempt)
       return [true,result];
     } catch (error) {
       return[false,error] ;
@@ -233,9 +216,10 @@ export const verifyAadharNumberOTPInternal = async (
         "isGSTDetailSave":true
        }
       );
+     
       await UserKYC1.findOneAndUpdate(
         { user: userId },
-        { $set: { isGSTVerified: true }},
+        { $set: { isGSTVerified: true, }},
         { new:true });
      
         return [true, gstDetails];
