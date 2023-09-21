@@ -10,6 +10,8 @@ import {
   resendEmailOtpInternal,
   authenticateAdmin,
   validateMFA,
+  handleForgotPasswordAdmin,
+  resendEmailOtpInternalAdmin
 } from './authHandler'
 
 
@@ -165,3 +167,26 @@ export const adminOTPVerify = async (req: Request, res: Response): Promise<void>
     res.status(500).send({ message: result, Active: false });
   }
 };
+
+export const forgotPassAdmin = async (req: Request, res: Response): Promise<void> => {
+  const { business_email } = req.body;
+  const errorMessage = await handleForgotPasswordAdmin(business_email);
+
+  if (errorMessage) {
+    res.status(errorMessage === 'Internal server error' ? 500 : 404).json({ message: errorMessage, Active: false });
+  } else {
+    res.status(200).json({ message: 'Password has been sent to an email', Active: true });
+  }
+};
+
+export async function resendEmailOtpAdmin(req: Request, res: Response) {
+  const { email } = req.body;
+  const [success, result] = await resendEmailOtpInternalAdmin(email)
+  if (success) {
+    res.status(200).send({ result, Active: true });
+  } else {
+    res.status(500).send({ result, Active: false });
+  }
+
+
+}

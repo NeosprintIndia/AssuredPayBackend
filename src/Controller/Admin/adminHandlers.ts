@@ -122,3 +122,21 @@ export const approveAdminAadharS1Internal = async (
       return  error;
     }
   };
+
+  // export const approveOrRejectDocumentInternal = async (
+  //   id: string,
+  //   docStatus:string,
+  //   docName:string
+  //   adminAadhaarS1Verified: boolean
+  // ): Promise<any | null> => {
+  //   try {
+  //     const result = await UserKYC1.findOneAndUpdate(
+  //       { user: id },
+  //       { $set: { AdminAadhaarS1Verified: adminAadhaarS1Verified } },{ new: true }
+  //     );
+  //     console.log(result);
+  //     return [true,result];
+  //   } catch (error) {
+  //     return[false,error];
+  //   }
+  // };

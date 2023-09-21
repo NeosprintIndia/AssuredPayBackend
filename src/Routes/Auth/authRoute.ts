@@ -9,7 +9,9 @@ import {
   searchExistingController,
   resendEmailOtp,
   adminOTPVerify,
-  loginAdmin
+  loginAdmin,
+  forgotPassAdmin,
+  resendEmailOtpAdmin
 } from '../../Controller/Auth/authControllers';
 
 import {
@@ -40,9 +42,11 @@ authRouter.post('/change-password',checkForUnexpectedProperties(allowedPropertie
 authRouter.post('/forgot-password',checkForUnexpectedProperties(allowedPropertiesForforgotpassword),forgotpasswordValidator,handleValidationErrors, forgotPass);
 
 //********************************Routes for Admin Till login***************************************
-authRouter.post('/registeradmin', verifyAdminToken, registerAdmin);
+authRouter.post('/registeradmin',checkForUnexpectedProperties(allowedRegistrationProperties),registrationValidator,handleValidationErrors, verifyAdminToken, registerAdmin);
 authRouter.post('/loginadmin',loginAdmin);
 authRouter.post('/verifyadmin',adminOTPVerify);
+authRouter.post('/forgot-passwordadmin',forgotPassAdmin);
+authRouter.post('/resendemailotpAdmin', resendEmailOtpAdmin);
 
 
 export default authRouter;

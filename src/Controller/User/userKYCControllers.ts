@@ -58,7 +58,7 @@ export const getGSTDetails = async (req: Request, res: Response): Promise<void> 
      
   
       // Call the internal function to get GST details
-       const [success, result] =await getGSTDetailsInternal(gst)
+       const [success, result] =await getGSTDetailsInternal(gst,userId)
       const inputString=result.body.data.gstin
       const data = result.body.data;
       const pan = inputString.substring(2, inputString.length - 3);

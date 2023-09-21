@@ -13,17 +13,21 @@ interface IRegisterUser extends Document {
   role: string;
   otp: string;
   MFA: string;
-  refferedBy:string;
+  refferedBy: string;
   comparePassword(candidatePassword: string): boolean;
 }
 
 // Define the schema
 const RegisterUserSchema: Schema<IRegisterUser> = new Schema({
-  business_email: { type: String,
-     required: true },
-  business_mobile: { type: String, 
-    required: true, 
-    unique: true },
+  business_email: {
+    type: String,
+    required: true
+  },
+  business_mobile: {
+    type: String,
+    required: true,
+    unique: true
+  },
   username: {
     type: String,
     required: true,
@@ -56,7 +60,7 @@ const RegisterUserSchema: Schema<IRegisterUser> = new Schema({
   MFA: {
     type: String,
   },
-  refferedBy:{type:String, default:""}
+  refferedBy: { type: String, default: "" }
 });
 
 // Define the model

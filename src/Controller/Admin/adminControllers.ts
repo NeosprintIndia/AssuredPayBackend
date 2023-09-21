@@ -5,7 +5,8 @@ import {getAllKYCRecordsInternal,
   setLimitInternal,
   getAllConfigurationInternal,
   getuserbusinessdetailInternal,
-  approvebusinessdetailInternal} from './adminHandlers';
+  approvebusinessdetailInternal,
+  } from './adminHandlers';
 import CouponCode from '../../Models/couponCodes';
 // Route handler function for retrieving all KYC records
 export const getAllKYCRecords = async (req: Request, res: Response): Promise<void> => {
@@ -154,3 +155,24 @@ enrollmentFees
     });
   }
   };
+
+
+  //**********Common Approve Testing */
+
+  // export const approveOrRejectDocument = async (req: Request, res: Response): Promise<void> => {
+  //   try {
+  //     const { docStatus,docName, id ,verificationComment } = req.body;
+  
+  //     // Call the internal function to approve Admin Aadhar S1 verification
+  //     const [success, result] = await approveOrRejectDocumentInternal(id, docStatus,docName,verificationComment);
+  
+  //     if (success) {
+  //       res.status(200).send({result,Active:true});
+  //     } else {
+  //       res.status(400).send({ message: result,Active:false});
+  //     }
+  //   } catch (error) {
+  //     console.error('Error in Approval:', error);
+  //     res.status(500).json({ error: 'An error occurred', Active:false });
+  //   }
+  // };

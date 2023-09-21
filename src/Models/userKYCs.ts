@@ -33,11 +33,11 @@ interface IUserKYC extends Document {
   isGSTDetailSave: boolean;
   isAadharDetailSave: boolean;
   AdminAadhaarS1Verified: boolean;
-  Admin_AadhaarS1_Verification_Clarification: boolean;
+  Admin_AadhaarS1_Verification_Clarification: string;
   AdminAadhaarS2Verified: boolean;
-  Admin_AadhaarS2_Verification_Clarification: boolean;
+  Admin_AadhaarS2_Verification_Clarification: string;
   AdminPANVerified: boolean;
-  Admin_Pan_Verification_Clarification: boolean;
+  Admin_Pan_Verification_Clarification: string;
   PAN_Attempt: number;
   GST_Attempt: number;
   Aadhaar_Attempt: number;
@@ -213,24 +213,24 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>({
     default: false,
   },
   Admin_AadhaarS1_Verification_Clarification: {
-    type: Boolean,
-    default: false,
+    type: String,
+    default: "",
   },
   AdminAadhaarS2Verified: {
     type: Boolean,
     default: false,
   },
   Admin_AadhaarS2_Verification_Clarification: {
-    type: Boolean,
-    default: false,
+    type: String,
+    default: "",
   },
   AdminPANVerified: {
     type: Boolean,
     default: false,
   },
   Admin_Pan_Verification_Clarification: {
-    type: Boolean,
-    default: false,
+    type: String,
+    default: "",
   },
   PAN_Attempt: {
     type: Number,
@@ -250,6 +250,7 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>({
   },
   userRequestReference: {
     type: String,
+    default:""
   },
   aadharSubDistrict: { type: String },
   aadharStreet: { type: String },

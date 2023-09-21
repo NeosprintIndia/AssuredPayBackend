@@ -151,7 +151,7 @@ export const validateUserSignUp = async (
     { expiresIn: "3D" }
   );
 
-  return [true,token];
+  return [true, { token: token }];
 };
 
 export const authenticateUser = async (
@@ -500,4 +500,68 @@ export const validateMFA = async (
   );
 
   return [true, { token: token }];
+};
+
+export const handleForgotPasswordAdmin = async (
+  business_email: string
+): Promise<string | null> => {
+  try {
+    // Check if the user exists in the database
+    const user = await Registration.findOne({ business_email: business_email });
+
+    if (!user) {
+      return "User not found";
+    }
+
+    // Generate a temporary password
+    const tempPassword = generateTemporaryPassword();
+    const encryptedNewPassword = CryptoJS.AES.encrypt(
+      tempPassword,
+      process.env.PASS_PHRASE
+    ).toString();
+
+    // Update the user's password in the database
+    const oldPasswords = user.oldPasswords || [];
+    oldPasswords.push(encryptedNewPassword);
+    if (oldPasswords.length > 5) {
+      oldPasswords.shift(); // Remove the oldest password
+    }
+
+    // Update the user's oldPasswords field and save the user
+    user.oldPasswords = oldPasswords;
+    user.password = encryptedNewPassword;
+    await user.save();
+
+    // Send an email with the temporary password
+    await sendMail({
+      to: user.business_email,
+      OTP: tempPassword,
+    });
+
+    return null; // Password reset successful
+  } catch (error) {
+    console.error(error);
+    return "Internal server error";
+  }
+};
+
+export const resendEmailOtpInternalAdmin = async (
+  email: string
+): Promise<[boolean, any]> => {
+  try {
+    const otpGenerated = await generateOTP();
+    const updatedUser = await Registration.findOneAndUpdate(
+      { business_email: email },
+      { $set: { otp: otpGenerated } },
+      { new: true }
+    );
+
+    if (updatedUser) return [true, updatedUser];
+    else {
+      return [false, updatedUser];
+    }
+  } catch (error) {
+    console.error("Error in Sending OTP:", error);
+    return [false, error];
+  }
 };

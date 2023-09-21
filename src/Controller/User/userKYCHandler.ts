@@ -31,7 +31,7 @@ export const verifyPANDetails = async (PanNumber:string,id: string): Promise<any
     
       const panFirstName = result.body.data.first_name.trim();
       const panNumber=result.body.data.pan;
-      const newAttempt=user.PAN_Attempt
+      const newAttempt=user.PAN_Attempt+1
   
       if (myArray[0].toLowerCase() === panFirstName.toLowerCase()) {
         const updatedUser = await UserKYC1.findOneAndUpdate(
@@ -52,9 +52,30 @@ export const verifyPANDetails = async (PanNumber:string,id: string): Promise<any
   };
 
 // Function to get GST details
-export const getGSTDetailsInternal = async (gst: string): Promise<any> => {
+export const getGSTDetailsInternal = async (gst: string,userId:string): Promise<any> => {
     try {
+
+      const user = await UserKYC1.findOne({
+        user: userId,
+      });
+      const maxLimit=await globalSetting.findOne({id:"globalSetting"})
+      const maxGSTLimit=maxLimit.gstLimit
+      const userLimit=user.GST_Attempt
+
+      console.log("maxGSTLimit",maxGSTLimit)
+      console.log("userLimit",userLimit)
+      
+      if(userLimit>=maxGSTLimit){
+        return [false,"Your GST Verification Attempt exceeded "];
+      }
       const result = await GST_KYC_SB({ id_number: gst });
+      const newAttempt=user.GST_Attempt+1
+       await UserKYC1.findOneAndUpdate(
+        { user: userId },
+        { $set: {GST_Attempt:newAttempt }},
+        { new:true });
+
+        console.log("GST_Attempt",newAttempt)
       return [true,result];
     } catch (error) {
       return[false,error] ;
@@ -64,13 +85,25 @@ export const getGSTDetailsInternal = async (gst: string): Promise<any> => {
 // Function to verify Aadhar number and update the reference ID
 export const verifyAadharNumberInternal = async (userId: string,AadharNumber:string): Promise<any | string> => {
     try {
+      const user = await UserKYC1.findOne({
+        user: userId,
+      });
+      const maxLimit=await globalSetting.findOne({id:"globalSetting"})
+      const maxAadharLimit=maxLimit.aadharLimit
+      const userLimit=user.Aadhaar_Attempt
+      
+      
+      if(userLimit>=maxAadharLimit){
+        return [false,"Your Aadhar Verification Attempt exceeded "];
+      }
   
       const result = await Aadhaar_KYC_S1({ id_number: AadharNumber });
       const refID = (result as any).body.data.ref_id;
+      const newAttempt=user.Aadhaar_Attempt+1
   
       const updatedUser = await UserKYC1.findOneAndUpdate(
         { user: userId },
-        { $set: { aadhar_ref_id: refID } }
+        { $set: { aadhar_ref_id: refID,Aadhaar_Attempt:newAttempt } }
       );
   
       console.log(updatedUser);
@@ -200,6 +233,10 @@ export const verifyAadharNumberOTPInternal = async (
         "isGSTDetailSave":true
        }
       );
+      await UserKYC1.findOneAndUpdate(
+        { user: userId },
+        { $set: { isGSTVerified: true }},
+        { new:true });
      
         return [true, gstDetails];
       } catch (error) {
