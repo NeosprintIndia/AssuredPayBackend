@@ -12,6 +12,50 @@ import {
   userreferencenumberInternal,
 } from "./userKYCHandler";
 
+// Route handler function for verifying PAN
+export const verifyPAN = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const PanNumber = req.body.PanNumber as string;
+    const id = (req as any).userId as string; // Assuming userId is a string
+
+    const [success, result] = await verifyPANDetails(PanNumber, id);
+
+    if (success) {
+      res.status(200).send({ result, Active: true });
+    } else {
+      res.status(400).send({ result, Active: false });
+    }
+  } catch (error) {
+    console.error({ message: "Error in verifyPAN:", error, Active: false });
+    res.status(500).json({ error: "An error occurred", Active: false });
+  }
+};
+
+export const userreferencenumber = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const id = (req as any).userId as string;
+    const generatedUUID = await generateUUID();
+    const [success, result] = await userreferencenumberInternal(
+      id,
+      generatedUUID
+    );
+    if (success) {
+      res.status(200).send({ result, Active: true });
+    } else {
+      res.status(400).send({ message: result, Active: false });
+    }
+  } catch (error) {
+    console.error({
+      message: "Error in Generating Reference Number:",
+      error,
+      Active: false,
+    });
+    res.status(500).json({ error: "An error occurred", Active: false });
+  }
+};
 
 // Route handler function for getting GST details
 export const getGSTDetails = async (
@@ -98,6 +142,29 @@ export const saveGSTDetails = async (
   }
 };
 
+////Route handler function to retrieve saved GST details
+
+export const getsavedgstdetail = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    // Assuming userId is a string
+    const userId = (req as any).userId as string;
+
+    // Call the internal function to get GST details
+    const [success, result] = await getGSTDetailsInternalsaved(userId);
+    if (success) {
+      res.status(200).send({ result, Active: true });
+    } else {
+      res.status(400).send({ message: result, Active: false });
+    }
+  } catch (error) {
+    console.error("Error in getGSTDetails:", error);
+    res.status(500).json({ error: "An error occurred", Active: false });
+  }
+};
+
 // Route handler function for verifying Aadhar number
 export const verifyAadharNumber = async (
   req: Request,
@@ -157,11 +224,8 @@ export const verifyAadharNumberOTP = async (
       aadharSubDistrict: data.split_address.subdist,
       cityInAadhar: data.split_address.vtc,
       addressInAadhar: data.split_address.country,
-     
     };
     const aadharphotoLink = data.photo_link;
-    
-    
     if (success) {
       res.status(200).send({ results, aadharphotoLink, Active: true });
     } else {
@@ -228,25 +292,6 @@ export const saveAadharDetails = async (
   }
 };
 
-// Route handler function for verifying PAN
-export const verifyPAN = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const PanNumber = req.body.PanNumber as string;
-    const id = (req as any).userId as string; // Assuming userId is a string
-
-    const [success, result] = await verifyPANDetails(PanNumber, id);
-
-    if (success) {
-      res.status(200).send({ result, Active: true });
-    } else {
-      res.status(400).send({ result, Active: false });
-    }
-  } catch (error) {
-    console.error({ message: "Error in verifyPAN:", error, Active: false });
-    res.status(500).json({ error: "An error occurred", Active: false });
-  }
-};
-
 export const getglobalstatus = async (
   req: Request,
   res: Response
@@ -262,54 +307,5 @@ export const getglobalstatus = async (
       message: result,
       Active: false,
     });
-  }
-};
-
-export const userreferencenumber = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    const id = (req as any).userId as string;
-    const generatedUUID = await generateUUID();
-    const [success, result] = await userreferencenumberInternal(
-      id,
-      generatedUUID
-    );
-    if (success) {
-      res.status(200).send({ result, Active: true });
-    } else {
-      res.status(400).send({ message: result, Active: false });
-    }
-  } catch (error) {
-    console.error({
-      message: "Error in Generating Reference Number:",
-      error,
-      Active: false,
-    });
-    res.status(500).json({ error: "An error occurred", Active: false });
-  }
-};
-
-////Route handler function to retrieve saved GST details
-
-export const getsavedgstdetail = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    // Assuming userId is a string
-    const userId = (req as any).userId as string;
-
-    // Call the internal function to get GST details
-    const [success, result] = await getGSTDetailsInternalsaved(userId);
-    if (success) {
-      res.status(200).send({ result, Active: true });
-    } else {
-      res.status(400).send({ message: result, Active: false });
-    }
-  } catch (error) {
-    console.error("Error in getGSTDetails:", error);
-    res.status(500).json({ error: "An error occurred", Active: false });
   }
 };

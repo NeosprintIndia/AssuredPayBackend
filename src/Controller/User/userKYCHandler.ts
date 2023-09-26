@@ -150,8 +150,6 @@ export const verifyAadharNumberOTPInternal = async (
     const result1 = await UserKYC1.findOne({ user: userId });
     const refId = result1.aadhar_ref_id;
     const result = await Aadhaar_KYC_S2({ otp, refId });
-
-    console.log('-----------',result)
    
     return [true, result];
   } catch (error) {

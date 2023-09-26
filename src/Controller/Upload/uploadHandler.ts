@@ -88,11 +88,10 @@ export const handleS1FileUpload = async (userId: string, originalName: string, b
           console.error(err);
           reject(err);
         } else {
-          const updateData = { [filename]: data.Location }; 
+          //const updatedUserKYC1 = 
           await UserKYC1.findOneAndUpdate(
             { user: userId },
-            updateData,
-            {new:true}
+            { $set: { filename: data.Location } },{new:true}
           );
           resolve();
         }

@@ -31,11 +31,11 @@ export const register = async (req: Request, res: Response): Promise<void> => {
   const reqData = {
     Email_slug:"registration",
     email: business_email,
-    VariablesEmail:["AssuredPay","Admin"],
+    VariablesEmail:["Neosprint","Admin"],
 
     receiverNo:business_mobile,
     Message_slug:"registration",
-    VariablesMessage:["AssuredPay","Team"],
+    VariablesMessage:["Tramo","25"],
   };
 
   if (success) {

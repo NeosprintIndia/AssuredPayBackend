@@ -25,7 +25,7 @@ router.get('/getallkyc',VerifyAdmin,getAllKYCRecords);
 router.get("/userbusinessdetail",VerifyAdmin,getuserbusinessdetail)
 router.get("/businessrepresentativedetail",VerifyAdmin,getbusinessrepresentativedetail)
 router.post("/approvebusinessdetail",VerifyAdmin,approvebusinessdetail)
-router.post("/approveDocument",approveDocument)
+router.post("/approveDocument",VerifyAdmin,approveDocument)
 router.post("/rejectDocument",rejectDocument)
 router.post('/couponupload',[VerifyAdmin,uploadMiddleware],couponCode)
 //router.post("/getbusinessdetail",getbusinessdetail)

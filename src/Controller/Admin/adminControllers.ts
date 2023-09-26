@@ -232,10 +232,10 @@ export const approvebusinessdetail = async (
 
 export const approveDocument = async (req: Request, res: Response): Promise<void> => {
   try {
-    const {_flag,status,id } = req.body;
+    const {flag,status,id } = req.body;
 
     // Call the internal function to approve Admin Aadhar S1 verification
-    const [success, result] = await approveDocumentInternal(_flag,status,id);
+    const [success, result] = await approveDocumentInternal(flag,status,id);
 
     if (success) {
       res.status(200).send({result,Active:true});

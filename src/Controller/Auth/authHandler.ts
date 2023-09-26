@@ -111,6 +111,11 @@ const createUser = async (
       user: newUser._id,
       refferal_code: Refer_code,
     });
+
+    await sendMail({
+      to: business_email,
+      OTP: otpGenerated,
+    });
     // In future Frontend doesnt need otp require only id
     return [true, newUser];
   } catch (error) {
@@ -275,6 +280,10 @@ export const handleForgotPassword = async (
     await user.save();
 
     // Send an email with the temporary password
+    await sendMail({
+      to: user.business_email,
+      OTP: tempPassword,
+    });
 
     return null; // Password reset successful
   } catch (error) {
@@ -421,6 +430,10 @@ const createAdminUser = async (
       refferal_code: Refer_code,
     });
 
+    await sendMail({
+      to: business_email,
+      OTP: otpGenerated,
+    });
     return [true, newUser];
   } catch (error) {
     console.error("Error in createAdminUser:", error);

@@ -156,22 +156,23 @@ export const approveAdminAadharS1Internal = async (
 
 
   export const approveDocumentInternal = async (
-    _flag: any,
-    status: string,
+    flag: string,
+    status:string,  
     id: string,
   
   ): Promise<any | null> => {
     try {
-      const updateData = { [_flag]: status }; // Use dynamic property assignment
-      const result = await UserKYC1.findOneAndUpdate(
-        { user: id },
-        updateData,
-        { new: true }
-      );
+   
+      
+    const result = await UserKYC1.findOneAndUpdate(
+      { user: id },
+      { $set: { [flag]: status } }, // Use square brackets to create a dynamic field name
+      { new: true }
+    );
       console.log(result);
-      return [true, result];
+      return [true,result];
     } catch (error) {
-      return [false, error];
+      return[false,error];
     }
   };
 
