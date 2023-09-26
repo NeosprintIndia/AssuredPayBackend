@@ -10,7 +10,7 @@ import {
   verifyAadharNumberOTPInternal,
   saveAadharDetailsInternal,
   userreferencenumberInternal,
-} from "./userKYCHandler";
+} from "./userKYCHandlers";
 
 // Route handler function for verifying PAN
 export const verifyPAN = async (req: Request, res: Response): Promise<void> => {

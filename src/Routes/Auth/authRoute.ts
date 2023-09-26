@@ -31,7 +31,7 @@ import {
 } from "../../services/validators";
 
 //*********************Importing Middleware******************************************************
-import verifyAdminToken from "../../middlewares/adminTokens";
+import verifyAdminToken from "../../middlewares/adminToken";
 
 const authRouter: Router = Router();
 

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import VerifyToken from '../../middlewares/verifyTokenUsers';
+import VerifyToken from '../../middlewares/verifyTokenUser';
 
 const router: Router = Router();
 
@@ -12,7 +12,7 @@ import {
     saveGSTDetails,
     getsavedgstdetail,
     saveAadharDetails,
-    userreferencenumber } from '../../Controller/user/userKYCControllers';
+    userreferencenumber } from '../../Controller/user/userKYCController';
 
 
 router.post('/verifypan',[VerifyToken],verifyPAN)

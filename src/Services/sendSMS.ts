@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { findAlertsTemplate } from "./findTemplates";
-import {replaceVarsInSequence} from "./replaceVariableInTemplate"
+import {replaceVarsInSequence} from "./replaceVariableInTemplates"
 
 export const sendSMS = async (
     data:any

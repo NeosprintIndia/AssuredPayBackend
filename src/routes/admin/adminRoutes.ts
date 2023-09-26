@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import VerifyAdmin from '../../middlewares/adminTokens';
+import VerifyAdmin from '../../middlewares/adminToken';
 import { uploadMiddleware } from '../../services/uploads';
 
 
