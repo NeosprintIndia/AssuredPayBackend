@@ -1,7 +1,5 @@
 import UserKYC1 from '../../models/userKYCs'; // Import your UserKYC1 model
 import adminGlobalSetting from "../../models/globalAdminSettings";
-import { Error } from 'mongoose';
-import { AnyArn } from 'aws-sdk/clients/groundstation';
 var ObjectId = require('mongodb').ObjectID;
 
 
