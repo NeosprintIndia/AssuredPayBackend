@@ -1,7 +1,7 @@
 import * as AWS from 'aws-sdk';
-import { SESConfig } from '../services/awsInitialise';
-import {findAlertsTemplate} from "../services/findTemplate";
-import {replaceVarsInSequence} from "../services/replaceVariableInTemplate"
+import { SESConfig } from './awsInitialise';
+import {findAlertsTemplate} from "./findTemplates";
+import {replaceVarsInSequence} from "./replaceVariableInTemplate"
 // Import other necessary modules as needed
 
 const sendDynamicMail = async (data: any) => {

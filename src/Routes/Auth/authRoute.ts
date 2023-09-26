@@ -19,7 +19,7 @@ import {
   allowedPropertiesForLogin,
   allowedPropertiesForchangepassword,
   allowedPropertiesForforgotpassword,
-} from "../../services/allowedProperties";
+} from "../../services/allowedProperty";
 
 import {
   registrationValidator,

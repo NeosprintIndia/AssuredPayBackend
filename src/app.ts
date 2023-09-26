@@ -11,7 +11,7 @@ dotenv.config();
 
 import authRoutes from "./routes/auth/authRoute";
 import adminRoutes from "./routes/admin/adminRoute";
-import TemplateRoutes from "./routes/admin/templateRoutes";
+import TemplateRoutes from "./routes/admin/templateRoute";
 import userKYCRoutes from "./routes/user/userKYCRoute";
 import uploadRoutes from "./routes/upload/uploadRoute";
 
