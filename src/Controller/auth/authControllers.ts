@@ -12,7 +12,7 @@ import {
   validateMFA,
   handleForgotPasswordAdmin,
   resendEmailOtpInternalAdmin
-} from './authHandler'
+} from "./authHandler"
 
 import { sendDynamicMail } from "../../services/sendEmail";
 import { sendSMS } from "../../services/sendSMS";

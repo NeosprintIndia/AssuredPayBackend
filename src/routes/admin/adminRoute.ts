@@ -1,13 +1,12 @@
 import { Router } from 'express';
 import VerifyAdmin from '../../middlewares/adminTokens';
-import { uploadMiddleware } from '../../services/uploads';
+
 
 
 const router: Router = Router();
 
 import { 
     getAllKYCRecords,
-    couponCode,
     setAllLimits,
     getconfiguration,
     getuserbusinessdetail,
@@ -27,7 +26,7 @@ router.get("/businessrepresentativedetail",VerifyAdmin,getbusinessrepresentative
 router.post("/approvebusinessdetail",VerifyAdmin,approvebusinessdetail)
 router.post("/approveDocument",approveDocument)
 router.post("/rejectDocument",rejectDocument)
-router.post('/couponupload',[VerifyAdmin,uploadMiddleware],couponCode)
+//router.post('/couponupload',[VerifyAdmin,uploadMiddleware],couponCode)
 //router.post("/getbusinessdetail",getbusinessdetail)
 
 

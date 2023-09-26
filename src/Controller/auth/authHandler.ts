@@ -7,7 +7,6 @@ import * as jwt from "jsonwebtoken";
 import "dotenv/config";
 import { generateOTP } from "../../services/otpGenrators";
 import { generateReferralCode } from "../../services/referralCodes";
-import { sendMail } from "../../services/mailTemporarys";
 import * as crypto from "crypto";
 
 // ****************************Function to handle registration logic****************************
@@ -112,10 +111,7 @@ const createUser = async (
       refferal_code: Refer_code,
     });
 
-    await sendMail({
-      to: business_email,
-      OTP: otpGenerated,
-    });
+  
     // In future Frontend doesnt need otp require only id
     return [true, newUser];
   } catch (error) {
@@ -280,10 +276,7 @@ export const handleForgotPassword = async (
     await user.save();
 
     // Send an email with the temporary password
-    await sendMail({
-      to: user.business_email,
-      OTP: tempPassword,
-    });
+ 
 
     return null; // Password reset successful
   } catch (error) {
@@ -430,10 +423,7 @@ const createAdminUser = async (
       refferal_code: Refer_code,
     });
 
-    await sendMail({
-      to: business_email,
-      OTP: otpGenerated,
-    });
+  
     return [true, newUser];
   } catch (error) {
     console.error("Error in createAdminUser:", error);
@@ -470,11 +460,7 @@ export const authenticateAdmin = async (
       { new: true }
     );
 
-    await sendMail({
-      to: user.business_email,
-      otp: otpGenerated,
-    });
-
+ 
     return [true, { updatedUser }];
   } catch (error) {
     return [false, error.message];
@@ -536,11 +522,7 @@ export const handleForgotPasswordAdmin = async (
     await user.save();
 
     // Send an email with the temporary password
-    await sendMail({
-      to: user.business_email,
-      OTP: tempPassword,
-    });
-
+  
     return null; // Password reset successful
   } catch (error) {
     console.error(error);

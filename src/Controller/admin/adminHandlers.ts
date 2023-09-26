@@ -31,7 +31,8 @@ export const approveAdminAadharS1Internal = async (
   }
 };
 
-export const setLimitInternal = async (gstLimit: number,
+export const setLimitInternal = async (
+  gstLimit: number,
   aadharLimit: number,
   panLimit: number,
   cin: number,

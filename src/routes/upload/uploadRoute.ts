@@ -1,6 +1,11 @@
 import { Router } from 'express';
 import VerifyToken from '../../middlewares/verifyTokenUsers';
-import { uploadAadhars1,uploadAadhars2,uploadPan,uploadGst,uploaddoc} from '../../Controller/upload/uploadController';
+import { uploadAadhars1,
+    uploadAadhars2,
+    uploadPan,
+    uploadGst,
+    uploaddoc
+} from '../../Controller/upload/uploadController';
 import { uploadMiddleware } from '../../services/uploads';
 
 const router: Router = Router();

@@ -13,7 +13,7 @@ import {
   //getbusinessdetailInternal,
 
 } from "./adminHandlers";
-import CouponCode from "../../models/couponCodes";
+
 // Route handler function for retrieving all KYC records
 export const getAllKYCRecords = async (
   req: Request,
@@ -58,38 +58,38 @@ export const approveAdminAadharS1 = async (
   }
 };
 
-export const couponCode = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    // Parse the uploaded Excel file
-    const workbook = xlsx.read((req as any).file.buffer, { type: "buffer" });
-    const sheetName = workbook.SheetNames[0];
-    console.log(sheetName);
-    const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
-    // Create an array to store coupon objects
-    const coupons = [];
+// export const couponCode = async (
+//   req: Request,
+//   res: Response
+// ): Promise<void> => {
+//   try {
+//     // Parse the uploaded Excel file
+//     const workbook = xlsx.read((req as any).file.buffer, { type: "buffer" });
+//     const sheetName = workbook.SheetNames[0];
+//     console.log(sheetName);
+//     const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+//     // Create an array to store coupon objects
+//     const coupons = [];
 
-    // Iterate through the sheet data and format it as needed
-    sheetData.forEach((row: any) => {
-      const coupon = {
-        coupon_code: row.coupon_code ? row.coupon_code.trim() : "", // Check if the key exists before trimming
-        discountPercentage: row.discountPercentage, // Assuming 'discountPercentage' is a column in the Excel sheet
-      };
+//     // Iterate through the sheet data and format it as needed
+//     sheetData.forEach((row: any) => {
+//       const coupon = {
+//         coupon_code: row.coupon_code ? row.coupon_code.trim() : "", // Check if the key exists before trimming
+//         discountPercentage: row.discountPercentage, // Assuming 'discountPercentage' is a column in the Excel sheet
+//       };
 
-      coupons.push(coupon);
-    });
-    console.log(coupons);
-    // Insert coupon codes into the database
-    await CouponCode.insertMany(coupons);
+//       coupons.push(coupon);
+//     });
+//     console.log(coupons);
+//     // Insert coupon codes into the database
+//     await CouponCode.insertMany(coupons);
 
-    res.status(200).send("File uploaded successfully");
-  } catch (error) {
-    console.error("Error in upload:", error);
-    res.status(500).send("Internal server error");
-  }
-};
+//     res.status(200).send("File uploaded successfully");
+//   } catch (error) {
+//     console.error("Error in upload:", error);
+//     res.status(500).send("Internal server error");
+//   }
+// };
 
 export const setAllLimits = async (
   req: Request,
