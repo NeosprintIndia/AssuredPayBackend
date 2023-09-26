@@ -1,4 +1,4 @@
-import  AlertsTemplateDB from '../models/templateSES'
+import  AlertsTemplateDB from '../models/NotificationTemplate'
 export const findAlertsTemplate = async (slug: string): Promise<any> => {
     console.log("Finding Template", slug);
     try {
