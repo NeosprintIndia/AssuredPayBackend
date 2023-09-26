@@ -2,7 +2,6 @@
 /gitignore
 /build/
 /dist/
-/out/
 .env
 
 # Ignore node_modules directory
