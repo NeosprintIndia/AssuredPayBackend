@@ -14,7 +14,7 @@ import {
   resendEmailOtpInternalAdmin
 } from './authHandler'
 
-import { sendDynamicMail } from "../../services/sendEmails";
+import { sendDynamicMail } from "../../services/sendEmail";
 import { sendSMS } from "../../services/sendSMS";
 
 

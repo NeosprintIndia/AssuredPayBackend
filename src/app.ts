@@ -10,10 +10,10 @@ dotenv.config();
 //******************* Import your routes*******************
 
 import authRoutes from "./routes/auth/authRoute";
-import adminRoutes from "./routes/admin/adminRoutes";
+import adminRoutes from "./routes/admin/adminRoute";
 import TemplateRoutes from "./routes/admin/templateRoutes";
 import userKYCRoutes from "./routes/user/userKYCRoute";
-import uploadRoutes from "./routes/upload/uploadRoutes";
+import uploadRoutes from "./routes/upload/uploadRoute";
 
 //****************** Create an instance of the Express application ******************************
 const app: Application = express();

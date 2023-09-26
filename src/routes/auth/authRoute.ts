@@ -19,7 +19,7 @@ import {
   allowedPropertiesForLogin,
   allowedPropertiesForchangepassword,
   allowedPropertiesForforgotpassword,
-} from "../../services/allowedProperty";
+} from "../../services/allowedProperties";
 
 import {
   registrationValidator,
@@ -31,7 +31,7 @@ import {
 } from "../../services/validators";
 
 //*********************Importing Middleware******************************************************
-import verifyAdminToken from "../../middlewares/adminToken";
+import verifyAdminToken from "../../middlewares/adminTokens";
 
 const authRouter: Router = Router();
 

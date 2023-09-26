@@ -13,7 +13,7 @@ import {
   //getbusinessdetailInternal,
 
 } from "./adminHandlers";
-import CouponCode from "../../models/couponCode";
+import CouponCode from "../../models/couponCodes";
 // Route handler function for retrieving all KYC records
 export const getAllKYCRecords = async (
   req: Request,
