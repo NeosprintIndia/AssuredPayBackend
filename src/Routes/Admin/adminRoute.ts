@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import VerifyAdmin from '../../Middlewares/adminTokens';
-import { uploadMiddleware } from '../../Services/uploads';
+import VerifyAdmin from '../../middlewares/adminTokens';
+import { uploadMiddleware } from '../../services/uploads';
 
 
 const router: Router = Router();
@@ -11,15 +11,24 @@ import {
     setAllLimits,
     getconfiguration,
     getuserbusinessdetail,
-    approvebusinessdetail
-} from '../../Controller/Admin/adminControllers';
+    approvebusinessdetail,
+    getbusinessrepresentativedetail,
+    approveDocument,
+    rejectDocument
+    //getbusinessdetail
+} from '../../Controller/admin/adminControllers';
 
-router.get('/getallkyc',VerifyAdmin,getAllKYCRecords);
-router.post('/couponupload',[VerifyAdmin,uploadMiddleware],couponCode)
+
 router.post('/setLimits',VerifyAdmin,setAllLimits)
 router.get('/getconfiguration',VerifyAdmin,getconfiguration)
-router.post("/userbusinessdetail",VerifyAdmin,getuserbusinessdetail)
+router.get('/getallkyc',VerifyAdmin,getAllKYCRecords);
+router.get("/userbusinessdetail",VerifyAdmin,getuserbusinessdetail)
+router.get("/businessrepresentativedetail",VerifyAdmin,getbusinessrepresentativedetail)
 router.post("/approvebusinessdetail",VerifyAdmin,approvebusinessdetail)
+router.post("/approveDocument",approveDocument)
+router.post("/rejectDocument",rejectDocument)
+router.post('/couponupload',[VerifyAdmin,uploadMiddleware],couponCode)
+//router.post("/getbusinessdetail",getbusinessdetail)
 
 
 export default router;

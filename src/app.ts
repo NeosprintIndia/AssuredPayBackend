@@ -9,10 +9,11 @@ dotenv.config();
 
 //******************* Import your routes*******************
 
-import authRoutes from "./Routes/Auth/authRoute";
-import adminRoutes from "./Routes/Admin/adminRoute";
-import userKYCRoutes from "./Routes/User/userKYCRoute";
-import uploadRoutes from "./Routes/Upload/uploadRoute";
+import authRoutes from "./routes/auth/authRoute";
+import adminRoutes from "./routes/admin/adminRoute";
+import TemplateRoutes from "./routes/admin/templateRoutes";
+import userKYCRoutes from "./routes/user/userKYCRoute";
+import uploadRoutes from "./routes/upload/uploadRoute";
 
 //****************** Create an instance of the Express application ******************************
 const app: Application = express();
@@ -31,6 +32,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
+app.use("/template", TemplateRoutes);
 app.use("/userkyc", userKYCRoutes);
 app.use("/uploadRoutes", uploadRoutes); 
 

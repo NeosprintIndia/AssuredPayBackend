@@ -14,7 +14,11 @@ interface IRegisterUser extends Document {
   otp: string;
   MFA: string;
   refferedBy: string;
-  comparePassword(candidatePassword: string): boolean;
+  PAN_Attempt: number;
+  GST_Attempt: number;
+  Aadhaar_Attempt: number;
+  cin: number;
+  
 }
 
 // Define the schema
@@ -59,6 +63,22 @@ const RegisterUserSchema: Schema<IRegisterUser> = new Schema({
   },
   MFA: {
     type: String,
+  },
+  PAN_Attempt: {
+    type: Number,
+    default: 0,
+  },
+  GST_Attempt: {
+    type: Number,
+    default: 0,
+  },
+  Aadhaar_Attempt: {
+    type: Number,
+    default: 0,
+  },
+  cin: {
+    type: Number,
+    default: 0,
   },
   refferedBy: { type: String, default: "" }
 });

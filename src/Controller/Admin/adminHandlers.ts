@@ -1,13 +1,16 @@
-import UserKYC1 from '../../Models/userKYCs'; // Import your UserKYC1 model
-import adminGlobalSetting from "../../Models/globalAdminSettings";
+import UserKYC1 from '../../models/userKYCs'; // Import your UserKYC1 model
+import adminGlobalSetting from "../../models/globalAdminSettings";
+import { Error } from 'mongoose';
+import { AnyArn } from 'aws-sdk/clients/groundstation';
 var ObjectId = require('mongodb').ObjectID;
 
 
 // Function to retrieve all KYC records
 export const getAllKYCRecordsInternal = async (): Promise<any[]> => {
   try {
-    const result = await UserKYC1.find().select({Legal_Name_of_Business:1, due:1 ,createdAt:1}).populate('user', 'refferedBy');
-    console.log(result);
+    const result = await UserKYC1.find()
+    .select({Legal_Name_of_Business:1,GSTIN_of_the_entity:1, due:1 ,createdAt:1})
+    .populate('user', 'refferedBy');
     return [true,result];
   } catch (error) { 
     return [false,error];
@@ -23,7 +26,7 @@ export const approveAdminAadharS1Internal = async (
         { user: id },
         { $set: { AdminAadhaarS1Verified: adminAadhaarS1Verified } },{ new: true }
       );
-      console.log(result);
+     
       return [true,result];
     } catch (error) {
       return[false,error];
@@ -73,7 +76,7 @@ export const approveAdminAadharS1Internal = async (
       if (enrollmentFees !== undefined) {
         (limitUpdate as any).enrollmentFees = enrollmentFees;
       }
-      console.log(limitUpdate)
+    
       const updated=await adminGlobalSetting.findOneAndUpdate(
         { id: "globalSetting" },
         { $set: limitUpdate
@@ -88,7 +91,7 @@ export const approveAdminAadharS1Internal = async (
   export const getAllConfigurationInternal = async (): Promise<any[]> => {
     try {
       const result = await adminGlobalSetting.find();
-      console.log(result);
+     
       return [true ,result];
     } catch (error) {
       return error;
@@ -97,8 +100,18 @@ export const approveAdminAadharS1Internal = async (
 
   export const getuserbusinessdetailInternal = async (id): Promise<any[]> => {
     try {
-      const result = await UserKYC1.find({user:id})
-      console.log("User Result",result);
+      const result = await UserKYC1.find({user:id}) .select({Constituion_of_Business:1, Taxpayer_Type:1 ,GSTIN_of_the_entity:1,State:1, Business_PAN:1 ,Date_of_Registration:1,Nature_of_Place_of_Business:1, Trade_Name:1 ,Place_of_Business:1,Nature_of_Business_Activity:1, GSTFILE:1 })
+  
+      return [true,result];
+    } catch (error) { 
+      return [false,error];
+    }
+  };
+
+  export const getbusinessrepresentativedetailInternal = async (id): Promise<any[]> => {
+    try {
+      const result = await UserKYC1.find({user:id}) .select({aadharNumber:1, aadharCO:1 ,aadharDOB:1,aadharGender:1, nameInAadhaar:1 ,aadharPhotoLink:1,aadharCountry:1, distInAadhar:1 ,aadharHouse:1,aadharPincode:1, aadharPO:1,aadharState:1,aadharStreet:1,aadharFileUrl:1,aadharBackUrl:1,PANFile:1 })
+  
       return [true,result];
     } catch (error) { 
       return [false,error];
@@ -107,36 +120,79 @@ export const approveAdminAadharS1Internal = async (
 
   export const approvebusinessdetailInternal = async (
     id: string,
-    status: string
+    key: string
   ): Promise<any> => {
     try {
-      console.log("In try",id,status)
+     
       const result = await UserKYC1.findOneAndUpdate(
         { user: id },
-        { $set: { due: status } },
+        { $set: { due: key } },
         { new: true }
       );
-      console.log(result);
+     
       return [true,  result ];
     } catch (error) {
       return  error;
     }
   };
 
-  // export const approveOrRejectDocumentInternal = async (
-  //   id: string,
-  //   docStatus:string,
-  //   docName:string
-  //   adminAadhaarS1Verified: boolean
-  // ): Promise<any | null> => {
+
+
+
+
+
+
+  // export const getbusinessdetailInternal = async (id): Promise<any[]> => {
   //   try {
-  //     const result = await UserKYC1.findOneAndUpdate(
-  //       { user: id },
-  //       { $set: { AdminAadhaarS1Verified: adminAadhaarS1Verified } },{ new: true }
-  //     );
-  //     console.log(result);
+  //     const result = await UserKYC1.findById({user:id})
+  //     .select({Legal_Name_of_Business:1, due:1 ,createdAt:1})
+  //     .populate('user', 'refferedBy');
   //     return [true,result];
-  //   } catch (error) {
-  //     return[false,error];
+  //   } catch (error) { 
+  //     return [false,error];
   //   }
   // };
+  
+
+
+  export const approveDocumentInternal = async (
+    _flag: any,
+    status: string,
+    id: string,
+  
+  ): Promise<any | null> => {
+    try {
+      const updateData = { [_flag]: status }; // Use dynamic property assignment
+      const result = await UserKYC1.findOneAndUpdate(
+        { user: id },
+        updateData,
+        { new: true }
+      );
+      console.log(result);
+      return [true, result];
+    } catch (error) {
+      return [false, error];
+    }
+  };
+
+  export const rejectDocumentInternal = async (
+    id: string,
+    status:string,  
+    filename: string,
+    remark:string,
+    clarification:string
+  ): Promise<any | null> => {
+    try {
+      const result = await UserKYC1.findOneAndUpdate(
+        { user: id },
+        { $set: { filename: status, clarification:remark } },{ new: true }
+      );
+      console.log(result);
+      return [true,result];
+    } catch (error) {
+      return[false,error];
+    }
+  };
+//--------------------------------------------------------------------------------------
+
+  

@@ -1,12 +1,13 @@
-import Registration from "../../Models/userRegisterations";
-import UserKYC from "../../Models/userKYCs";
-import Referral from "../../Models/refferalCodes";
+import Registration from "../../models/userRegisterations";
+import UserKYC from "../../models/userKYCs";
+import Referral from "../../models/refferalCodes";
+import globalSetting from "../../models/globalAdminSettings";
 import * as CryptoJS from "crypto-js";
 import * as jwt from "jsonwebtoken";
 import "dotenv/config";
-import { generateOTP } from "../../Services/otpGenrators";
-import { generateReferralCode } from "../../Services/referralCodes";
-import { sendMail } from "../../Services/mailTemporarys";
+import { generateOTP } from "../../services/otpGenrators";
+import { generateReferralCode } from "../../services/referralCodes";
+import { sendMail } from "../../services/mailTemporarys";
 import * as crypto from "crypto";
 
 // ****************************Function to handle registration logic****************************
@@ -24,7 +25,6 @@ export const performRegistration = async (
   }
 
   const isExisting = await findUserByEmailUsername(business_email, username);
-  console.log(isExisting);
 
   if (isExisting) {
     return [false, "Already existing business or Username"];
@@ -90,6 +90,8 @@ const createUser = async (
         referredBy = (referUserProfile as any).Legal_Name_of_Business;
       }
     }
+    const { gstLimit, aadharLimit, panLimit, cin } =
+      await globalSetting.findOne({ id: "globalSetting" });
 
     const newUser = await Registration.create({
       business_email,
@@ -99,21 +101,17 @@ const createUser = async (
       oldPasswords: [hashedPassword],
       otp: otpGenerated,
       refferedBy: referredBy,
+      PAN_Attempt: panLimit,
+      GST_Attempt: gstLimit,
+      Aadhaar_Attempt: aadharLimit,
+      cin: cin,
     });
-    console.log(newUser);
 
     const Generate_Referral = await Referral.create({
       user: newUser._id,
       refferal_code: Refer_code,
     });
-    console.log(Generate_Referral);
-
-    await sendMail({
-      to: business_email,
-      OTP: otpGenerated,
-    });
     // In future Frontend doesnt need otp require only id
-    console.log(newUser);
     return [true, newUser];
   } catch (error) {
     console.error("Error in createUser:", error);
@@ -151,7 +149,7 @@ export const validateUserSignUp = async (
     { expiresIn: "3D" }
   );
 
-  return [true, token ];
+  return [true, token];
 };
 
 export const authenticateUser = async (
@@ -277,10 +275,6 @@ export const handleForgotPassword = async (
     await user.save();
 
     // Send an email with the temporary password
-    await sendMail({
-      to: user.business_email,
-      OTP: tempPassword,
-    });
 
     return null; // Password reset successful
   } catch (error) {
@@ -295,7 +289,6 @@ export const searchExisting = async (
   business_mobile: string
 ): Promise<boolean | any> => {
   try {
-    console.log(business_email, username, business_mobile);
     const searchExist = {};
     if (business_email !== undefined) {
       (searchExist as any).business_email = business_email;
@@ -350,6 +343,8 @@ export const resendEmailOtpInternal = async (
   }
 };
 //****************************Admin Access Starts*****************************************
+
+
 export const registerAdminUser = async (
   business_email: string,
   username: string,
@@ -361,7 +356,7 @@ export const registerAdminUser = async (
     const isExisting = await findUserByEmailUsername(business_email, username);
 
     if (isExisting) {
-      return [false, "Already existing business or Username"];
+      return [false, "Already existing Admin "];
     }
 
     const newUser = await createAdminUser(
@@ -405,7 +400,7 @@ const createAdminUser = async (
         { $inc: { count: 1 } },
         { new: true }
       );
-      console.log(updatedReferral);
+
       if (!updatedReferral) {
         return [false, null];
       }
@@ -425,12 +420,7 @@ const createAdminUser = async (
       user: newUser._id,
       refferal_code: Refer_code,
     });
-    //console.log(Generate_Referral);
 
-    await sendMail({
-      to: business_email,
-      OTP: otpGenerated,
-    });
     return [true, newUser];
   } catch (error) {
     console.error("Error in createAdminUser:", error);

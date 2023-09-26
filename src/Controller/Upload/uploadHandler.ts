@@ -1,5 +1,5 @@
-import { awsinitialise } from '../../Services/awsInitialise'; 
-import UserKYC1 from '../../Models/userKYCs';
+import { awsinitialise } from '../../services/awsInitialise'; 
+import UserKYC1 from '../../models/userKYCs';
 // Function to handle file upload and AWS S3 upload
 
 export const handleS1FileUpload = async (userId: string, originalName: string, buffer: Buffer) => {
@@ -88,10 +88,11 @@ export const handleS1FileUpload = async (userId: string, originalName: string, b
           console.error(err);
           reject(err);
         } else {
-          //const updatedUserKYC1 = 
+          const updateData = { [filename]: data.Location }; 
           await UserKYC1.findOneAndUpdate(
             { user: userId },
-            { $set: { filename: data.Location } },{new:true}
+            updateData,
+            {new:true}
           );
           resolve();
         }

@@ -53,12 +53,29 @@ const changepasswordValidator = [
     .withMessage('Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one digit, and one special character.'),
 ];
 
+
+
 const forgotpasswordValidator = [
   check('username')
     .isLength({ min: 4 })
     .withMessage('Username must be at least 4 characters long.'),
 ];
 
+
+const addSMSTemplateValidation = [
+  check('Title').notEmpty().withMessage('Title is required'),
+  check('Subtitle').notEmpty().withMessage('Subtitle is required'),
+  check('SLUG').notEmpty().withMessage('SLUG is required'),
+  check('For').notEmpty().withMessage('For is required'),
+  check('Template_Name').notEmpty().withMessage('Template_Name is required'),
+  check('Message').optional().notEmpty().withMessage('Message is required'),
+  check('Lenth').notEmpty().withMessage('Lenth is required'),
+  check('Status').notEmpty().withMessage('Status is required'),
+  check('Template_ID').notEmpty().withMessage('Template_ID is required'),
+  check('Subject').notEmpty().withMessage('Subject is required'),
+  check('Email').optional().notEmpty().withMessage('Email is required'),
+  check('Reference_message').notEmpty().withMessage('Reference_message is required'),
+];
 // Middleware to handle validation errors
 const handleValidationErrors = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
@@ -90,5 +107,6 @@ export {
   changepasswordValidator,
   forgotpasswordValidator,
   handleValidationErrors,
-  checkForUnexpectedProperties 
+  checkForUnexpectedProperties,
+  addSMSTemplateValidation 
 };

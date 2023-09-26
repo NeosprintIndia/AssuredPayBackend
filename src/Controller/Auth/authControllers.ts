@@ -14,6 +14,9 @@ import {
   resendEmailOtpInternalAdmin
 } from './authHandler'
 
+import { sendDynamicMail } from "../../services/sendEmail";
+import { sendSMS } from "../../services/sendSMS";
+
 
 // *********************Controller function to handle the registration request***********************
 export const register = async (req: Request, res: Response): Promise<void> => {
@@ -25,10 +28,23 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     password,
     refferal_code
   );
+  const reqData = {
+    Email_slug:"registration",
+    email: business_email,
+    VariablesEmail:["AssuredPay","Admin"],
 
+    receiverNo:business_mobile,
+    Message_slug:"registration",
+    VariablesMessage:["AssuredPay","Team"],
+  };
 
   if (success) {
-    res.status(200).send({ result, Active: true });
+    await sendDynamicMail(reqData);
+    console.log("Email sent successfully");
+    const sms=await sendSMS(reqData)
+    console.log("Message sent successfully",sms);
+   
+    res.status(200).send({result,Active: true });
   } else {
     res.status(400).send({ message: result, Active: false });
   }
@@ -166,7 +182,7 @@ export const adminOTPVerify = async (req: Request, res: Response): Promise<void>
   } else {
     res.status(500).send({ message: result, Active: false });
   }
-};
+}; 
 
 export const forgotPassAdmin = async (req: Request, res: Response): Promise<void> => {
   const { business_email } = req.body;

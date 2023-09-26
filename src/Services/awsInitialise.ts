@@ -18,4 +18,13 @@ export async function awsinitialise(Key: string, Body: Buffer) {
   return { params, s3 };
 }
 
+export const SESConfig={
+  apiVersion: "2010-12-01",
+  credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY || '',
+      secretAccessKey: process.env.AWS_SECRET_KEY || ''
+  },
+  region: "ap-south-1"
+};
+
 
