@@ -12,7 +12,7 @@ import {
   rejectDocumentInternal
   //getbusinessdetailInternal,
 
-} from "./adminHandlers";
+} from "../admin/adminHandlers";
 import CouponCode from "../../models/couponCodes";
 // Route handler function for retrieving all KYC records
 export const getAllKYCRecords = async (
