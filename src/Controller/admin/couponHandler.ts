@@ -18,7 +18,7 @@ export const findAndInsert = async (couponDetails): Promise<any> => {
 
 export const find = async (page): Promise<any> => {
   try {
-    const limitRange = 1;
+    const limitRange = 10;
     const skipLimit  = page*limitRange - limitRange; 
     const result = await coupon.find().limit(limitRange).skip(skipLimit);
     console.log("Coupons fetched successfully");
