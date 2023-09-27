@@ -16,6 +16,11 @@ import {
     rejectDocument
     //getbusinessdetail
 } from '../../Controller/admin/adminControllers';
+import { addCoupon,
+    getCoupons,
+    updateCoupon,
+    deleteCoupon,
+} from '../../Controller/admin/couponController';
 
 
 router.post('/setLimits',VerifyAdmin,setAllLimits)
@@ -29,5 +34,10 @@ router.post("/rejectDocument",rejectDocument)
 //router.post('/couponupload',[VerifyAdmin,uploadMiddleware],couponCode)
 //router.post("/getbusinessdetail",getbusinessdetail)
 
+// couponMangementRoutes
+router.post("/addCoupon",addCoupon)
+router.get("/getCoupons/:page",getCoupons)
+router.put("/updateCoupon",updateCoupon)
+router.delete("/deleteCoupon",deleteCoupon)
 
 export default router;
