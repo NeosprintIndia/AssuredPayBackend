@@ -127,8 +127,8 @@ export async function searchExistingController(req: Request, res: Response) {
 }
 //********************* Controller function to handle Resend Mail OTP*********************
 export async function resendEmailOtp(req: Request, res: Response) {
-  const { email } = req.body;
-  const [success, result] = await resendEmailOtpInternal(email)
+  const { business_email } = req.body;
+  const [success, result] = await resendEmailOtpInternal(business_email)
   if (success) {
     res.status(200).send({ result, Active: true });
   } else {
