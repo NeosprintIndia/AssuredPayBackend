@@ -1,8 +1,5 @@
 import { Request, Response } from 'express';
-import { 
- 
-  handledocsInternal
-} from './uploadHandler';
+import {  handledocsInternal} from './uploadHandler';
 
  export const uploaddoc = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -10,6 +7,8 @@ import {
       const originalName = (req as any).file.originalname as string;
       const buffer =(req as any).file.buffer as Buffer;
       const {filename}=req.query
+
+      console.log("FILENAME")
     
   
       await handledocsInternal(userId, originalName, buffer,filename);

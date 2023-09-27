@@ -4,7 +4,7 @@ import UserKYC1 from '../../models/userKYCs';
 
   export const handledocsInternal = async (userId: string, originalName: string, buffer:Buffer,filename:any) => {
     const { params, s3 } = await awsinitialise(originalName, buffer);
-    console.log("filename",filename)
+    
   
     return new Promise<void>((resolve, reject) => {
       s3.upload(params, async (err, data) => {

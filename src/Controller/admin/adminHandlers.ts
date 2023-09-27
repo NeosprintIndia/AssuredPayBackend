@@ -76,7 +76,9 @@ export const getAllConfigurationInternal = async (): Promise<any[]> => {
   try {
     const result = await adminGlobalSetting.find();
 
-    return [true, result];
+   // const resultObject = result.flat()
+    console.log("GET ALL KYC ",result)
+    return [true, result[0]];
   } catch (error) {
     return error;
   }

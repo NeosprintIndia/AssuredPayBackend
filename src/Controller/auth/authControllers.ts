@@ -105,6 +105,19 @@ export const forgotPass = async (req: Request, res: Response): Promise<void> => 
     res.status(200).json({ message: 'Password has been sent to an email', Active: true });
   }
 };
+
+export async function forgotPassotp(req: Request, res: Response) {
+  const { username } = req.body;
+  const [success, result] = await forgotPassotpInternal(username)
+  if (success) {
+    res.status(200).send({ result, Active: true });
+  } else {
+    res.status(500).send({ result, Active: false });
+  }
+
+
+}
+
 //********************* Controller function to handle Existing Search*********************
 export async function searchExistingController(req: Request, res: Response) {
 
@@ -139,17 +152,6 @@ export async function resendEmailOtp(req: Request, res: Response) {
 }
 
 
-export async function forgotPassotp(req: Request, res: Response) {
-  const { username } = req.body;
-  const [success, result] = await forgotPassotpInternal(username)
-  if (success) {
-    res.status(200).send({ result, Active: true });
-  } else {
-    res.status(500).send({ result, Active: false });
-  }
-
-
-}
 
 //************************************ADMIN*********************************** */
 

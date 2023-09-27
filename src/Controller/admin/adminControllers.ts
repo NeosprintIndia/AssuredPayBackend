@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import xlsx from "xlsx";
 import {
   getAllKYCRecordsInternal,
   setLimitInternal,
@@ -60,7 +59,7 @@ export const getconfiguration = async (
     // Call the internal function to retrieve all KYC records
     const [success, result] = await getAllConfigurationInternal();
     if (success) {
-      res.send({ result, Active: true });
+      res.status(200).send({result, Active: true} );
     } else {
       res.status(400).send({
         message: result,
@@ -78,6 +77,7 @@ export const getAllKYCRecords = async (
   res: Response
 ): Promise<void> => {
   try {
+    
     // Call the internal function to retrieve all KYC records
     const [success, result] = await getAllKYCRecordsInternal();
     if (success) {
@@ -133,10 +133,10 @@ export const getbusinessrepresentativedetail = async (
 
 export const approveDocument = async (req: Request, res: Response): Promise<void> => {
   try {
-    const {flag,status,id } = req.body;
+    const {_flag,status,id } = req.body;
 
     // Call the internal function to approve Admin Aadhar S1 verification
-    const [success, result] = await approveDocumentInternal(flag,status,id);
+    const [success, result] = await approveDocumentInternal(_flag,status,id);
 
     if (success) {
       res.status(200).send({result,Active:true});

@@ -9,7 +9,7 @@ interface IemailTemplates extends Document {
     For: string;
     Template_Name: string;
     Message: string;
-    Lenth: number;
+    Length: number;
     Status: string;
     Template_ID: string;
     VAR_1: string;
@@ -53,7 +53,7 @@ const emailTemplatesSchema: Schema<IemailTemplates> =new Schema({
       type: String,
       default:""
     },
-    Lenth: {
+    Length: {
       type: Number,
       default:0
     },
