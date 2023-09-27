@@ -1,5 +1,3 @@
-//import { set } from 'mongoose';
-import globalSetting from "../../models/globalAdminSettings";
 import UserKYC1 from "../../models/userKYCs"; // Import your UserKYC1 model
 import Registration from "../../models/userRegisterations";
 import {
@@ -142,7 +140,7 @@ export const userreferencenumberInternal = async (
   }
 };
 
-// Function to verify Aadhar number OTP
+// Function to verify Aadhar number OTP and Save details
 export const verifyAadharNumberOTPInternal = async (
   userId: string,
   otp: string

@@ -59,6 +59,8 @@ const forgotpasswordValidator = [
   check('username')
     .isLength({ min: 4 })
     .withMessage('Username must be at least 4 characters long.'),
+    check('otp')
+    .isNumeric()
 ];
 
 

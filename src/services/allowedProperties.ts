@@ -8,7 +8,7 @@ export const allowedPropertiesForLogin=['username','password']
 
 export const allowedPropertiesForchangepassword=["username","oldPassword","newPassword"]
 
-export const allowedPropertiesForforgotpassword=["username"]
+export const allowedPropertiesForforgotpassword=["username","otp"]
 
 
 

@@ -14,22 +14,6 @@ export const getAllKYCRecordsInternal = async (): Promise<any[]> => {
     return [false, error];
   }
 };
-// Function to approve Admin Aadhar S1 verification
-export const approveAdminAadharS1Internal = async (
-  id: string,
-  adminAadhaarS1Verified: boolean
-): Promise<any | null> => {
-  try {
-    const result = await UserKYC1.findOneAndUpdate(
-      { user: id },
-      { $set: { AdminAadhaarS1Verified: adminAadhaarS1Verified } }, { new: true }
-    );
-
-    return [true, result];
-  } catch (error) {
-    return [false, error];
-  }
-};
 
 export const setLimitInternal = async (
   gstLimit: number,
@@ -135,25 +119,6 @@ export const approvebusinessdetailInternal = async (
     return error;
   }
 };
-
-
-
-
-
-
-
-// export const getbusinessdetailInternal = async (id): Promise<any[]> => {
-//   try {
-//     const result = await UserKYC1.findById({user:id})
-//     .select({Legal_Name_of_Business:1, due:1 ,createdAt:1})
-//     .populate('user', 'refferedBy');
-//     return [true,result];
-//   } catch (error) { 
-//     return [false,error];
-//   }
-// };
-
-
 
 export const approveDocumentInternal = async (
   _flag: any,

@@ -9,7 +9,7 @@ import {
   getbusinessrepresentativedetailInternal,
   approveDocumentInternal,
   rejectDocumentInternal
-  //getbusinessdetailInternal,
+  
 
 } from "./adminHandlers";
 
