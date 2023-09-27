@@ -209,8 +209,8 @@ export const forgotPassAdmin = async (req: Request, res: Response): Promise<void
 };
 
 export async function resendverifycode(req: Request, res: Response) {
-  const { email } = req.body;
-  const [success, result] = await resendverifycodeInternalAdmin(email)
+  const { business_email } = req.body;
+  const [success, result] = await resendverifycodeInternalAdmin(business_email)
   if (success) {
     res.status(200).send({ result, Active: true });
   } else {
