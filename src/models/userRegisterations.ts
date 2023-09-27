@@ -18,6 +18,7 @@ interface IRegisterUser extends Document {
   GST_Attempt: number;
   Aadhaar_Attempt: number;
   cin: number;
+  forgotpasswordotp:string;
   
 }
 
@@ -61,6 +62,7 @@ const RegisterUserSchema: Schema<IRegisterUser> = new Schema({
   otp: {
     type: String,
   },
+  forgotpasswordotp:{type: String},
   MFA: {
     type: String,
   },

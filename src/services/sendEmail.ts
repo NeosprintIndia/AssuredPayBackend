@@ -40,8 +40,8 @@ const sendDynamicMail = async (data: any) => {
                     Data: subject // Use the updated subject
                 }
             },
-            Source: 'sumit.tomar@assuredpay.in',
-            ReplyToAddresses: ['sumit.tomar@assuredpay.in']
+            Source: 'developer@neosprint.in',
+            ReplyToAddresses: ['developer@neosprint.in']
         };
 
         // Create the promise and SES service object

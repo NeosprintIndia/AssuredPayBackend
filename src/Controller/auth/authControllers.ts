@@ -11,7 +11,8 @@ import {
   authenticateAdmin,
   validateMFA,
   handleForgotPasswordAdmin,
-  resendEmailOtpInternalAdmin
+  resendEmailOtpInternalAdmin,
+  forgotPassotpInternal
 } from "./authHandler"
 
 import { sendDynamicMail } from "../../services/sendEmail";
@@ -94,10 +95,9 @@ export const changePass = async (req: Request, res: Response): Promise<void> => 
 
 //********************* Controller function to handle forgot password for admin/user request*********************
 export const forgotPass = async (req: Request, res: Response): Promise<void> => {
-  const { username } = req.body;
-  console.log(username)
+  const { username,otp } = req.body;
 
-  const errorMessage = await handleForgotPassword(username);
+  const errorMessage = await handleForgotPassword(username,otp);
 
   if (errorMessage) {
     res.status(errorMessage === 'Internal server error' ? 500 : 404).json({ message: errorMessage, Active: false });
@@ -129,6 +129,19 @@ export async function searchExistingController(req: Request, res: Response) {
 export async function resendEmailOtp(req: Request, res: Response) {
   const { email } = req.body;
   const [success, result] = await resendEmailOtpInternal(email)
+  if (success) {
+    res.status(200).send({ result, Active: true });
+  } else {
+    res.status(500).send({ result, Active: false });
+  }
+
+
+}
+
+
+export async function forgotPassotp(req: Request, res: Response) {
+  const { username } = req.body;
+  const [success, result] = await forgotPassotpInternal(username)
   if (success) {
     res.status(200).send({ result, Active: true });
   } else {
@@ -185,8 +198,8 @@ export const adminOTPVerify = async (req: Request, res: Response): Promise<void>
 }; 
 
 export const forgotPassAdmin = async (req: Request, res: Response): Promise<void> => {
-  const { business_email } = req.body;
-  const errorMessage = await handleForgotPasswordAdmin(business_email);
+  const { username,otp } = req.body;
+  const errorMessage = await handleForgotPasswordAdmin(username,otp);
 
   if (errorMessage) {
     res.status(errorMessage === 'Internal server error' ? 500 : 404).json({ message: errorMessage, Active: false });

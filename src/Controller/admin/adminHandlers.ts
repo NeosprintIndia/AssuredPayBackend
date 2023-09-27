@@ -176,16 +176,19 @@ export const approveDocumentInternal = async (
 };
 
 export const rejectDocumentInternal = async (
-  id: string,
-  status: string,
+ 
   filename: string,
-  remark: string,
+  status: string,
+  id: string,
+  docNameKey: string,
   clarification: string
 ): Promise<any | null> => {
   try {
+
+    const updateData = { [filename]: status ,[docNameKey]:clarification};
     const result = await UserKYC1.findOneAndUpdate(
       { user: id },
-      { $set: { filename: status, clarification: remark } }, { new: true }
+      updateData, { new: true }
     );
     console.log(result);
     return [true, result];

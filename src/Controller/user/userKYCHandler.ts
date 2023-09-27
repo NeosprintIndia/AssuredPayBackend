@@ -130,9 +130,10 @@ export const userreferencenumberInternal = async (
   generatedUUID: string
 ): Promise<any | string> => {
   try {
+    const currentDate = new Date();
     const updatedUser = await UserKYC1.findOneAndUpdate(
       { user: id },
-      { $set: { userRequestReference: generatedUUID } },
+      { $set: { userRequestReference: generatedUUID ,kycrequested:currentDate} },
       { new: true }
     );
     return [true, updatedUser];
@@ -150,68 +151,38 @@ export const verifyAadharNumberOTPInternal = async (
     const result1 = await UserKYC1.findOne({ user: userId });
     const refId = result1.aadhar_ref_id;
     const result = await Aadhaar_KYC_S2({ otp, refId });
+    const data = (result as any).body.data;
+    const results = {
+      aadharNumber: "",
+      aadharCO: data.care_of,
+      aadharGender: data.gender,
+      nameInAadhaar: data.name,
+      aadharDOB: data.dob,
+      aadharCountry: data.split_address.country,
+      distInAadhar: data.split_address.dist,
+      aadharHouse: data.split_address.house,
+      aadharPincode: data.split_address.pincode,
+      aadharPO: data.split_address.po,
+      aadharState: data.split_address.state,
+      aadharStreet: data.split_address.street,
+      aadharSubDistrict: data.split_address.subdist,
+      cityInAadhar: data.split_address.vtc,
+      addressInAadhar: data.split_address.country,
+      aadharphotoLink : data.photo_link,
+    };
+   const resultSaved=await UserKYC1.findOneAndUpdate(
+    { user: userId },
+    { $set: results },
+    { new: true }
+  );
    
-    return [true, result];
+    return [true, results];
   } catch (error) {
     return [false, error];
   }
 };
 
-// Function to save GST Details
-export const saveAadharDetailsInternal = async (
-  aadharNumber: string,
-  aadharCO: string,
-  aadharGender: string,
-  nameInAadhaar: string,
-  aadharDOB: string,
-  aadharPhotoLink: string,
-  aadharCountry: string,
-  distInAadhar: string,
-  aadharHouse: string,
-  aadharPincode: string,
-  aadharPO: string,
-  aadharState: string,
-  aadharStreet: string,
-  aadharSubDistrict: string,
-  cityInAadhar: string,
-  addressInAadhar: string,
-  userId: string
-): Promise<any> => {
-  try {
-    const user = await Registration.findOne({ _id: userId });
-    const aadharDetails = await UserKYC1.findOneAndUpdate(
-      { user: user._id },
-      {
-        $set: {
-          aadharNumber: aadharNumber,
-          aadharCO: aadharCO,
-          aadharGender: aadharGender,
-          nameInAadhaar: nameInAadhaar,
-          aadharDOB: aadharDOB,
-          aadharPhotoLink: aadharPhotoLink,
-          aadharCountry: aadharCountry,
-          distInAadhar: distInAadhar,
-          aadharHouse: aadharHouse,
-          aadharPincode: aadharPincode,
-          aadharPO: aadharPO,
-          aadharState: aadharState,
-          aadharStreet: aadharStreet,
-          aadharSubDistrict: aadharSubDistrict,
-          cityInAadhar: cityInAadhar,
-          addressInAadhar: addressInAadhar,
-          user: userId,
-          isAadharDetailSave: true,
-        },
-      },
-      { new: true }
-    );
 
-    return [true, aadharDetails];
-  } catch (error) {
-    console.error("Error in Saving Details:", error);
-    return [false, error];
-  }
-};
 
 // Function to save GST Details
 export const saveGSTDetailsInternal = async (

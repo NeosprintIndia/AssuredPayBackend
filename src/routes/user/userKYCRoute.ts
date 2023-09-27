@@ -11,8 +11,8 @@ import {
     verifyAadharNumberOTP,
     saveGSTDetails,
     getsavedgstdetail,
-    saveAadharDetails,
-    userreferencenumber } from '../../Controller/user/userKYCControllers';
+    userreferencenumber
+ } from '../../Controller/user/userKYCControllers';
 
 
 router.post('/verifypan',[VerifyToken],verifyPAN)
@@ -22,7 +22,6 @@ router.get('/getsavedgstdetail',[VerifyToken],getsavedgstdetail)
 router.post('/savegstdetail',[VerifyToken],saveGSTDetails)
 router.post('/verifyadhar',[VerifyToken],verifyAadharNumber)
 router.post('/verifyadharotp',[VerifyToken],verifyAadharNumberOTP)
-router.post('/saveaadhardetail',[VerifyToken],saveAadharDetails)
 router.post("/getglobalstatus",[VerifyToken],getglobalstatus) 
 
 

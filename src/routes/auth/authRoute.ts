@@ -12,6 +12,8 @@ import {
   loginAdmin,
   forgotPassAdmin,
   resendEmailOtpAdmin,
+  forgotPassotp
+  
 } from "../../Controller/auth/authControllers";
 
 import {
@@ -45,6 +47,7 @@ authRouter.post(
   register
 );
 authRouter.post("/verify", verifyEmail); // NO validation Till Service is finalized
+
 authRouter.post(
   "/login",
   checkForUnexpectedProperties(allowedPropertiesForLogin),
@@ -53,7 +56,9 @@ authRouter.post(
   login
 );
 authRouter.post("/searchexisting", searchExistingController);
+
 authRouter.post("/resendemailotp", resendEmailOtp); // NO validation till Service is finalized
+
 authRouter.post(
   "/change-password",
   checkForUnexpectedProperties(allowedPropertiesForchangepassword),
@@ -68,6 +73,10 @@ authRouter.post(
   handleValidationErrors,
   forgotPass
 );
+authRouter.post(
+  "/sendforgotpassotp", forgotPassotp
+);
+
 
 //********************************Routes for Admin Till login***************************************
 authRouter.post(

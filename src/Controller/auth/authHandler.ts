@@ -246,15 +246,18 @@ function generateTemporaryPassword(): string {
 
 //**************************** Function to handle forgot password logic****************************
 export const handleForgotPassword = async (
-  username: string
+  username: string,
+  otp:string
 ): Promise<string | null> => {
   try {
     // Check if the user exists in the database
     const user = await Registration.findOne({ username: username });
-
+    
     if (!user) {
       return "User not found";
     }
+   if(user.forgotpasswordotp!=otp)
+    return "Wrong OTP";
 
     // Generate a temporary password
     const tempPassword = generateTemporaryPassword();
@@ -336,6 +339,31 @@ export const resendEmailOtpInternal = async (
     );
 
     if (updatedUser) return [true, updatedUser];
+    else {
+      return [false, updatedUser];
+    }
+  } catch (error) {
+    console.error("Error in Sending OTP:", error);
+    return [false, error];
+  }
+};
+
+
+
+export const forgotPassotpInternal = async (
+  username: string
+): Promise<[boolean, any]> => {
+  try {
+    const otpGenerated = await generateOTP();
+    const updatedUser = await Registration.findOneAndUpdate(
+      { username: username },
+      { $set: { forgotpasswordotp: otpGenerated } },
+      { new: true }
+    );
+// Send OTP On mail
+
+    if (updatedUser) 
+    return [true, updatedUser];
     else {
       return [false, updatedUser];
     }
@@ -492,16 +520,18 @@ export const validateMFA = async (
 };
 
 export const handleForgotPasswordAdmin = async (
-  business_email: string
+  username: string,
+  otp:string
 ): Promise<string | null> => {
   try {
     // Check if the user exists in the database
-    const user = await Registration.findOne({ business_email: business_email });
+    const user = await Registration.findOne({ username: username });
 
     if (!user) {
       return "User not found";
     }
-
+    if(user.forgotpasswordotp!=otp)
+    return "Wrong OTP";
     // Generate a temporary password
     const tempPassword = generateTemporaryPassword();
     const encryptedNewPassword = CryptoJS.AES.encrypt(

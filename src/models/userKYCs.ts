@@ -66,6 +66,7 @@ interface IUserKYC extends Document {
   globalStatus: string;
   createdAt: Date;
   updatedAt: Date;
+  kycrequested:Date;
 }
 
 // Define the reference interface for the user field
@@ -221,6 +222,7 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>({
   Legal_Name_of_Business: { type: String },
   Business_PAN: { type: String },
   Date_of_Registration: { Date },
+  kycrequested:{Date},
   State: { type: String },
   Trade_Name: { type: String },
   Place_of_Business: { type: String },

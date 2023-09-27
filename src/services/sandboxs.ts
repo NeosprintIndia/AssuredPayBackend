@@ -191,8 +191,6 @@ export const Aadhaar_KYC_S2 = async(dynamicData: { otp: string; refId: string })
     instance
       .request(config)
       .then((response: AxiosResponse) => {
-        console.log("Adhar OTP API Run")
-        console.log(response.data);
         resolve({ body: response.data });
       })
       .catch(error => {

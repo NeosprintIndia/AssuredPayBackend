@@ -8,7 +8,6 @@ import {
   saveGSTDetailsInternal,
   verifyAadharNumberInternal,
   verifyAadharNumberOTPInternal,
-  saveAadharDetailsInternal,
   userreferencenumberInternal,
 } from "./userKYCHandler";
 
@@ -36,7 +35,7 @@ export const userreferencenumber = async (
   res: Response
 ): Promise<void> => {
   try {
-    const id = (req as any).userId as string;
+    const id = (req as any).userId ;
     const generatedUUID = await generateUUID();
     const [success, result] = await userreferencenumberInternal(
       id,
@@ -206,89 +205,16 @@ export const verifyAadharNumberOTP = async (
     const otp = req.body.otp as string;
 
     // Call the internal function to verify Aadhar number OTP
-    const [success, result] = await verifyAadharNumberOTPInternal(userId, otp);
-    const data = result.body.data;
-    const results = {
-      aadharNumber: "",
-      aadharCO: data.care_of,
-      aadharGender: data.gender,
-      nameInAadhaar: data.name,
-      aadharDOB: data.dob,
-      aadharCountry: data.split_address.country,
-      distInAadhar: data.split_address.dist,
-      aadharHouse: data.split_address.house,
-      aadharPincode: data.split_address.pincode,
-      aadharPO: data.split_address.po,
-      aadharState: data.split_address.state,
-      aadharStreet: data.split_address.street,
-      aadharSubDistrict: data.split_address.subdist,
-      cityInAadhar: data.split_address.vtc,
-      addressInAadhar: data.split_address.country,
-    };
-    const aadharphotoLink = data.photo_link;
+    const [success, results] = await verifyAadharNumberOTPInternal(userId, otp);
+  
     if (success) {
-      res.status(200).send({ results, aadharphotoLink, Active: true });
+      res.status(200).send({ results,  Active: true });
     } else {
       res.status(400).send({ message: results, Active: false });
     }
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Wrong Aadhar Number OTP", Active: false });
-  }
-};
-
-// Route handler function for saving Aadhar details
-
-export const saveAadharDetails = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  const {
-    aadharNumber,
-    aadharCO,
-    aadharGender,
-    nameInAadhaar,
-    aadharDOB,
-    aadharPhotoLink,
-    aadharCountry,
-    distInAadhar,
-    aadharHouse,
-    aadharPincode,
-    aadharPO,
-    aadharState,
-    aadharStreet,
-    aadharSubDistrict,
-    cityInAadhar,
-    addressInAadhar,
-  } = req.body;
-  const userId = (req as any).userId;
-  const [success, result] = await saveAadharDetailsInternal(
-    aadharNumber,
-    aadharCO,
-    aadharGender,
-    nameInAadhaar,
-    aadharDOB,
-    aadharPhotoLink,
-    aadharCountry,
-    distInAadhar,
-    aadharHouse,
-    aadharPincode,
-    aadharPO,
-    aadharState,
-    aadharStreet,
-    aadharSubDistrict,
-    cityInAadhar,
-    addressInAadhar,
-    userId
-  );
-
-  if (success) {
-    res.status(200).send({ result, Active: true });
-  } else {
-    res.status(400).send({
-      message: result,
-      Active: false,
-    });
   }
 };
 
