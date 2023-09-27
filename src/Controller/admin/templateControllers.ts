@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import TemplateDB from '../../models/NotificationTemplate'
-import fs from 'fs';
 import json2csv from 'json2csv';
 import csv from 'csv-parser';
 

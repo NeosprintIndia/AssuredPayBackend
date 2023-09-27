@@ -102,7 +102,7 @@ export const getbusinessrepresentativedetailInternal = async (id): Promise<any[]
   }
 };
 
-export const approvebusinessdetailInternal = async (
+export const finalstatusInternal = async (
   id: string,
   key: string
 ): Promise<any> => {

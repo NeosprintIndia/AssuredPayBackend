@@ -11,7 +11,7 @@ import {
   adminOTPVerify,
   loginAdmin,
   forgotPassAdmin,
-  resendEmailOtpAdmin,
+  resendverifycode,
   forgotPassotp
   
 } from "../../Controller/auth/authControllers";
@@ -89,7 +89,8 @@ authRouter.post(
 );
 authRouter.post("/loginadmin", loginAdmin);
 authRouter.post("/verifyadmin", adminOTPVerify);
+authRouter.post("/resendverifycode", resendverifycode);
 authRouter.post("/forgot-passwordadmin", forgotPassAdmin);
-authRouter.post("/resendemailotpAdmin", resendEmailOtpAdmin);
+
 
 export default authRouter;

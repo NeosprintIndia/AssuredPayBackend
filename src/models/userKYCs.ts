@@ -30,10 +30,13 @@ interface IUserKYC extends Document {
   isAadharDetailSave: boolean;
   AdminAadhaarS1Verified: string;
   AdminAadhaarS2Verified: string;
+  AdminPanVerified: string;
+  AdminGSTVerified: string;
  
   Admin_AadhaarS1_Verification_Clarification: string;
   Admin_AadhaarS2_Verification_Clarification: string;
   Admin_Pan_Verification_Clarification: string;
+  Admin_GST_Verification_Clarification: string;
   due: string;
   Constituion_of_Business: string;
   Taxpayer_Type: string;
@@ -186,8 +189,19 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>({
     type: String,
     default: "",
   },
-  
+  AdminPanVerified: {
+    type: String,
+    default: "Under_Review",
+  },
   Admin_Pan_Verification_Clarification: {
+    type: String,
+    default: "",
+  },
+  AdminGSTVerified: {
+    type: String,
+    default: "Under_Review",
+  },
+  Admin_GST_Verification_Clarification: {
     type: String,
     default: "",
   },

@@ -170,7 +170,7 @@ export const verifyAadharNumberOTPInternal = async (
     };
    const resultSaved=await UserKYC1.findOneAndUpdate(
     { user: userId },
-    { $set: results },
+    { $set: results,isAadharDetailSave:true },
     { new: true }
   );
    

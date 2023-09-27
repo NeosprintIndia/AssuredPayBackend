@@ -10,18 +10,18 @@ import {
     setAllLimits,
     getconfiguration,
     getuserbusinessdetail,
-    approvebusinessdetail,
-    getbusinessrepresentativedetail,
     approveDocument,
+    getbusinessrepresentativedetail,
+    finalstatus,
     rejectDocument
    
 }
 from '../../Controller/admin/adminControllers';
 
 import { addCoupon,
-    getCoupons,
-    updateCoupon,
-    deleteCoupon,
+         getCoupons,
+         updateCoupon,
+         deleteCoupon,
 } from '../../Controller/admin/couponController';
 
 //onboardingRoutes
@@ -31,9 +31,9 @@ router.get('/getconfiguration',VerifyAdmin,getconfiguration)
 router.get('/getallkyc',VerifyAdmin,getAllKYCRecords);
 router.get("/userbusinessdetail",VerifyAdmin,getuserbusinessdetail)
 router.get("/businessrepresentativedetail",VerifyAdmin,getbusinessrepresentativedetail)
-router.post("/approvebusinessdetail",VerifyAdmin,approvebusinessdetail)
-router.post("/approveDocument",VerifyAdmin,approveDocument)
+router.post("/approvedocument",VerifyAdmin,approveDocument)
 router.post("/rejectDocument",VerifyAdmin,rejectDocument)
+router.post("/finalstatus",VerifyAdmin,finalstatus)
 
 
 // couponMangementRoutes

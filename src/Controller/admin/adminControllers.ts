@@ -5,7 +5,7 @@ import {
   setLimitInternal,
   getAllConfigurationInternal,
   getuserbusinessdetailInternal,
-  approvebusinessdetailInternal,
+  finalstatusInternal,
   getbusinessrepresentativedetailInternal,
   approveDocumentInternal,
   rejectDocumentInternal
@@ -14,23 +14,7 @@ import {
 } from "./adminHandlers";
 
 // Route handler function for retrieving all KYC records
-export const getAllKYCRecords = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    // Call the internal function to retrieve all KYC records
-    const [success, result] = await getAllKYCRecordsInternal();
-    if (success) {
-      res.status(200).send({ result, Active: true });
-    } else {
-      res.status(400).send({ message: result, Active: false });
-    }
-  } catch (error) {
-    console.error("Error in getAllKYCRecords:", error);
-    res.status(500).json({ error: "An error occurred", Active: false });
-  }
-};
+
 
 export const setAllLimits = async (
   req: Request,
@@ -89,6 +73,24 @@ export const getconfiguration = async (
   }
 };
 
+export const getAllKYCRecords = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    // Call the internal function to retrieve all KYC records
+    const [success, result] = await getAllKYCRecordsInternal();
+    if (success) {
+      res.status(200).send({ result, Active: true });
+    } else {
+      res.status(400).send({ message: result, Active: false });
+    }
+  } catch (error) {
+    console.error("Error in getAllKYCRecords:", error);
+    res.status(500).json({ error: "An error occurred", Active: false });
+  }
+};
+
 export const getuserbusinessdetail = async (
   req: Request,
   res: Response
@@ -129,25 +131,6 @@ export const getbusinessrepresentativedetail = async (
   }
 };
 
-export const approvebusinessdetail = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  const { key, id } = req.body;
-
-  // Call the internal function to approve Admin Aadhar S1 verification
-  const [success, result] = await approvebusinessdetailInternal(id, key);
-
-  if (success) {
-    res.send({ result, Active: true });
-  } else {
-    res.status(500).send({
-      message: result,
-      Active: false,
-    });
-  }
-};
-
 export const approveDocument = async (req: Request, res: Response): Promise<void> => {
   try {
     const {flag,status,id } = req.body;
@@ -181,5 +164,24 @@ export const rejectDocument = async (req: Request, res: Response): Promise<void>
   } catch (error) {
     console.error('Error in Rejection:', error);
     res.status(500).json({ error: 'An error occurred', Active:false });
+  }
+};
+
+export const finalstatus = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { key, id } = req.body;
+
+  // Call the internal function to approve Admin Aadhar S1 verification
+  const [success, result] = await finalstatusInternal(id, key);
+
+  if (success) {
+    res.send({ result, Active: true });
+  } else {
+    res.status(500).send({
+      message: result,
+      Active: false,
+    });
   }
 };

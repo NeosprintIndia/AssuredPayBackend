@@ -560,14 +560,14 @@ export const handleForgotPasswordAdmin = async (
   }
 };
 
-export const resendEmailOtpInternalAdmin = async (
+export const resendverifycodeInternalAdmin = async (
   email: string
 ): Promise<[boolean, any]> => {
   try {
     const otpGenerated = await generateOTP();
     const updatedUser = await Registration.findOneAndUpdate(
       { business_email: email },
-      { $set: { otp: otpGenerated } },
+      { $set: { MFA: otpGenerated } },
       { new: true }
     );
 

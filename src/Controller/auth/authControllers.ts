@@ -11,7 +11,7 @@ import {
   authenticateAdmin,
   validateMFA,
   handleForgotPasswordAdmin,
-  resendEmailOtpInternalAdmin,
+  resendverifycodeInternalAdmin,
   forgotPassotpInternal
 } from "./authHandler"
 
@@ -208,9 +208,9 @@ export const forgotPassAdmin = async (req: Request, res: Response): Promise<void
   }
 };
 
-export async function resendEmailOtpAdmin(req: Request, res: Response) {
+export async function resendverifycode(req: Request, res: Response) {
   const { email } = req.body;
-  const [success, result] = await resendEmailOtpInternalAdmin(email)
+  const [success, result] = await resendverifycodeInternalAdmin(email)
   if (success) {
     res.status(200).send({ result, Active: true });
   } else {
