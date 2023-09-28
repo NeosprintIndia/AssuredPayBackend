@@ -540,7 +540,7 @@ export const authenticateAdmin = async (
     );
 
  
-    return [true, { updatedUser }];
+    return [true,  updatedUser ];
   } catch (error) {
     return [false, error.message];
   }
@@ -621,8 +621,16 @@ export const resendverifycodeInternalAdmin = async (
       { $set: { MFA: otpGenerated } },
       { new: true }
     );
-
-    if (updatedUser) return [true, updatedUser];
+    const reqData = {
+      Email_slug:"Admin_Password_Reset",
+      email: business_email,
+      VariablesEmail:[otpGenerated],
+    };
+ 
+      await sendDynamicMail(reqData);
+      await sendSMS(reqData)
+    if (updatedUser)
+     return [true, updatedUser];
     else {
       return [false, updatedUser];
     }

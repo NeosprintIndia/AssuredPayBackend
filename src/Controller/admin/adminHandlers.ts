@@ -21,9 +21,9 @@ export const getAllKYCRecordsInternal = async (
 
     const results = await query.skip(skipCount).limit(pageSize).exec();
 
-   
+
     const totalRecordCount = await UserKYC1.countDocuments(due !== null ? { due } : {});
-    
+
 
     return [true, { results, totalRecordCount }];
   } catch (error) {
@@ -82,17 +82,17 @@ export const setLimitInternal = async (
         $set: limitUpdate
       },
       { new: true });
-// Now send Only those keys which are not undefined in limitUpdate
-      const updatedFields = {};
 
-      for (const key in limitUpdate) {
-        if (limitUpdate.hasOwnProperty(key)) {
-          updatedFields[key] = updated[key];
-        }
+    // Now send Only those keys which are not undefined in limitUpdate
+    const updatedFields = {};
+    for (const key in limitUpdate) {
+      if (limitUpdate.hasOwnProperty(key)) {
+        updatedFields[key] = updated[key];
       }
-    
-      return [true, updatedFields];
-  
+    }
+
+    return [true, updatedFields];
+
   } catch (error) {
     return error;
   }
@@ -101,7 +101,7 @@ export const setLimitInternal = async (
 export const getAllConfigurationInternal = async (): Promise<any[]> => {
   try {
     const result = await adminGlobalSetting.find();
-    console.log("GET ALL KYC ",result)
+    console.log("GET ALL KYC ", result)
     return [true, result[0]];
   } catch (error) {
     return error;
@@ -167,7 +167,7 @@ export const approveDocumentInternal = async (
 };
 
 export const rejectDocumentInternal = async (
- 
+
   filename: string,
   status: string,
   id: string,
@@ -176,7 +176,7 @@ export const rejectDocumentInternal = async (
 ): Promise<any | null> => {
   try {
 
-    const updateData = { [filename]: status ,[docNameKey]:clarification};
+    const updateData = { [filename]: status, [docNameKey]: clarification };
     const result = await UserKYC1.findOneAndUpdate(
       { user: id },
       updateData, { new: true }
