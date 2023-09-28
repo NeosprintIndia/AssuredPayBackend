@@ -2,14 +2,30 @@ import UserKYC1 from '../../models/userKYCs'; // Import your UserKYC1 model
 import adminGlobalSetting from "../../models/globalAdminSettings";
 
 
-
-// Function to retrieve all KYC records
-export const getAllKYCRecordsInternal = async (): Promise<any[]> => {
+//Function to retrieve all KYC records based on sorting
+export const getAllKYCRecordsInternal = async (
+  page: number = 1,
+  pageSize: number = 10,
+  due: string | null = null
+): Promise<any[]> => {
   try {
-    const result = await UserKYC1.find()
+    const skipCount = (page - 1) * pageSize;
+
+    let query = UserKYC1.find()
       .select({ Legal_Name_of_Business: 1, GSTIN_of_the_entity: 1, due: 1, createdAt: 1 })
-      .populate('user', 'refferedBy');
-    return [true, result];
+      .populate('user', 'referredBy');
+
+    if (due !== null) {
+      query = query.where('due').equals(due);
+    }
+
+    const results = await query.skip(skipCount).limit(pageSize).exec();
+
+   
+    const totalRecordCount = await UserKYC1.countDocuments(due !== null ? { due } : {});
+    
+
+    return [true, { results, totalRecordCount }];
   } catch (error) {
     return [false, error];
   }
@@ -66,7 +82,17 @@ export const setLimitInternal = async (
         $set: limitUpdate
       },
       { new: true });
-    return [true, updated];
+// Now send Only those keys which are not undefined in limitUpdate
+      const updatedFields = {};
+
+      for (const key in limitUpdate) {
+        if (limitUpdate.hasOwnProperty(key)) {
+          updatedFields[key] = updated[key];
+        }
+      }
+    
+      return [true, updatedFields];
+  
   } catch (error) {
     return error;
   }
@@ -75,8 +101,6 @@ export const setLimitInternal = async (
 export const getAllConfigurationInternal = async (): Promise<any[]> => {
   try {
     const result = await adminGlobalSetting.find();
-
-   // const resultObject = result.flat()
     console.log("GET ALL KYC ",result)
     return [true, result[0]];
   } catch (error) {

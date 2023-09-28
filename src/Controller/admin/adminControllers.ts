@@ -77,9 +77,10 @@ export const getAllKYCRecords = async (
   res: Response
 ): Promise<void> => {
   try {
-    
+    const {due,page,pageSize}= (req as any).query 
+
     // Call the internal function to retrieve all KYC records
-    const [success, result] = await getAllKYCRecordsInternal();
+    const [success, result] = await getAllKYCRecordsInternal(page,pageSize,due);
     if (success) {
       res.status(200).send({ result, Active: true });
     } else {

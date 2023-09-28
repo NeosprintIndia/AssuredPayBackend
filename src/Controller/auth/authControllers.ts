@@ -32,19 +32,16 @@ export const register = async (req: Request, res: Response): Promise<void> => {
   const reqData = {
     Email_slug:"registration",
     email: business_email,
-    VariablesEmail:["Neosprint","Admin"],
+    VariablesEmail:[username,"Agent"],
 
     receiverNo:business_mobile,
     Message_slug:"registration",
-    VariablesMessage:["Tramo","25"],
+    VariablesMessage:[username ,"25"],
   };
 
   if (success) {
     await sendDynamicMail(reqData);
-    console.log("Email sent successfully");
-    const sms=await sendSMS(reqData)
-    console.log("Message sent successfully",sms);
-   
+    await sendSMS(reqData)
     res.status(200).send({result,Active: true });
   } else {
     res.status(400).send({ message: result, Active: false });

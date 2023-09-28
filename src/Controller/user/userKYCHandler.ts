@@ -6,6 +6,9 @@ import {
   Aadhaar_KYC_S1,
   Aadhaar_KYC_S2,
 } from "../../services/sandboxs"; // Import your sandbox module
+
+import { sendDynamicMail } from "../../services/sendEmail";
+import { sendSMS } from "../../services/sendSMS";
 // Function to verify PAN details
 
 export const verifyPANDetails = async (
@@ -134,6 +137,19 @@ export const userreferencenumberInternal = async (
       { $set: { userRequestReference: generatedUUID ,kycrequested:currentDate} },
       { new: true }
     );
+    const user = await Registration.findOne({ _id: updatedUser.user });
+    const reqData = {
+      Email_slug:"Application_Under_Review",
+      email: user.business_email,
+      VariablesEmail:[user.username,generatedUUID],
+  
+      receiverNo:user.business_mobile,
+      Message_slug:"Application_Under_Review",
+      VariablesMessage:[user.username ,generatedUUID],
+
+    };
+      await sendDynamicMail(reqData);
+      await sendSMS(reqData)
     return [true, updatedUser];
   } catch (error) {
     return [false, error];

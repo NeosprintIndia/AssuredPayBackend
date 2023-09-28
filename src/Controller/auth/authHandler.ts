@@ -8,6 +8,8 @@ import "dotenv/config";
 import { generateOTP } from "../../services/otpGenrators";
 import { generateReferralCode } from "../../services/referralCodes";
 import * as crypto from "crypto";
+import { sendDynamicMail } from "../../services/sendEmail";
+import { sendSMS } from "../../services/sendSMS";
 
 // ****************************Function to handle registration logic****************************
 export const performRegistration = async (
@@ -110,6 +112,18 @@ const createUser = async (
       user: newUser._id,
       refferal_code: Refer_code,
     });
+    const reqData = {
+      Email_slug:"Verification_OTP",
+      email: business_email,
+      VariablesEmail:[username,newUser.otp],
+  
+      receiverNo:business_mobile,
+      Message_slug:"Verification_OTP",
+      VariablesMessage:[newUser.otp],
+    };
+      await sendDynamicMail(reqData);
+      await sendSMS(reqData)
+
 
   
     // In future Frontend doesnt need otp require only id
@@ -278,8 +292,20 @@ export const handleForgotPassword = async (
     user.password = encryptedNewPassword;
     await user.save();
 
-    // Send an email with the temporary password
+    //Send an email with the temporary password
+    const reqData = {
+      Email_slug:"Admin_Password_Reset",
+      email: user.business_email,
+      VariablesEmail:[username,tempPassword],
+  
+      receiverNo:user.business_mobile,
+      Message_slug:"Admin_Password_Reset",
+      VariablesMessage:[username ,tempPassword],
+    };
  
+   
+      await sendDynamicMail(reqData);
+      await sendSMS(reqData)
 
     return null; // Password reset successful
   } catch (error) {
@@ -337,8 +363,21 @@ export const resendEmailOtpInternal = async (
       { $set: { otp: otpGenerated } },
       { new: true }
     );
+    const reqData = {
+      Email_slug:"Verification_OTP",
+      email: business_email,
+      VariablesEmail:[updatedUser.username,otpGenerated],
+  
+      receiverNo:updatedUser.business_mobile,
+      Message_slug:"Verification_OTP",
+      VariablesMessage:[otpGenerated],
+    };
+      await sendDynamicMail(reqData);
+      await sendSMS(reqData)
+   
 
-    if (updatedUser) return [true, updatedUser];
+    if (updatedUser) 
+    return [true, updatedUser];
     else {
       return [false, updatedUser];
     }
@@ -361,6 +400,18 @@ export const forgotPassotpInternal = async (
       { new: true }
     );
 // Send OTP On mail
+const reqData = {
+  Email_slug:"Verification_OTP",
+  email: updatedUser.business_email,
+  VariablesEmail:[updatedUser.username,otpGenerated],
+
+  receiverNo:updatedUser.business_mobile,
+  Message_slug:"Verification_OTP",
+  VariablesMessage:[otpGenerated],
+};
+  await sendDynamicMail(reqData);
+  await sendSMS(reqData)
+
 
     if (updatedUser) 
     return [true, updatedUser];
