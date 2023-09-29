@@ -3,7 +3,7 @@ import express, { Application } from "express";
 import mongoose from "mongoose"; 
 import bodyParser from "body-parser"; 
 import dotenv from "dotenv"; 
-// ***************Load environment variables from a .env file if available*******************
+
 
 dotenv.config(); 
 
@@ -15,14 +15,14 @@ import TemplateRoutes from "./routes/admin/templateRoutes";
 import userKYCRoutes from "./routes/user/userKYCRoute";
 import uploadRoutes from "./routes/upload/uploadRoute";
 
-//****************** Create an instance of the Express application ******************************
+
 const app: Application = express();
 const cors = require("cors");
 
-// *******************Enable CORS for all origins, you might want to restrict this to specific origins in production
+
 app.use(cors({origin: "*",}));
 
-//********************Parse various different custom JSON types as JSON******************************
+
 
 app.use(bodyParser.json({limit: '50mb'})); 
 app.use(bodyParser.urlencoded({ extended: false })); 

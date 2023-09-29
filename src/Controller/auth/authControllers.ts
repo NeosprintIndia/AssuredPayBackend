@@ -177,10 +177,12 @@ export const loginAdmin = async (req: Request, res: Response): Promise<void> => 
 
   const [success, result] = await authenticateAdmin(business_email, password);
 
+  const results= result.business_email
+
   if (success) {
-    res.status(200).json({ result, Active: true });
+    res.status(200).json({ results, Active: true });
   } else {
-    res.status(400).json({ error: result, Active: false });
+    res.status(400).json({ error: res, Active: false });
   }
 };
 
