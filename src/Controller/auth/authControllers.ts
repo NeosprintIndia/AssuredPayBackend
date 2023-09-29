@@ -177,7 +177,7 @@ export const loginAdmin = async (req: Request, res: Response): Promise<void> => 
 
   const [success, result] = await authenticateAdmin(business_email, password);
 
-  const results= result.business_email
+  const results= {business_email:result.business_email}
 
   if (success) {
     res.status(200).json({ results, Active: true });
