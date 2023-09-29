@@ -18,10 +18,7 @@ import uploadRoutes from "./routes/upload/uploadRoute";
 
 const app: Application = express();
 const cors = require("cors");
-
-
-app.use(cors({//origin: "*", 
-origin: "admin.assuredpay.in" }));
+app.use(cors({origin: "*" }));
 
 
 
