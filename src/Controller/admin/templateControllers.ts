@@ -197,11 +197,10 @@ export const uploadTemplateFromCsv = async (req: Request, res: Response): Promis
                 results.push(row);
             })
             .on('end', async () => {
-                console.log('cccccccccccccccccccccccccccccccccccc', results);
 
                 try {
                     const result = await TemplateDB.insertMany(results);
-                    console.log('RESULT----------------->', result);
+                   
                     res.status(200).json({ code: 200, message: 'Templates added successfully', data: result });
                 } catch (err) {
                     console.error(err);
@@ -214,3 +213,17 @@ export const uploadTemplateFromCsv = async (req: Request, res: Response): Promis
         res.status(500).json({ code: 500, message: 'Internal server error', err: error });
     }
 };
+
+// const uploadTemplateFroCsv=async(req,res)=>{
+//     const filebuffer=req.file.buffer;
+//     req as any:[]  
+
+//     csv() .on("end",async()=>{
+//         try {
+//             TemplateDB.insertMany(req)
+
+//         } catch (error) {
+            
+//         }
+//     })
+// }

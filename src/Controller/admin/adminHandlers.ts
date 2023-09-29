@@ -83,7 +83,8 @@ export const setLimitInternal = async (
       },
       { new: true });
 
-    // Now send Only those keys which are not undefined in limitUpdate
+    // Now send Only those keys which are not undefined in limitUpdate 
+    // Check wether we can send the limit object directly 
     const updatedFields = {};
     for (const key in limitUpdate) {
       if (limitUpdate.hasOwnProperty(key)) {

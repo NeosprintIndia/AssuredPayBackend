@@ -20,7 +20,8 @@ const app: Application = express();
 const cors = require("cors");
 
 
-app.use(cors({origin: "*",}));
+app.use(cors({//origin: "*", 
+origin: "admin.assuredpay.in" }));
 
 
 
