@@ -72,7 +72,8 @@ const createUser = async (
       password,
       process.env.PASS_PHRASE
     ).toString();
-    const otpGenerated = await generateOTP();
+    const otpGeneratedEmail = await generateOTP();
+    const otpGeneratedMobile = await generateOTP();
     const Refer_code = await generateReferralCode(username, business_mobile);
     let updatedReferral = null;
     var referredBy = "";
@@ -100,7 +101,8 @@ const createUser = async (
       password: hashedPassword,
       username,
       oldPasswords: [hashedPassword],
-      otp: otpGenerated,
+      mobileotp: otpGeneratedMobile,
+      emailotp: otpGeneratedEmail,
       refferedBy: referredBy,
       PAN_Attempt: panLimit,
       GST_Attempt: gstLimit,
@@ -115,11 +117,11 @@ const createUser = async (
     const reqData = {
       Email_slug:"Verification_OTP",
       email: business_email,
-      VariablesEmail:[username,newUser.otp],
+      VariablesEmail:[username,newUser.emailotp],
   
       receiverNo:business_mobile,
       Message_slug:"Verification_OTP",
-      VariablesMessage:[newUser.otp],
+      VariablesMessage:[username,newUser.mobileotp],
     };
       await sendDynamicMail(reqData);
       await sendSMS(reqData)
@@ -136,36 +138,57 @@ const createUser = async (
 
 // ****************************Function to validate User via OTP****************************
 export const validateUserSignUp = async (
-  business_email: string,
-  otp: string
+  otpVerifyType: string,
+  otp: string,
+  business_email_or_mobile: string,
 ): Promise<[boolean, string | any]> => {
-  const user = await Registration.findOne({
-    business_email: business_email,
-  });
 
-  if (!user) {
-    return [false, "User not found"];
+  let user;
+
+  if (otpVerifyType === 'email') {
+    user = await Registration.findOne({ business_email: business_email_or_mobile });
+    if (user && user.emailotp === otp) {
+      await Registration.findOneAndUpdate(
+        { business_email: user.business_email },
+        { $set: { isemailotpverified: true } },
+        { new: true }
+      );
+    } else {
+      return [false, "Invalid OTP"];
+    }
+  } else if (otpVerifyType === 'mobile') {
+    user = await Registration.findOne({ business_mobile: business_email_or_mobile });
+    if (user && user.mobileotp === otp) {
+      await Registration.findOneAndUpdate(
+        { business_mobile: user.business_mobile },
+        { $set: { ismobileotpverified: true } },
+        { new: true }
+      );
+    } else {
+      return [false, "Invalid OTP"];
+    }
+  } else {
+    return [false, "Invalid OTP type"];
   }
 
-  if (user.business_email && user.otp !== otp) {
-    return [false, "Invalid OTP"];
+  if (user.isemailotpverified && user.ismobileotpverified) {
+    await Registration.findOneAndUpdate(
+      { business_email: user.business_email },
+      { $set: { active: true } },
+      { new: true }
+    );
+      const token = jwt.sign(
+      { userId: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "3D" }
+    );
+
+    return [true, token];
+  } else {
+    return [false, "Verification pending"];
   }
-
-  const updatedUser = await Registration.findOneAndUpdate(
-    { business_email: user.business_email },
-    {
-      $set: { active: true },
-    },
-    { new: true }
-  );
-  const token = jwt.sign(
-    { userId: user._id, role: user.role },
-    process.env.JWT_SECRET,
-    { expiresIn: "3D" }
-  );
-
-  return [true, token];
 };
+
 
 export const authenticateUser = async (
   username: string,
@@ -321,6 +344,7 @@ export const searchExisting = async (
 ): Promise<boolean | any> => {
   try {
     const searchExist = {};
+
     if (business_email !== undefined) {
       (searchExist as any).business_email = business_email;
     }
@@ -332,18 +356,23 @@ export const searchExisting = async (
     if (business_mobile !== undefined) {
       (searchExist as any).business_mobile = business_mobile;
     }
+
+    if (Object.keys(searchExist).length === 0) {
+      const errorResponse = {
+        error: 'At least one search parameter is required.',
+      };
+      return [false, errorResponse];
+    }
     const result = await Registration.find(searchExist);
 
     if (result.length > 0) {
       const finalresult = {
-        found: true,
-        data: result,
+        found: true  
       };
       return [true, finalresult];
     } else {
       const finalresult = {
         found: false,
-        data: result,
       };
       return [true, finalresult];
     }
@@ -352,33 +381,66 @@ export const searchExisting = async (
   }
 };
 
+export const searchexistingrefercodeInternal = async (
+  refercode: string,
+): Promise<boolean | any> => {
+  try {
+    const result = await Referral.find({refferal_code:refercode});
+    if (result.length > 0) {
+      const finalresult = {
+        found: true  
+      };
+      return [true, finalresult];
+    } else {
+      const finalresult = {
+        found: false,
+      };
+      return [true, finalresult];
+    }
+  } catch (error) {
+    return [false, error];
+  }
+};
 //*********************Handler function to handle Resend Mail OTP*********************
-export const resendEmailOtpInternal = async (
-  business_email: string
+export const resendOtpInternal = async (
+  verificationType: string,
+  business_email_or_mobile: string
 ): Promise<[boolean, any]> => {
   try {
     const otpGenerated = await generateOTP();
-    const updatedUser = await Registration.findOneAndUpdate(
-      { business_email: business_email },
-      { $set: { otp: otpGenerated } },
-      { new: true }
-    );
-    const reqData = {
-      Email_slug:"Verification_OTP",
-      email: business_email,
-      VariablesEmail:[updatedUser.username,otpGenerated],
-  
-      receiverNo:updatedUser.business_mobile,
-      Message_slug:"Verification_OTP",
-      VariablesMessage:[otpGenerated],
-    };
-      await sendDynamicMail(reqData);
-      await sendSMS(reqData)
-   
+    let updatedUser;
 
-    if (updatedUser) 
-    return [true, updatedUser];
-    else {
+    if (verificationType === 'email') {
+      updatedUser = await Registration.findOneAndUpdate(
+        { business_email: business_email_or_mobile },
+        { $set: { emailotp: otpGenerated } },
+        { new: true }
+      );
+      const reqData = {
+        Email_slug: "Verification_OTP",
+        email: business_email_or_mobile,
+        VariablesEmail: [updatedUser.username, otpGenerated],
+      };
+      await sendDynamicMail(reqData);
+    } else if (verificationType === 'mobile') {
+      updatedUser = await Registration.findOneAndUpdate(
+        { business_mobile: business_email_or_mobile },
+        { $set: { mobileotp: otpGenerated } },
+        { new: true }
+      );
+      const reqData = {
+        receiverNo:updatedUser.business_mobile,
+        Message_slug:"Verification_OTP",
+        VariablesMessage:[updatedUser.username, otpGenerated],
+      };
+      await sendSMS(reqData);
+    } else {
+      return [false, "Invalid verification type"];
+    }
+
+    if (updatedUser) {
+      return [true, updatedUser];
+    } else {
       return [false, updatedUser];
     }
   } catch (error) {
@@ -386,8 +448,6 @@ export const resendEmailOtpInternal = async (
     return [false, error];
   }
 };
-
-
 
 export const forgotPassotpInternal = async (
   username: string
@@ -526,7 +586,7 @@ export const authenticateAdmin = async (
       process.env.PASS_PHRASE
     );
     const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
-
+console.log("ORIGINAL PASSWORD",originalPassword)
     if (originalPassword !== password) {
       return [false, "Wrong Password"];
     }

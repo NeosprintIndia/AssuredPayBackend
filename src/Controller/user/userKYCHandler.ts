@@ -1,5 +1,7 @@
 import UserKYC1 from "../../models/userKYCs"; // Import your UserKYC1 model
 import Registration from "../../models/userRegisterations";
+import { awsinitialise } from '../../services/awsInitialise'; 
+const fs = require('fs');
 import {
   PAN_KYC_SB,
   GST_KYC_SB,
@@ -159,6 +161,7 @@ export const userreferencenumberInternal = async (
 // Function to verify Aadhar number OTP and Save details
 export const verifyAadharNumberOTPInternal = async (
   userId: string,
+  aadharNum:string,
   otp: string
 ): Promise<any> => {
   try {
@@ -166,8 +169,19 @@ export const verifyAadharNumberOTPInternal = async (
     const refId = result1.aadhar_ref_id;
     const result = await Aadhaar_KYC_S2({ otp, refId });
     const data = (result as any).body.data;
+    
+    const base64String = data.photo_link;
+
+// Remove the data:image/png;base64 header if present
+const base64Data = base64String.replace(/^data:image\/\w+;base64,/, '');
+
+// Create a buffer from the base64 data
+const imageBuffer = Buffer.from(base64Data, 'base64');
+const s3ObjectUrl=await uploadtos3( refId,imageBuffer)
+console.log("SURL",s3ObjectUrl)
+
     const results = {
-      aadharNumber: "",
+      aadharNumber: aadharNum,
       aadharCO: data.care_of,
       aadharGender: data.gender,
       nameInAadhaar: data.name,
@@ -182,8 +196,9 @@ export const verifyAadharNumberOTPInternal = async (
       aadharSubDistrict: data.split_address.subdist,
       cityInAadhar: data.split_address.vtc,
       addressInAadhar: data.split_address.country,
-      aadharphotoLink : data.photo_link,
+      aadharPhotoLink : s3ObjectUrl,
     };
+    
    const resultSaved=await UserKYC1.findOneAndUpdate(
     { user: userId },
     { $set: results,isAadharDetailSave:true },
@@ -195,6 +210,24 @@ export const verifyAadharNumberOTPInternal = async (
     return [false, error];
   }
 };
+const uploadtos3=async (
+  refId: string,
+  imageBuffer: any
+): Promise<any> => {
+  const { params, s3 } = await awsinitialise(refId, imageBuffer);
+  return new Promise<any>((resolve, reject) => {
+
+    s3.upload(params, async (err, data) => {
+      if (err) {
+        console.error(err);
+        reject(err);
+      } else {
+        console.log("DATA LOCATION",data.Location)
+        resolve(data.Location);
+      }
+    });
+  });
+}
 
 
 

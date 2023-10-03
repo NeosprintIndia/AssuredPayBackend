@@ -11,7 +11,10 @@ interface IRegisterUser extends Document {
   lastActive?: string;
   active: boolean;
   role: string;
-  otp: string;
+  mobileotp:string;
+  emailotp: string;
+  isemailotpverified:boolean;
+  ismobileotpverified:boolean
   MFA: string;
   refferedBy: string;
   PAN_Attempt: number;
@@ -59,8 +62,19 @@ const RegisterUserSchema: Schema<IRegisterUser> = new Schema({
     type: String,
     default: "Business_User",
   },
-  otp: {
+  emailotp: {
     type: String,
+  },
+  mobileotp: {
+    type: String,
+  },
+  isemailotpverified: {
+    type: Boolean,
+    default: false,
+  },
+  ismobileotpverified: {
+    type: Boolean,
+    default: false,
   },
   forgotpasswordotp:{type: String},
   MFA: {

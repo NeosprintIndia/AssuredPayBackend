@@ -202,10 +202,11 @@ export const verifyAadharNumberOTP = async (
   try {
     // Assuming userId is a string
     const userId = (req as any).userId as string;
+    const aadharNum=req.body.aadharNum
     const otp = req.body.otp as string;
 
     // Call the internal function to verify Aadhar number OTP
-    const [success, results] = await verifyAadharNumberOTPInternal(userId, otp);
+    const [success, results] = await verifyAadharNumberOTPInternal(userId,aadharNum, otp);
   
     if (success) {
       res.status(200).send({ results,  Active: true });

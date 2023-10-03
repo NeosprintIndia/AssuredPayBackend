@@ -11,6 +11,7 @@ import {
   
 
 } from "./adminHandlers";
+import UserKYC from "../../models/userKYCs";
 
 // Route handler function for retrieving all KYC records
 
@@ -77,10 +78,10 @@ export const getAllKYCRecords = async (
   res: Response
 ): Promise<void> => {
   try {
-    const {due,page,pageSize}= (req as any).query 
+    const {due,page,pageSize,search}= (req as any).query 
 
     // Call the internal function to retrieve all KYC records
-    const [success, result] = await getAllKYCRecordsInternal(page,pageSize,due);
+    const [success, result] = await getAllKYCRecordsInternal(page,pageSize,due,search);
     if (success) {
       res.status(200).send({ result, Active: true });
     } else {
@@ -186,3 +187,9 @@ export const finalstatus = async (
     });
   }
 };
+
+
+export const search= async(req,res)=>{
+  const{value}=req.body
+UserKYC.find({value})
+}

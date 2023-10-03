@@ -7,16 +7,18 @@ import {
   handleForgotPassword,
   registerAdminUser,
   searchExisting,
-  resendEmailOtpInternal,
+  resendOtpInternal,
   authenticateAdmin,
   validateMFA,
   handleForgotPasswordAdmin,
   resendverifycodeInternalAdmin,
-  forgotPassotpInternal
+  forgotPassotpInternal,
+  searchexistingrefercodeInternal
 } from "./authHandler"
 
 import { sendDynamicMail } from "../../services/sendEmail";
 import { sendSMS } from "../../services/sendSMS";
+
 
 
 // *********************Controller function to handle the registration request***********************
@@ -36,7 +38,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
     receiverNo:business_mobile,
     Message_slug:"registration",
-    VariablesMessage:[username ,"25"],
+    VariablesMessage:[username,"Agent"],
   };
 
   if (success) {
@@ -50,10 +52,10 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
 //********************* Controller function to handle verify OTP*********************
 
-export const verifyEmail = async (req: Request, res: Response): Promise<void> => {
-  const { business_email, otp } = req.body;
+export const verifyEmailAndMobile = async (req: Request, res: Response): Promise<void> => {
+  const { otpVerifyType, otp,business_email_or_mobile } = req.body;
 
-  const [success, result] = await validateUserSignUp(business_email, otp);
+  const [success, result] = await validateUserSignUp(otpVerifyType, otp,business_email_or_mobile);
 
   if (success) {
     res.status(200).send({ result, Active: true });
@@ -135,10 +137,29 @@ export async function searchExistingController(req: Request, res: Response) {
     res.status(500).send({ "message": "Internal Server Error" });
   }
 }
+
+export async function searchexistingrefercode(req: Request, res: Response) {
+
+  try {
+    const { refercode } = req.body
+    const [success, result] = await searchexistingrefercodeInternal(refercode);
+
+    if (success) {
+      res.status(200).send({ result });
+
+    } else {
+      res.status(404).send({ error: result });
+
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ "message": "Internal Server Error" });
+  }
+}
 //********************* Controller function to handle Resend Mail OTP*********************
-export async function resendEmailOtp(req: Request, res: Response) {
-  const { business_email } = req.body;
-  const [success, result] = await resendEmailOtpInternal(business_email)
+export async function resendOtp(req: Request, res: Response) {
+  const { verificationType,business_email_or_mobile } = req.body;
+  const [success, result] = await resendOtpInternal(verificationType,business_email_or_mobile)
   if (success) {
     res.status(200).send({ result, Active: true });
   } else {
@@ -177,12 +198,12 @@ export const loginAdmin = async (req: Request, res: Response): Promise<void> => 
 
   const [success, result] = await authenticateAdmin(business_email, password);
 
-  const results= {business_email:result.business_email}
-
+  console.log("IN SUCCESS",result)
   if (success) {
+     const results= {business_email:result.business_email}
     res.status(200).json({ results, Active: true });
   } else {
-    res.status(400).json({ error: res, Active: false });
+    res.status(400).json({ error: result, Active: false });
   }
 };
 

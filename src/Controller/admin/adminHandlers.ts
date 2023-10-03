@@ -6,7 +6,8 @@ import adminGlobalSetting from "../../models/globalAdminSettings";
 export const getAllKYCRecordsInternal = async (
   page: number = 1,
   pageSize: number = 10,
-  due: string | null = null
+  due: string | null = null ,
+  search: string | null = null
 ): Promise<any[]> => {
   try {
     const skipCount = (page - 1) * pageSize;
@@ -17,6 +18,12 @@ export const getAllKYCRecordsInternal = async (
 
     if (due !== null) {
       query = query.where('due').equals(due);
+    }
+    if (search !== null) {
+      query.or([
+        { userRequestReference: search },
+        { GSTIN_of_the_entity: search }
+      ]);
     }
 
     const results = await query.skip(skipCount).limit(pageSize).exec();

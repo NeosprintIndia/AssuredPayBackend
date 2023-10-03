@@ -224,7 +224,7 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>({
   aadharPO: { type: String },
   aadharHouse: { type: String },
   aadharCountry: { type: String },
-  aadharPhotoLink: { type: String },
+  aadharPhotoLink: { type: String, default:"" },
   aadharDOB: { type: String },
   aadharCO: { type: String },
   aadharGender: { type: String },

@@ -35,6 +35,9 @@ router.post("/approvedocument",VerifyAdmin,approveDocument)
 router.post("/rejectDocument",VerifyAdmin,rejectDocument)
 router.post("/finalstatus",VerifyAdmin,finalstatus)
 
+///////////////////////////////////////////////////////////////////////////////-------------------
+router.post("/searchbusiness",VerifyAdmin,finalstatus)  
+
 
 // couponMangementRoutes
 

@@ -2,8 +2,8 @@ import { Router } from "express";
 import {
   register,
   searchExistingController,
-  verifyEmail,
-  resendEmailOtp,
+  verifyEmailAndMobile,
+  resendOtp,
   changePass,
   forgotPass,
   login,
@@ -12,7 +12,8 @@ import {
   loginAdmin,
   forgotPassAdmin,
   resendverifycode,
-  forgotPassotp
+  forgotPassotp,
+  searchexistingrefercode
   
 } from "../../Controller/auth/authControllers";
 
@@ -46,7 +47,7 @@ authRouter.post(
   handleValidationErrors,
   register
 );
-authRouter.post("/verify", verifyEmail); // NO validation Till Service is finalized
+authRouter.post("/verify", verifyEmailAndMobile); // NO validation Till Service is finalized
 
 authRouter.post(
   "/login",
@@ -57,7 +58,9 @@ authRouter.post(
 );
 authRouter.post("/searchexisting", searchExistingController);
 
-authRouter.post("/resendemailotp", resendEmailOtp); // NO validation till Service is finalized
+authRouter.post("/searchexistingrefercode", searchexistingrefercode);
+
+authRouter.post("/resendotp", resendOtp); // NO validation till Service is finalized
 
 authRouter.post(
   "/change-password",
