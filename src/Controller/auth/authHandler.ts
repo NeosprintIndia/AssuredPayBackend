@@ -353,7 +353,8 @@ export const resendOtpInternal = async (
         receiverNo: business_email_or_mobile,
         Message_slug: "Verification_OTP",
         VariablesMessage: [business_email_or_mobile, otpGenerated],
-      });
+      }); 
+      
     } else {
       return [false, "Invalid verification type"];
     }

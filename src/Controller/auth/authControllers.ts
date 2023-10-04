@@ -128,9 +128,9 @@ export async function resendOtp(req: Request, res: Response) {
     business_email_or_mobile
   );
   if (success) {
-    res.status(200).send({  Active: true });
+    res.status(200).send({ result, Active: true });
   } else {
-    res.status(500).send({  Active: false });
+    res.status(500).send({ result, Active: false });
   }
 }
 

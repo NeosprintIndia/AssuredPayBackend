@@ -1,5 +1,6 @@
 import express from 'express';
-import {addTemplate,
+import {
+  addTemplate,
   getTemplate,
   updateTemplate,
   deleteTemplate,
