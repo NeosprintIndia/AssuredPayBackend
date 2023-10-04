@@ -37,6 +37,8 @@ import verifyAdminToken from "../../middlewares/adminTokens";
 
 const authRouter: Router = Router();
 
+
+
 //********************* Routes for User Till login**********************************************
 
 authRouter.post(
@@ -69,6 +71,9 @@ authRouter.post("/searchexistingrefercode", searchexistingrefercode);
 
 authRouter.post("/resendotp", resendOtp);
 
+
+
+
 //---------------------------Routes for Admin Till login---------------------------------
 authRouter.post(
   "/registeradmin",
@@ -81,6 +86,8 @@ authRouter.post(
 authRouter.post("/loginadmin", loginAdmin);
 authRouter.post("/verifyadmin", adminOTPVerify);
 authRouter.post("/resendverifycode", resendverifycode);
+
+
 
 // -----------------------------Common route for ADMIN/USER-----------------------------
 

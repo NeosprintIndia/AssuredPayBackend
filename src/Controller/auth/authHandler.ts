@@ -222,7 +222,7 @@ export const validateUserSignUp = async (
 
     return [true, token];
   } else {
-    return [false, "Verification pending"];
+    return [true, "Verification pending"];
   }
 };
 

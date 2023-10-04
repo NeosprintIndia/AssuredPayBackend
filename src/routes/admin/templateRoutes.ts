@@ -1,6 +1,12 @@
 import express from 'express';
-import {addTemplate,getTemplate,updateTemplate,deleteTemplate,downloadTemplateFormatCsv,uploadTemplateFromCsv,getTemplateById
-} from '../../Controller/admin/templateControllers'; // Import your EmailTemplate controller here
+import {addTemplate,
+  getTemplate,
+  updateTemplate,
+  deleteTemplate,
+  downloadTemplateFormatCsv,
+  uploadTemplateFromCsv,
+  getTemplateById
+} from '../../Controller/admin/templateControllers'; 
 
 import {
     addSMSTemplateValidation,
