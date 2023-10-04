@@ -30,12 +30,12 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     refferal_code
   );
   const reqData = {
-    Email_slug: "registration",
+    Email_slug: "Business_Succesfully_Registered",
     email: business_email,
     VariablesEmail: [username, "Agent"],
 
     receiverNo: business_mobile,
-    Message_slug: "registration",
+    Message_slug: "Business_Succesfully_Registered",
     VariablesMessage: [username, "Agent"],
   };
 
