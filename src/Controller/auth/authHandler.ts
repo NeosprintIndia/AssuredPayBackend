@@ -46,6 +46,51 @@ export const performRegistration = async (
   }
 };
 
+//********************* Handler function to handle Existing Search*********************
+export const searchExisting = async (
+  business_email: string,
+  username: string,
+  business_mobile: string
+): Promise<boolean | any> => {
+  try {
+    const searchExist = {};
+
+    if (business_email !== undefined) {
+      (searchExist as any).business_email = business_email;
+    }
+
+    if (username !== undefined) {
+      (searchExist as any).username = username;
+    }
+
+    if (business_mobile !== undefined) {
+      (searchExist as any).business_mobile = business_mobile;
+    }
+
+    if (Object.keys(searchExist).length === 0) {
+      const errorResponse = {
+        error: "At least one search parameter is required.",
+      };
+      return [false, errorResponse];
+    }
+    const result = await Registration.find(searchExist);
+
+    if (result.length > 0) {
+      const finalresult = {
+        found: true,
+      };
+      return [true, finalresult];
+    } else {
+      const finalresult = {
+        found: false,
+      };
+      return [true, finalresult];
+    }
+  } catch (error) {
+    return [false, error];
+  }
+};
+
 // **********************Function to handle Exisitng User during registration************************
 const findUserByEmailUsername = async (
   business_email: string,
@@ -115,19 +160,17 @@ const createUser = async (
       refferal_code: Refer_code,
     });
     const reqData = {
-      Email_slug:"Verification_OTP",
+      Email_slug: "Verification_OTP",
       email: business_email,
-      VariablesEmail:[username,newUser.emailotp],
-  
-      receiverNo:business_mobile,
-      Message_slug:"Verification_OTP",
-      VariablesMessage:[username,newUser.mobileotp],
+      VariablesEmail: [username, newUser.emailotp],
+
+      receiverNo: business_mobile,
+      Message_slug: "Verification_OTP",
+      VariablesMessage: [username, newUser.mobileotp],
     };
-      await sendDynamicMail(reqData);
-      await sendSMS(reqData)
+    await sendDynamicMail(reqData);
+    await sendSMS(reqData);
 
-
-  
     // In future Frontend doesnt need otp require only id
     return [true, newUser];
   } catch (error) {
@@ -140,35 +183,28 @@ const createUser = async (
 export const validateUserSignUp = async (
   otpVerifyType: string,
   otp: string,
-  business_email_or_mobile: string,
+  business_email_or_mobile: string
 ): Promise<[boolean, string | any]> => {
-
   let user;
 
-  if (otpVerifyType === 'email') {
-    user = await Registration.findOne({ business_email: business_email_or_mobile });
-    if (user && user.emailotp === otp) {
-      await Registration.findOneAndUpdate(
-        { business_email: user.business_email },
-        { $set: { isemailotpverified: true } },
-        { new: true }
-      );
-    } else {
-      return [false, "Invalid OTP"];
-    }
-  } else if (otpVerifyType === 'mobile') {
-    user = await Registration.findOne({ business_mobile: business_email_or_mobile });
-    if (user && user.mobileotp === otp) {
-      await Registration.findOneAndUpdate(
-        { business_mobile: user.business_mobile },
-        { $set: { ismobileotpverified: true } },
-        { new: true }
-      );
-    } else {
-      return [false, "Invalid OTP"];
-    }
+  if (otpVerifyType === "email") {
+    user = await Registration.findOneAndUpdate(
+      { business_email: business_email_or_mobile, emailotp: otp },
+      { $set: { isemailotpverified: true } },
+      { new: true }
+    );
+  } else if (otpVerifyType === "mobile") {
+    user = await Registration.findOneAndUpdate(
+      { business_mobile: business_email_or_mobile, mobileotp: otp },
+      { $set: { ismobileotpverified: true } },
+      { new: true }
+    );
   } else {
     return [false, "Invalid OTP type"];
+  }
+
+  if (!user) {
+    return [false, "Invalid OTP"];
   }
 
   if (user.isemailotpverified && user.ismobileotpverified) {
@@ -177,7 +213,8 @@ export const validateUserSignUp = async (
       { $set: { active: true } },
       { new: true }
     );
-      const token = jwt.sign(
+
+    const token = await jwt.sign(
       { userId: user._id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "3D" }
@@ -188,7 +225,6 @@ export const validateUserSignUp = async (
     return [false, "Verification pending"];
   }
 };
-
 
 export const authenticateUser = async (
   username: string,
@@ -206,6 +242,8 @@ export const authenticateUser = async (
       process.env.PASS_PHRASE
     );
     const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
+    console.log("originalPassword", originalPassword);
+    console.log("password", password);
 
     if (originalPassword !== password) {
       return [false, "Wrong Password"];
@@ -223,172 +261,14 @@ export const authenticateUser = async (
   }
 };
 
-//**************************** Function to handle changing the user's password****************************
-export const changePassword = async (
-  username: string,
-  oldPassword: string,
-  newPassword: string
-): Promise<string | null> => {
-  try {
-    const user = await Registration.findOne({ username: username });
-
-    if (!user) {
-      return "User not found";
-    }
-
-    // Decrypt all old passwords and check if the oldPassword matches any of them
-    const oldPasswords = user.oldPasswords || []; // Ensure oldPasswords is initialized as an array
-    const plainOldPasswords = oldPasswords.map((encryptedPassword) => {
-      return CryptoJS.AES.decrypt(
-        encryptedPassword,
-        process.env.PASS_PHRASE
-      ).toString(CryptoJS.enc.Utf8);
-    });
-
-    let OP = plainOldPasswords[plainOldPasswords.length - 1];
-    if (OP != oldPassword) {
-      return "Invalid old password";
-    }
-
-    if (plainOldPasswords.includes(newPassword)) {
-      return "New password cannot be an old password";
-    }
-
-    // Encrypt the new password before saving it
-    const encryptedNewPassword = CryptoJS.AES.encrypt(
-      newPassword,
-      process.env.PASS_PHRASE
-    ).toString();
-
-    // Add the new password to the oldPasswords array and limit it to the 5 latest passwords
-    oldPasswords.push(encryptedNewPassword);
-    if (oldPasswords.length > 5) {
-      oldPasswords.shift(); // Remove the oldest password
-    }
-
-    // Update the user's oldPasswords field and save the user
-    user.oldPasswords = oldPasswords;
-    await user.save();
-
-    return null; // Password changed successfully
-  } catch (error) {
-    return "Internal server error";
-  }
-};
-
-//********************* Handler function to Generate Temp Password*********************
-function generateTemporaryPassword(): string {
-  return crypto.randomBytes(8).toString("hex"); // 16 characters long hexadecimal string
-}
-
-//**************************** Function to handle forgot password logic****************************
-export const handleForgotPassword = async (
-  username: string,
-  otp:string
-): Promise<string | null> => {
-  try {
-    // Check if the user exists in the database
-    const user = await Registration.findOne({ username: username });
-    
-    if (!user) {
-      return "User not found";
-    }
-   if(user.forgotpasswordotp!=otp)
-    return "Wrong OTP";
-
-    // Generate a temporary password
-    const tempPassword = generateTemporaryPassword();
-    const encryptedNewPassword = CryptoJS.AES.encrypt(
-      tempPassword,
-      process.env.PASS_PHRASE
-    ).toString();
-
-    // Update the user's password in the database
-    const oldPasswords = user.oldPasswords || [];
-    oldPasswords.push(encryptedNewPassword);
-    if (oldPasswords.length > 5) {
-      oldPasswords.shift(); // Remove the oldest password
-    }
-
-    // Update the user's oldPasswords field and save the user
-    user.oldPasswords = oldPasswords;
-    user.password = encryptedNewPassword;
-    await user.save();
-
-    //Send an email with the temporary password
-    const reqData = {
-      Email_slug:"Admin_Password_Reset",
-      email: user.business_email,
-      VariablesEmail:[username,tempPassword],
-  
-      receiverNo:user.business_mobile,
-      Message_slug:"Admin_Password_Reset",
-      VariablesMessage:[username ,tempPassword],
-    };
- 
-   
-      await sendDynamicMail(reqData);
-      await sendSMS(reqData)
-
-    return null; // Password reset successful
-  } catch (error) {
-    console.error(error);
-    return "Internal server error";
-  }
-};
-//********************* Handler function to handle Existing Search*********************
-export const searchExisting = async (
-  business_email: string,
-  username: string,
-  business_mobile: string
-): Promise<boolean | any> => {
-  try {
-    const searchExist = {};
-
-    if (business_email !== undefined) {
-      (searchExist as any).business_email = business_email;
-    }
-
-    if (username !== undefined) {
-      (searchExist as any).username = username;
-    }
-
-    if (business_mobile !== undefined) {
-      (searchExist as any).business_mobile = business_mobile;
-    }
-
-    if (Object.keys(searchExist).length === 0) {
-      const errorResponse = {
-        error: 'At least one search parameter is required.',
-      };
-      return [false, errorResponse];
-    }
-    const result = await Registration.find(searchExist);
-
-    if (result.length > 0) {
-      const finalresult = {
-        found: true  
-      };
-      return [true, finalresult];
-    } else {
-      const finalresult = {
-        found: false,
-      };
-      return [true, finalresult];
-    }
-  } catch (error) {
-    return [false, error];
-  }
-};
-
 export const searchexistingrefercodeInternal = async (
-  refercode: string,
+  refercode: string
 ): Promise<boolean | any> => {
   try {
-    const result = await Referral.find({refferal_code:refercode});
+    const result = await Referral.find({ refferal_code: refercode });
     if (result.length > 0) {
       const finalresult = {
-        found: true  
+        found: true,
       };
       return [true, finalresult];
     } else {
@@ -401,47 +281,93 @@ export const searchexistingrefercodeInternal = async (
     return [false, error];
   }
 };
-//*********************Handler function to handle Resend Mail OTP*********************
+//*********************Handler function to handle Resend Mail/Mobile OTP*********************
+// export const resendOtpInternal = async (
+//   verificationType: string,
+//   business_email_or_mobile: string
+// ): Promise<[boolean, any]> => {
+//   try {
+//     const otpGenerated = await generateOTP();
+//     let updatedUser;
+
+//     if (verificationType === "email") {
+//       updatedUser = await Registration.findOneAndUpdate(
+//         { business_email: business_email_or_mobile },
+//         { $set: { emailotp: otpGenerated } },
+//         { new: true }
+//       );
+//       const reqData = {
+//         Email_slug: "Verification_OTP",
+//         email: business_email_or_mobile,
+//         VariablesEmail: [updatedUser.username, otpGenerated],
+//       };
+//       await sendDynamicMail(reqData);
+//     } else if (verificationType === "mobile") {
+//       updatedUser = await Registration.findOneAndUpdate(
+//         { business_mobile: business_email_or_mobile },
+//         { $set: { mobileotp: otpGenerated } },
+//         { new: true }
+//       );
+//       const reqData = {
+//         receiverNo: updatedUser.business_mobile,
+//         Message_slug: "Verification_OTP",
+//         VariablesMessage: [updatedUser.username, otpGenerated],
+//       };
+//       await sendSMS(reqData);
+//     } else {
+//       return [false, "Invalid verification type"];
+//     }
+
+//     if (updatedUser) {
+//       return [true, updatedUser];
+//     } else {
+//       return [false, updatedUser];
+//     }
+//   } catch (error) {
+//     console.error("Error in Sending OTP:", error);
+//     return [false, error];
+//   }
+// };
+
 export const resendOtpInternal = async (
   verificationType: string,
   business_email_or_mobile: string
 ): Promise<[boolean, any]> => {
   try {
     const otpGenerated = await generateOTP();
-    let updatedUser;
+    let query = {};
+    let fieldToUpdate = "";
 
-    if (verificationType === 'email') {
-      updatedUser = await Registration.findOneAndUpdate(
-        { business_email: business_email_or_mobile },
-        { $set: { emailotp: otpGenerated } },
-        { new: true }
-      );
-      const reqData = {
+    if (verificationType === "email") {
+      query = { business_email: business_email_or_mobile };
+      fieldToUpdate = "emailotp";
+      await sendDynamicMail({
         Email_slug: "Verification_OTP",
         email: business_email_or_mobile,
-        VariablesEmail: [updatedUser.username, otpGenerated],
-      };
-      await sendDynamicMail(reqData);
-    } else if (verificationType === 'mobile') {
-      updatedUser = await Registration.findOneAndUpdate(
-        { business_mobile: business_email_or_mobile },
-        { $set: { mobileotp: otpGenerated } },
-        { new: true }
-      );
-      const reqData = {
-        receiverNo:updatedUser.business_mobile,
-        Message_slug:"Verification_OTP",
-        VariablesMessage:[updatedUser.username, otpGenerated],
-      };
-      await sendSMS(reqData);
+        VariablesEmail: [business_email_or_mobile, otpGenerated],
+      });
+    } else if (verificationType === "mobile") {
+      query = { business_mobile: business_email_or_mobile };
+      fieldToUpdate = "mobileotp";
+      await sendSMS({
+        receiverNo: business_email_or_mobile,
+        Message_slug: "Verification_OTP",
+        VariablesMessage: [business_email_or_mobile, otpGenerated],
+      });
     } else {
       return [false, "Invalid verification type"];
     }
 
+    const updatedUser = await Registration.findOneAndUpdate(
+      query,
+      { $set: { [fieldToUpdate]: otpGenerated } },
+      { new: true }
+    );
+
     if (updatedUser) {
       return [true, updatedUser];
     } else {
-      return [false, updatedUser];
+      return [false, "User not found"];
     }
   } catch (error) {
     console.error("Error in Sending OTP:", error);
@@ -449,42 +375,7 @@ export const resendOtpInternal = async (
   }
 };
 
-export const forgotPassotpInternal = async (
-  username: string
-): Promise<[boolean, any]> => {
-  try {
-    const otpGenerated = await generateOTP();
-    const updatedUser = await Registration.findOneAndUpdate(
-      { username: username },
-      { $set: { forgotpasswordotp: otpGenerated } },
-      { new: true }
-    );
-// Send OTP On mail
-const reqData = {
-  Email_slug:"Verification_OTP",
-  email: updatedUser.business_email,
-  VariablesEmail:[updatedUser.username,otpGenerated],
-
-  receiverNo:updatedUser.business_mobile,
-  Message_slug:"Verification_OTP",
-  VariablesMessage:[otpGenerated],
-};
-  await sendDynamicMail(reqData);
-  await sendSMS(reqData)
-
-
-    if (updatedUser) 
-    return [true, updatedUser];
-    else {
-      return [false, updatedUser];
-    }
-  } catch (error) {
-    console.error("Error in Sending OTP:", error);
-    return [false, error];
-  }
-};
 //****************************Admin Access Starts*****************************************
-
 
 export const registerAdminUser = async (
   business_email: string,
@@ -562,7 +453,6 @@ const createAdminUser = async (
       refferal_code: Refer_code,
     });
 
-  
     return [true, newUser];
   } catch (error) {
     console.error("Error in createAdminUser:", error);
@@ -586,7 +476,7 @@ export const authenticateAdmin = async (
       process.env.PASS_PHRASE
     );
     const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
-console.log("ORIGINAL PASSWORD",originalPassword)
+
     if (originalPassword !== password) {
       return [false, "Wrong Password"];
     }
@@ -598,10 +488,8 @@ console.log("ORIGINAL PASSWORD",originalPassword)
       },
       { new: true }
     );
-    
 
- 
-    return [true,  updatedUser ];
+    return [true, updatedUser];
   } catch (error) {
     return [false, error.message];
   }
@@ -631,47 +519,6 @@ export const validateMFA = async (
   return [true, { token: token }];
 };
 
-export const handleForgotPasswordAdmin = async (
-  username: string,
-  otp:string
-): Promise<string | null> => {
-  try {
-    // Check if the user exists in the database
-    const user = await Registration.findOne({ username: username });
-
-    if (!user) {
-      return "User not found";
-    }
-    if(user.forgotpasswordotp!=otp)
-    return "Wrong OTP";
-    // Generate a temporary password
-    const tempPassword = generateTemporaryPassword();
-    const encryptedNewPassword = CryptoJS.AES.encrypt(
-      tempPassword,
-      process.env.PASS_PHRASE
-    ).toString();
-
-    // Update the user's password in the database
-    const oldPasswords = user.oldPasswords || [];
-    oldPasswords.push(encryptedNewPassword);
-    if (oldPasswords.length > 5) {
-      oldPasswords.shift(); // Remove the oldest password
-    }
-
-    // Update the user's oldPasswords field and save the user
-    user.oldPasswords = oldPasswords;
-    user.password = encryptedNewPassword;
-    await user.save();
-
-    // Send an email with the temporary password
-  
-    return null; // Password reset successful
-  } catch (error) {
-    console.error(error);
-    return "Internal server error";
-  }
-};
-
 export const resendverifycodeInternalAdmin = async (
   business_email: string
 ): Promise<[boolean, any]> => {
@@ -683,15 +530,155 @@ export const resendverifycodeInternalAdmin = async (
       { new: true }
     );
     const reqData = {
-      Email_slug:"Admin_Password_Reset",
+      Email_slug: "Two_step_Verification_OTP",
       email: business_email,
-      VariablesEmail:[otpGenerated],
+      VariablesEmail: [updatedUser.username, otpGenerated],
+
+      receiverNo: updatedUser.business_mobile,
+      Message_slug: "registration",
+      VariablesMessage: [updatedUser.username, otpGenerated],
     };
- 
-      await sendDynamicMail(reqData);
-      await sendSMS(reqData)
-    if (updatedUser)
-     return [true, updatedUser];
+    await sendDynamicMail(reqData);
+    await sendSMS(reqData);
+    if (updatedUser) return [true, updatedUser];
+    else {
+      return [false, updatedUser];
+    }
+  } catch (error) {
+    console.error("Error in Sending OTP:", error);
+    return [false, error];
+  }
+};
+
+// ----------------Common Function to Both ADMIN/USER--------------------------------------
+
+
+//**************************** Function to handle changing the user/Admin password****************************
+export const changePassword = async (
+  username: string,
+  oldPassword: string,
+  newPassword: string
+): Promise<string | null> => {
+  try {
+    const user = await Registration.findOne({ username: username });
+
+    if (!user) {
+      return "User not found";
+    }
+    const oldPasswords = user.oldPasswords || [];
+    const plainOldPasswords = oldPasswords.map((encryptedPassword) => {
+      return CryptoJS.AES.decrypt(
+        encryptedPassword,
+        process.env.PASS_PHRASE
+      ).toString(CryptoJS.enc.Utf8);
+    });
+
+    let OP = plainOldPasswords[plainOldPasswords.length - 1];
+    if (OP != oldPassword) {
+      return "Invalid old password";
+    }
+
+    if (plainOldPasswords.includes(newPassword)) {
+      return "New password cannot be an old password";
+    }
+    const encryptedNewPassword = CryptoJS.AES.encrypt(
+      newPassword,
+      process.env.PASS_PHRASE
+    ).toString();
+
+    oldPasswords.push(encryptedNewPassword);
+    if (oldPasswords.length > 5) {
+      oldPasswords.shift();
+    }
+    user.oldPasswords = oldPasswords;
+    user.password = encryptedNewPassword;
+    await user.save();
+    return null;
+  } catch (error) {
+    return "Internal server error";
+  }
+};
+
+//********************* Handler function to Generate Temp Password*********************
+function generateTemporaryPassword(): string {
+  return crypto.randomBytes(8).toString("hex"); // 16 characters long hexadecimal string
+}
+
+//**************************** Function to handle forgot password logic****************************
+export const handleForgotPassword = async (
+  username: string,
+  otp: string
+): Promise<string | null> => {
+  try {
+    const user = await Registration.findOne({ username: username });
+
+    if (!user) {
+      return "User not found";
+    }
+    if (user.forgotpasswordotp != otp) return "Wrong OTP";
+
+    const tempPassword = generateTemporaryPassword();
+    const encryptedNewPassword = CryptoJS.AES.encrypt(
+      tempPassword,
+      process.env.PASS_PHRASE
+    ).toString();
+
+    const oldPasswords = user.oldPasswords || [];
+    oldPasswords.push(encryptedNewPassword);
+    if (oldPasswords.length > 5) {
+      oldPasswords.shift();
+    }
+
+    user.oldPasswords = oldPasswords;
+    user.password = encryptedNewPassword;
+    await user.save();
+
+    //Send an email with the temporary password
+    const reqData = {
+      Email_slug: "Admin_Password_Reset",
+      email: user.business_email,
+      VariablesEmail: [username, tempPassword],
+
+      receiverNo: user.business_mobile,
+      Message_slug: "Admin_Password_Reset",
+      VariablesMessage: [username, tempPassword],
+    };
+
+    await sendDynamicMail(reqData);
+    await sendSMS(reqData);
+
+    return null;
+  } catch (error) {
+    console.error(error);
+    return "Internal server error";
+  }
+};
+
+// For resending the Forgot Pass OTP Again this route will be called
+export const forgotPassotpInternal = async (
+  username: string
+): Promise<[boolean, any]> => {
+  try {
+    const otpGenerated = await generateOTP();
+    const updatedUser = await Registration.findOneAndUpdate(
+      { username: username },
+      { $set: { forgotpasswordotp: otpGenerated } },
+      { new: true }
+    );
+    // Send OTP On Mail/Mobile
+    const reqData = {
+      Email_slug: "Verification_OTP",
+      email: updatedUser.business_email,
+      VariablesEmail: [updatedUser.username, otpGenerated],
+
+      receiverNo: updatedUser.business_mobile,
+      Message_slug: "Verification_OTP",
+      VariablesMessage: [otpGenerated],
+    };
+    await sendDynamicMail(reqData);
+    await sendSMS(reqData);
+
+    if (updatedUser) return [true, updatedUser];
     else {
       return [false, updatedUser];
     }

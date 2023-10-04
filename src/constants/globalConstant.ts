@@ -1,19 +1,6 @@
 import dotenv from 'dotenv';
 
 dotenv.config();
-
-// export const OTP_LENGTH: number = 6;
-
-// export const OTP_CONFIG: {
-//   upperCaseAlphabets: boolean;
-//   specialChars: boolean;
-// } = {
-//   upperCaseAlphabets: false,
-//   specialChars: false,
-// };
-
-
-
 export const MAIL_SETTINGS: {
   service: string;
   auth: {

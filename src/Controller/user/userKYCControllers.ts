@@ -11,51 +11,6 @@ import {
   userreferencenumberInternal,
 } from "./userKYCHandler";
 
-// Route handler function for verifying PAN
-export const verifyPAN = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const PanNumber = req.body.PanNumber as string;
-    const id = (req as any).userId as string; // Assuming userId is a string
-
-    const [success, result] = await verifyPANDetails(PanNumber, id);
-
-    if (success) {
-      res.status(200).send({ result, Active: true });
-    } else {
-      res.status(400).send({ result, Active: false });
-    }
-  } catch (error) {
-    console.error({ message: "Error in verifyPAN:", error, Active: false });
-    res.status(500).json({ error: "An error occurred", Active: false });
-  }
-};
-
-export const userreferencenumber = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  try {
-    const id = (req as any).userId ;
-    const generatedUUID = await generateUUID();
-    const [success, result] = await userreferencenumberInternal(
-      id,
-      generatedUUID
-    );
-    if (success) {
-      res.status(200).send({ result, Active: true });
-    } else {
-      res.status(400).send({ message: result, Active: false });
-    }
-  } catch (error) {
-    console.error({
-      message: "Error in Generating Reference Number:",
-      error,
-      Active: false,
-    });
-    res.status(500).json({ error: "An error occurred", Active: false });
-  }
-};
-
 // Route handler function for getting GST details
 export const getGSTDetails = async (
   req: Request,
@@ -202,20 +157,69 @@ export const verifyAadharNumberOTP = async (
   try {
     // Assuming userId is a string
     const userId = (req as any).userId as string;
-    const aadharNum=req.body.aadharNum
+    const aadharNum = req.body.aadharNum;
     const otp = req.body.otp as string;
 
     // Call the internal function to verify Aadhar number OTP
-    const [success, results] = await verifyAadharNumberOTPInternal(userId,aadharNum, otp);
-  
+    const [success, results] = await verifyAadharNumberOTPInternal(
+      userId,
+      aadharNum,
+      otp
+    );
+
     if (success) {
-      res.status(200).send({ results,  Active: true });
+      res.status(200).send({ results, Active: true });
     } else {
       res.status(400).send({ message: results, Active: false });
     }
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Wrong Aadhar Number OTP", Active: false });
+  }
+};
+
+// Route handler function for verifying PAN
+export const verifyPAN = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const PanNumber = req.body.PanNumber as string;
+    const id = (req as any).userId as string; // Assuming userId is a string
+
+    const [success, result] = await verifyPANDetails(PanNumber, id);
+
+    if (success) {
+      res.status(200).send({ result, Active: true });
+    } else {
+      res.status(400).send({ result, Active: false });
+    }
+  } catch (error) {
+    console.error({ message: "Error in verifyPAN:", error, Active: false });
+    res.status(500).json({ error: "An error occurred", Active: false });
+  }
+};
+
+export const userreferencenumber = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const id = (req as any).userId;
+    const generatedUUID = await generateUUID();
+    const [success, result] = await userreferencenumberInternal(
+      id,
+      generatedUUID
+    );
+    if (success) {
+      res.status(200).send({ result, Active: true });
+    } else {
+      res.status(400).send({ message: result, Active: false });
+    }
+  } catch (error) {
+    console.error({
+      message: "Error in Generating Reference Number:",
+      error,
+      Active: false,
+    });
+    res.status(500).json({ error: "An error occurred", Active: false });
   }
 };
 

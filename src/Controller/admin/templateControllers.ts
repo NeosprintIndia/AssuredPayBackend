@@ -213,17 +213,3 @@ export const uploadTemplateFromCsv = async (req: Request, res: Response): Promis
         res.status(500).json({ code: 500, message: 'Internal server error', err: error });
     }
 };
-
-// const uploadTemplateFroCsv=async(req,res)=>{
-//     const filebuffer=req.file.buffer;
-//     req as any:[]  
-
-//     csv() .on("end",async()=>{
-//         try {
-//             TemplateDB.insertMany(req)
-
-//         } catch (error) {
-            
-//         }
-//     })
-// }

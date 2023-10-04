@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult, check } from 'express-validator';
 
-// Create a custom validation middleware for registration
+// Create a custom Validation middleware
 const registrationValidator = [
   check('business_email')
     .isEmail()
@@ -15,10 +15,11 @@ const registrationValidator = [
     .isMobilePhone('any', { strictMode: false })
     .withMessage('Please provide a valid mobile phone number.'),
 
-    check('password')
-    .isLength({ min: 8 }) // At least 8 characters long
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/) // Contains at least one uppercase letter, one lowercase letter, one digit, and one special character
-    .withMessage('Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one digit, and one special character.'),
+  check('password')
+    .isLength({ min: 8 })
+    .withMessage('Password must be at least 8 characters long.')
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/)
+    .withMessage('Password must include at least one uppercase letter, one lowercase letter, one digit, and one special character.'),
 
   check('refferal_code')
     .optional()
@@ -26,7 +27,7 @@ const registrationValidator = [
     .withMessage('Referral code must be alphanumeric.')
 ];
 
-const loginValidator = [
+const loginValidatorUser = [
   check('username')
     .isLength({ min: 4 })
     .withMessage('Username must be at least 4 characters long.'),
@@ -38,7 +39,7 @@ const loginValidator = [
 ];
 
 const changepasswordValidator = [
-  check('username')
+     check('username')
     .isLength({ min: 4 })
     .withMessage('Username must be at least 4 characters long.'),
 
@@ -53,16 +54,13 @@ const changepasswordValidator = [
     .withMessage('Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one digit, and one special character.'),
 ];
 
-
-
 const forgotpasswordValidator = [
-  check('username')
+     check('username')
     .isLength({ min: 4 })
     .withMessage('Username must be at least 4 characters long.'),
-    check('otp')
+     check('otp')
     .isNumeric()
 ];
-
 
 const addSMSTemplateValidation = [
   check('Title').notEmpty().withMessage('Title is required'),
@@ -78,6 +76,8 @@ const addSMSTemplateValidation = [
   check('Email').optional().notEmpty().withMessage('Email is required'),
   check('Reference_message').notEmpty().withMessage('Reference_message is required'),
 ];
+
+
 // Middleware to handle validation errors
 const handleValidationErrors = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
@@ -105,7 +105,7 @@ const checkForUnexpectedProperties = (allowedProperties: string[]) => {
 
 export {
   registrationValidator,
-  loginValidator,
+  loginValidatorUser,
   changepasswordValidator,
   forgotpasswordValidator,
   handleValidationErrors,

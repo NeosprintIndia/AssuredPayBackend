@@ -10,30 +10,29 @@ import {
   registerAdmin,
   adminOTPVerify,
   loginAdmin,
-  forgotPassAdmin,
   resendverifycode,
   forgotPassotp,
-  searchexistingrefercode
-  
+  searchexistingrefercode,
 } from "../../Controller/auth/authControllers";
 
 import {
   allowedRegistrationProperties,
-  allowedPropertiesForLogin,
+  allowedPropertiesForLoginUser,
   allowedPropertiesForchangepassword,
   allowedPropertiesForforgotpassword,
+  allowedPropertiesForVerify,
+  allowedPropertiesForsearchexisting,
 } from "../../services/allowedProperties";
 
 import {
   registrationValidator,
   handleValidationErrors,
   checkForUnexpectedProperties,
-  loginValidator,
+  loginValidatorUser,
   changepasswordValidator,
   forgotpasswordValidator,
 } from "../../services/validators";
 
-//*********************Importing Middleware******************************************************
 import verifyAdminToken from "../../middlewares/adminTokens";
 
 const authRouter: Router = Router();
@@ -47,41 +46,30 @@ authRouter.post(
   handleValidationErrors,
   register
 );
-authRouter.post("/verify", verifyEmailAndMobile); // NO validation Till Service is finalized
+authRouter.post(
+  "/verify",
+  checkForUnexpectedProperties(allowedPropertiesForVerify),
+  verifyEmailAndMobile
+);
 
 authRouter.post(
   "/login",
-  checkForUnexpectedProperties(allowedPropertiesForLogin),
-  loginValidator,
+  checkForUnexpectedProperties(allowedPropertiesForLoginUser),
+  loginValidatorUser,
   handleValidationErrors,
   login
 );
-authRouter.post("/searchexisting", searchExistingController);
+authRouter.post(
+  "/searchexisting",
+  checkForUnexpectedProperties(allowedPropertiesForsearchexisting),
+  searchExistingController
+);
 
 authRouter.post("/searchexistingrefercode", searchexistingrefercode);
 
-authRouter.post("/resendotp", resendOtp); // NO validation till Service is finalized
+authRouter.post("/resendotp", resendOtp);
 
-authRouter.post(
-  "/change-password",
-  checkForUnexpectedProperties(allowedPropertiesForchangepassword),
-  changepasswordValidator,
-  handleValidationErrors,
-  changePass
-);
-authRouter.post(
-  "/forgot-password",
-  checkForUnexpectedProperties(allowedPropertiesForforgotpassword),
-  forgotpasswordValidator,
-  handleValidationErrors,
-  forgotPass
-);
-authRouter.post(
-  "/sendforgotpassotp", forgotPassotp
-);
-
-
-//********************************Routes for Admin Till login***************************************
+//---------------------------Routes for Admin Till login---------------------------------
 authRouter.post(
   "/registeradmin",
   checkForUnexpectedProperties(allowedRegistrationProperties),
@@ -93,7 +81,25 @@ authRouter.post(
 authRouter.post("/loginadmin", loginAdmin);
 authRouter.post("/verifyadmin", adminOTPVerify);
 authRouter.post("/resendverifycode", resendverifycode);
-authRouter.post("/forgot-passwordadmin", forgotPassAdmin);
 
+// -----------------------------Common route for ADMIN/USER-----------------------------
+
+authRouter.post(
+  "/change-password",
+  checkForUnexpectedProperties(allowedPropertiesForchangepassword),
+  changepasswordValidator,
+  handleValidationErrors,
+  changePass
+);
+
+authRouter.post(
+  "/forgot-password",
+  checkForUnexpectedProperties(allowedPropertiesForforgotpassword),
+  forgotpasswordValidator,
+  handleValidationErrors,
+  forgotPass
+);
+
+authRouter.post("/sendforgotpassotp", forgotPassotp);
 
 export default authRouter;

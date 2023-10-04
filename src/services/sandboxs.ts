@@ -1,97 +1,93 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';  // Import axios library for making HTTP requests
-require('dotenv').config(); // Load environment variables from .env file
-const API_Key = process.env.SandBox_API_Key; // Load Sandbox API key from environment
-const Secret_Key = process.env.SandBox_Secret_Key; // Load Sandbox Secret key from environment
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+require('dotenv').config();
+const API_Key = process.env.SandBox_API_Key;
+const Secret_Key = process.env.SandBox_Secret_Key;
 
 
 // Function to fetch admin data
 const adminGetData = async () => {
-    try {
-      const response = await AUTHENTICATE_SB(); // Call AUTHENTICATE_SB function
-  
-      console.log("response",response)
-      // Assuming the response structure is { body: { token: 'yourTokenValue' } }
-      const token = response.body.access_token; // Extract the token from the response
-      
-      return { sandbox_token: token };
-    } catch (error) {
-      console.error("Error fetching admin data:", error);
-      throw error; // You might want to handle or rethrow the error accordingly
-    }
-  };
+  try {
+    const response = await AUTHENTICATE_SB(); // Call AUTHENTICATE_SB function
+    // Assuming the response structure is { body: { token: 'yourTokenValue' } }
+    const token = response.body.access_token; // Extract the token from the response
+
+    return { sandbox_token: token };
+  } catch (error) {
+    console.error("Error fetching admin data:", error);
+    throw error; // You might want to handle or rethrow the error accordingly
+  }
+};
 // Function to authenticate with Sandbox API
 
 const AUTHENTICATE_SB = () => {
-    const instance = axios.create({
-      baseURL: 'https://api.sandbox.co.in', // Base URL for the API
-    });
-  
-    const config = {
-      method: 'POST',
-      url: '/authenticate', // API endpoint for authentication
-      headers: {
-        'x-api-key': API_Key,
-        'x-api-secret': Secret_Key,
-        'x-api-version': '1.0',
-      },
-    };
-  
+  const instance = axios.create({
+    baseURL: 'https://api.sandbox.co.in', // Base URL for the API
+  });
+
+  const config = {
+    method: 'POST',
+    url: '/authenticate', // API endpoint for authentication
+    headers: {
+      'x-api-key': API_Key,
+      'x-api-secret': Secret_Key,
+      'x-api-version': '1.0',
+    },
+  };
+
 
   // Send the request and handle the response
-    return instance
-      .request(config)
-      .then((response) => {
-        console.log(response.data);
-        return { body: response.data };
-      })
-      .catch((error) => {
-        throw error.response.data;
-      });
-  };
+  return instance
+    .request(config)
+    .then((response) => {
+      console.log(response.data);
+      return { body: response.data };
+    })
+    .catch((error) => {
+      throw error.response.data;
+    });
+};
 
 // Exported functions for various KYC verification processes
 
-  export const PAN_KYC_SB = async (dynamicData: { id_number: string }) => {
-    try {
-      const instance = axios.create({
-        baseURL: 'https://api.sandbox.co.in',
-      });
-  
-      const adminData = await adminGetData();
-      console.log(adminData)
-      const token = adminData.sandbox_token;
-  
-      const config: AxiosRequestConfig = {
-        method: 'POST',
-        url: '/kyc/pan',
-        headers: {
-          Authorization: token,
-          accept: 'application/json',
-          'x-api-key': API_Key,
-          'x-api-version': '1.0',
-        },
-        data: {
-          pan: dynamicData.id_number,
-          consent: 'Y',
-          reason: 'For KYC of User',
-        },
-      };
-  
-      console.log(config);
-  
-      try {
-        const response = await instance.request(config);
-        console.log(response.data);
-        return { body: response.data };
-      } catch (error) {
-        throw error.response.data;
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
+export const PAN_KYC_SB = async (dynamicData: { id_number: string }) => {
+  try {
+    const instance = axios.create({
+      baseURL: 'https://api.sandbox.co.in',
+    });
 
-export const GST_KYC_SB = async(dynamicData: { id_number: string }) => {
+    const adminData = await adminGetData();
+    const token = adminData.sandbox_token;
+
+    const config: AxiosRequestConfig = {
+      method: 'POST',
+      url: '/kyc/pan',
+      headers: {
+        Authorization: token,
+        accept: 'application/json',
+        'x-api-key': API_Key,
+        'x-api-version': '1.0',
+      },
+      data: {
+        pan: dynamicData.id_number,
+        consent: 'Y',
+        reason: 'For KYC of User',
+      },
+    };
+
+
+    try {
+      const response = await instance.request(config);
+
+      return { body: response.data };
+    } catch (error) {
+      throw error.response.data;
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const GST_KYC_SB = async (dynamicData: { id_number: string }) => {
   const instance = axios.create({
     baseURL: 'https://api.sandbox.co.in',
   });
@@ -107,7 +103,7 @@ export const GST_KYC_SB = async(dynamicData: { id_number: string }) => {
     }
   };
 
-  console.log(config);
+
 
   return new Promise((resolve, reject) => {
     instance
@@ -122,9 +118,9 @@ export const GST_KYC_SB = async(dynamicData: { id_number: string }) => {
   });
 };
 
-export const Aadhaar_KYC_S1 = async(dynamicData: { id_number: string }) => {
+export const Aadhaar_KYC_S1 = async (dynamicData: { id_number: string }) => {
 
-  console.log(dynamicData,"dynamicData")
+  console.log(dynamicData, "dynamicData")
 
   const adminData = await adminGetData()
   const token = adminData.sandbox_token
@@ -144,10 +140,10 @@ export const Aadhaar_KYC_S1 = async(dynamicData: { id_number: string }) => {
     data: {
       aadhaar_number: dynamicData.id_number,
     },
- 
+
   };
 
-  console.log(config);
+
 
   return new Promise((resolve, reject) => {
     instance
@@ -162,7 +158,7 @@ export const Aadhaar_KYC_S1 = async(dynamicData: { id_number: string }) => {
   });
 };
 
-export const Aadhaar_KYC_S2 = async(dynamicData: { otp: string; refId: string }) => {
+export const Aadhaar_KYC_S2 = async (dynamicData: { otp: string; refId: string }) => {
 
   const adminData = await adminGetData()
   const token = adminData.sandbox_token
@@ -185,7 +181,7 @@ export const Aadhaar_KYC_S2 = async(dynamicData: { otp: string; refId: string })
     },
   };
 
-  console.log(config);
+
 
   return new Promise((resolve, reject) => {
     instance
@@ -200,7 +196,7 @@ export const Aadhaar_KYC_S2 = async(dynamicData: { otp: string; refId: string })
   });
 };
 
-export const IFSC_Verify = async(dynamicData: { ifsc: string }) => {
+export const IFSC_Verify = async (dynamicData: { ifsc: string }) => {
   const adminData = await adminGetData()
   const token = adminData.sandbox_token
   const instance = axios.create({
@@ -218,7 +214,7 @@ export const IFSC_Verify = async(dynamicData: { ifsc: string }) => {
     },
   };
 
-  console.log(config);
+
 
   return new Promise((resolve, reject) => {
     instance
@@ -233,7 +229,7 @@ export const IFSC_Verify = async(dynamicData: { ifsc: string }) => {
   });
 };
 
-export const Bank_Account_Verify = async(dynamicData: { ifsc: string; account_number: string; mobile: string; name: string }) => {
+export const Bank_Account_Verify = async (dynamicData: { ifsc: string; account_number: string; mobile: string; name: string }) => {
   const adminData = await adminGetData()
   const token = adminData.sandbox_token
   const instance = axios.create({
@@ -253,13 +249,13 @@ export const Bank_Account_Verify = async(dynamicData: { ifsc: string; account_nu
     },
   };
 
-  console.log(config);
+
 
   return new Promise((resolve, reject) => {
     instance
       .request(config)
       .then((response: AxiosResponse) => {
-          console.log(response.data);
+        console.log(response.data);
         resolve({ body: response.data });
       })
       .catch(error => {
@@ -268,7 +264,7 @@ export const Bank_Account_Verify = async(dynamicData: { ifsc: string; account_nu
   });
 };
 
-export const UPI_Verify = async(dynamicData: { VPA: string }) => {
+export const UPI_Verify = async (dynamicData: { VPA: string }) => {
   const adminData = await adminGetData()
   const token = adminData.sandbox_token
   const instance = axios.create({
@@ -284,7 +280,7 @@ export const UPI_Verify = async(dynamicData: { VPA: string }) => {
     },
   };
 
-  console.log(config);
+
 
   return new Promise((resolve, reject) => {
     instance
