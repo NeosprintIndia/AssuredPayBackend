@@ -255,17 +255,26 @@ export const userreferencenumberInternal = async (
   generatedUUID: string
 ): Promise<any | string> => {
   try {
+    const months = [
+      "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+      "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
+    ];
     const currentDate = new Date();
+    const day = ("0" + currentDate.getDate()).slice(-2); // Add leading zero if day is single digit
+    const monthAbbreviation = months[currentDate.getMonth()];
+    const year = currentDate.getFullYear().toString().slice(-2); // Get last two digits of the year
+    const formattedDate = `${day} ${monthAbbreviation} ${year}`;
     const updatedUser = await UserKYC1.findOneAndUpdate(
       { user: id },
       {
         $set: {
           userRequestReference: generatedUUID,
-          kycrequested: currentDate,
+          kycrequested: formattedDate,
         },
       },
       { new: true }
     );
+    const res=updatedUser.userRequestReference
     const user = await Registration.findOne({ _id: updatedUser.user });
     const reqData = {
       Email_slug: "Application_Under_Review",
@@ -278,7 +287,7 @@ export const userreferencenumberInternal = async (
     };
     await sendDynamicMail(reqData);
     await sendSMS(reqData);
-    return [true, updatedUser];
+    return [true, {userRequestReference:res}];
   } catch (error) {
     return [false, error];
   }
