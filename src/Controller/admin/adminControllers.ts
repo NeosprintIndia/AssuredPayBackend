@@ -189,7 +189,3 @@ export const finalstatus = async (
 };
 
 
-export const search= async(req,res)=>{
-  const{value}=req.body
-UserKYC.find({value})
-}

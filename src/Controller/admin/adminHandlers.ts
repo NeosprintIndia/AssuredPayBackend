@@ -29,10 +29,15 @@ export const getAllKYCRecordsInternal = async (
     const results:any[] = await query.skip(skipCount).limit(pageSize).exec();
 
 
-    const totalRecordCount = await UserKYC1.countDocuments(due !== null ? { due } : {});
+    const dueCounts = {
+      approved: await UserKYC1.countDocuments({ due: 'Approved' }),
+      rejected: await UserKYC1.countDocuments({ due: 'Rejected' }),
+      new: await UserKYC1.countDocuments({ due: 'New' }),
+      total:await UserKYC1.countDocuments(),
+    };
 
 
-    return [true, { results, totalRecordCount }];
+    return [true, { results, dueCounts }];
   } catch (error) {
     return [false, error];
   }
