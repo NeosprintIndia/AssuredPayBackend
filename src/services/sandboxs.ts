@@ -2,6 +2,7 @@ import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 require('dotenv').config();
 const API_Key = process.env.SandBox_API_Key;
 const Secret_Key = process.env.SandBox_Secret_Key;
+import log from "../models/vendorAPILogs"
 
 
 // Function to fetch admin data
@@ -33,8 +34,6 @@ const AUTHENTICATE_SB = () => {
       'x-api-version': '1.0',
     },
   };
-
-
   // Send the request and handle the response
   return instance
     .request(config)
@@ -49,7 +48,7 @@ const AUTHENTICATE_SB = () => {
 
 // Exported functions for various KYC verification processes
 
-export const PAN_KYC_SB = async (dynamicData: { id_number: string }) => {
+export const PAN_KYC_SB = async (dynamicData: { id_number: string,userlog:any }) => {
   try {
     const instance = axios.create({
       baseURL: 'https://api.sandbox.co.in',
@@ -77,7 +76,11 @@ export const PAN_KYC_SB = async (dynamicData: { id_number: string }) => {
 
     try {
       const response = await instance.request(config);
-
+      await log.create({
+        user:dynamicData.userlog,
+        vendorRequestBody:config,
+        vendorResponseBody:response.data 
+      });
       return { body: response.data };
     } catch (error) {
       throw error.response.data;
@@ -87,7 +90,7 @@ export const PAN_KYC_SB = async (dynamicData: { id_number: string }) => {
   }
 };
 
-export const GST_KYC_SB = async (dynamicData: { id_number: string }) => {
+export const GST_KYC_SB = async (dynamicData: { id_number: string,userlog:any }) => {
   const instance = axios.create({
     baseURL: 'https://api.sandbox.co.in',
   });
@@ -102,15 +105,14 @@ export const GST_KYC_SB = async (dynamicData: { id_number: string }) => {
       'x-api-version': '1.0'
     }
   };
-
-
-
   return new Promise((resolve, reject) => {
     instance
       .request(config)
+      
       .then((response: AxiosResponse) => {
         console.log(response.data);
         resolve({ body: response.data });
+        
       })
       .catch(error => {
         reject(error.response.data);
@@ -181,8 +183,6 @@ export const Aadhaar_KYC_S2 = async (dynamicData: { otp: string; refId: string }
     },
   };
 
-
-
   return new Promise((resolve, reject) => {
     instance
       .request(config)
@@ -195,6 +195,10 @@ export const Aadhaar_KYC_S2 = async (dynamicData: { otp: string; refId: string }
       });
   });
 };
+
+
+
+
 
 export const IFSC_Verify = async (dynamicData: { ifsc: string }) => {
   const adminData = await adminGetData()
@@ -248,9 +252,6 @@ export const Bank_Account_Verify = async (dynamicData: { ifsc: string; account_n
       mobile: dynamicData.mobile,
     },
   };
-
-
-
   return new Promise((resolve, reject) => {
     instance
       .request(config)

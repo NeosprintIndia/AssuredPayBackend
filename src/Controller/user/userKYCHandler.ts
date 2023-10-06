@@ -23,7 +23,7 @@ export const getGSTDetailsInternal = async (
     if (userLimit <= 0) {
       return [false, "Your GST Verification Attempt exceeded "];
     }
-    const GSTresult = await GST_KYC_SB({ id_number: gst });
+    const GSTresult = await GST_KYC_SB({ id_number: gst,userlog:userId });
     const newAttempt = user.GST_Attempt - 1;
     const attemptResult = await Registration.findOneAndUpdate(
       { _id: userId },
@@ -221,7 +221,7 @@ export const verifyPANDetails = async (
     }
     const aadharFullName = user.nameInAadhaar;
     const myArray = aadharFullName.split(" ");
-    const result = await PAN_KYC_SB({ id_number: PanNumber });
+    const result = await PAN_KYC_SB({ id_number: PanNumber,userlog:id });
     const panFirstName = result.body.data.first_name.trim();
     const panNumber = result.body.data.pan;
 

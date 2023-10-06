@@ -11,10 +11,8 @@ import {
   
 
 } from "./adminHandlers";
-import UserKYC from "../../models/userKYCs";
 
-// Route handler function for retrieving all KYC records
-
+// Route handler Function to update various limits and settings in the global admin configuration
 
 export const setAllLimits = async (
   req: Request,
@@ -52,6 +50,8 @@ export const setAllLimits = async (
   }
 };
 
+// Route handler Function to retrieve all configuration settings from the global admin configuration
+
 export const getconfiguration = async (
   req: Request,
   res: Response
@@ -73,6 +73,8 @@ export const getconfiguration = async (
   }
 };
 
+//Route handler Function to retrieve all KYC records based on sorting
+
 export const getAllKYCRecords = async (
   req: Request,
   res: Response
@@ -92,6 +94,8 @@ export const getAllKYCRecords = async (
     res.status(500).json({ error: "An error occurred", Active: false });
   }
 };
+
+//Route handler Function to retrieve business details for a specific user from the UserKYC1 collection in the database
 
 export const getuserbusinessdetail = async (
   req: Request,
@@ -113,6 +117,7 @@ export const getuserbusinessdetail = async (
   }
 };
 
+// Route handler Function to retrieve business representative details for a specific user from the UserKYC1 collection in the database
 export const getbusinessrepresentativedetail = async (
   req: Request,
   res: Response
@@ -133,6 +138,8 @@ export const getbusinessrepresentativedetail = async (
   }
 };
 
+//Route handler Function to update document approval status in the UserKYC1 collection based on provided parameters
+
 export const approveDocument = async (req: Request, res: Response): Promise<void> => {
   try {
     const {_flag,status,id } = req.body;
@@ -150,6 +157,7 @@ export const approveDocument = async (req: Request, res: Response): Promise<void
     res.status(500).json({ error: 'An error occurred', Active:false });
   }
 };
+//Route handler Function to reject a document in the UserKYC1 collection based on provided parameters
 
 export const rejectDocument = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -168,6 +176,7 @@ export const rejectDocument = async (req: Request, res: Response): Promise<void>
     res.status(500).json({ error: 'An error occurred', Active:false });
   }
 };
+//Route handler Function to update the due status of a specific user in the UserKYC1 collection in the database
 
 export const finalstatus = async (
   req: Request,
@@ -175,7 +184,6 @@ export const finalstatus = async (
 ): Promise<void> => {
   const { key, id } = req.body;
 
-  // Call the internal function to approve Admin Aadhar S1 verification
   const [success, result] = await finalstatusInternal(id, key);
 
   if (success) {

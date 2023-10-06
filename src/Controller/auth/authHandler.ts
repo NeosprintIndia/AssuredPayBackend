@@ -282,52 +282,7 @@ export const searchexistingrefercodeInternal = async (
   }
 };
 //*********************Handler function to handle Resend Mail/Mobile OTP*********************
-// export const resendOtpInternal = async (
-//   verificationType: string,
-//   business_email_or_mobile: string
-// ): Promise<[boolean, any]> => {
-//   try {
-//     const otpGenerated = await generateOTP();
-//     let updatedUser;
 
-//     if (verificationType === "email") {
-//       updatedUser = await Registration.findOneAndUpdate(
-//         { business_email: business_email_or_mobile },
-//         { $set: { emailotp: otpGenerated } },
-//         { new: true }
-//       );
-//       const reqData = {
-//         Email_slug: "Verification_OTP",
-//         email: business_email_or_mobile,
-//         VariablesEmail: [updatedUser.username, otpGenerated],
-//       };
-//       await sendDynamicMail(reqData);
-//     } else if (verificationType === "mobile") {
-//       updatedUser = await Registration.findOneAndUpdate(
-//         { business_mobile: business_email_or_mobile },
-//         { $set: { mobileotp: otpGenerated } },
-//         { new: true }
-//       );
-//       const reqData = {
-//         receiverNo: updatedUser.business_mobile,
-//         Message_slug: "Verification_OTP",
-//         VariablesMessage: [updatedUser.username, otpGenerated],
-//       };
-//       await sendSMS(reqData);
-//     } else {
-//       return [false, "Invalid verification type"];
-//     }
-
-//     if (updatedUser) {
-//       return [true, updatedUser];
-//     } else {
-//       return [false, updatedUser];
-//     }
-//   } catch (error) {
-//     console.error("Error in Sending OTP:", error);
-//     return [false, error];
-//   }
-// };
 
 export const resendOtpInternal = async (
   verificationType: string,
