@@ -29,7 +29,7 @@ interface IUserKYC extends Document {
   GSTIN_of_the_entity: string;
   Legal_Name_of_Business: string;
   Business_PAN: string;
-  Date_of_Registration: Date;
+  Date_of_Registration: string;
   State: string;
   Trade_Name: string;
   userRequestReference: string;
@@ -196,7 +196,7 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>(
     GSTIN_of_the_entity: { type: String, default: "" },
     Legal_Name_of_Business: { type: String, default: "",},
     Business_PAN: { type: String , default: ""},
-    Date_of_Registration: { Date },
+    Date_of_Registration: { type:String },
     kycrequested: { Date },
     State: { type: String , default: ""},
     Trade_Name: { type: String , default: ""},
