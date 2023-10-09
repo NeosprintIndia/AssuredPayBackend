@@ -179,12 +179,10 @@ export const getbusinessrepresentativedetailInternal = async (id): Promise<any[]
     // Retrieve specific business representative details for the specified user ID from the UserKYC1 collection
     // Select specific fields to include in the result set
     const result = await UserKYC1.find({ user: id }).select({
-      aadharNumber: 1,
       aadharCO: 1,
       aadharDOB: 1,
       aadharGender: 1,
       nameInAadhaar: 1,
-      aadharPhotoLink: 1,
       aadharCountry: 1,
       distInAadhar: 1,
       aadharHouse: 1,
@@ -196,10 +194,16 @@ export const getbusinessrepresentativedetailInternal = async (id): Promise<any[]
     const resultFiles = await UserKYC1.find({ user: id }).select({
       aadharFileUrl: 1,
       aadharBackUrl: 1,
-      PANFile: 1
+      PANFile: 1,
+      aadharPhotoLink: 1,
+      aadharNumber: 1,
+    });
+    const resultAadharPhoto = await UserKYC1.find({ user: id }).select({
+      aadharPhotoLink: 1,
+      aadharNumber: 1,
     });
   
-    return [true, {result,resultFiles}]; // Future mai dekhna hai result mao zero kyu aara
+    return [true, {result,resultFiles,resultAadharPhoto}]; // Future mai dekhna hai result mao zero kyu aara
   } catch (error) {
     
     return [false, error];

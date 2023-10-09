@@ -31,16 +31,16 @@ router.post('/savegstdetail',[VerifyToken],saveGSTDetails)
 router.post('/verifyadhar',[VerifyToken],verifyAadharNumber)
 router.post('/verifyadharotp',[VerifyToken],verifyAadharNumberOTP)
 router.post("/getglobalstatus",[VerifyToken],getglobalstatus) 
-
+router.post("/kycRedoRequested",[VerifyToken],kycRedoRequested)
 
 // buinessNetworkRoutes
-router.get("/getBusinessDetails",getBusinessDetails)
-router.get("/getAllBusinessNamesByString", getAllBusinessNamesByString)
-router.post("/addBusinessNetwork",addBusinessInBusinessNetwork)
-router.get("/getBusinessNetwork",getBusinessesFromBusinessNetwork)
-router.put("/updateBusinessNetwork",updateBusinessInBusinessNetwork)
+router.get("/getBusinessDetails",[VerifyToken],getBusinessDetails)
+router.get("/getAllBusinessNamesByString",[VerifyToken], getAllBusinessNamesByString)
+router.post("/addBusinessNetwork",[VerifyToken],addBusinessInBusinessNetwork)
+router.get("/getBusinessNetwork",[VerifyToken],getBusinessesFromBusinessNetwork)
+router.put("/updateBusinessNetwork",[VerifyToken],updateBusinessInBusinessNetwork)
 
-router.post("/kycRedoRequested",[VerifyToken],kycRedoRequested)
+
 
 
 export default router;
