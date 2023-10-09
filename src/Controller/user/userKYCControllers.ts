@@ -9,6 +9,7 @@ import {
   verifyAadharNumberInternal,
   verifyAadharNumberOTPInternal,
   userreferencenumberInternal,
+  kycRedoRequestedInternal
 } from "./userKYCHandler";
 
 // Route handler function for getting GST details
@@ -235,6 +236,25 @@ export const getglobalstatus = async (
     res.send({ result, Active: true });
   } else {
     res.status(400).send({
+      message: result,
+      Active: false,
+    });
+  }
+};
+
+
+export const kycRedoRequested = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { key, id,mac,ip } = req.body;
+
+  const [success, result] = await kycRedoRequestedInternal(id, key,mac,ip);
+
+  if (success) {
+    res.send({ result, Active: true });
+  } else {
+    res.status(500).send({
       message: result,
       Active: false,
     });

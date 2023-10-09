@@ -192,9 +192,6 @@ export const getbusinessrepresentativedetailInternal = async (id): Promise<any[]
       aadharPO: 1,
       aadharState: 1,
       aadharStreet: 1,
-      aadharFileUrl: 1,
-      aadharBackUrl: 1,
-      PANFile: 1
     });
     const resultFiles = await UserKYC1.find({ user: id }).select({
       aadharFileUrl: 1,
@@ -202,31 +199,42 @@ export const getbusinessrepresentativedetailInternal = async (id): Promise<any[]
       PANFile: 1
     });
   
-    return [true, {result,resultFiles}];
+    return [true, {result,resultFiles}]; // Future mai dekhna hai result mao zero kyu aara
   } catch (error) {
     
     return [false, error];
   }
 };
 
-// Function to update the due status of a specific user in the UserKYC1 collection in the database
 export const finalstatusInternal = async (
-  id: string, // User ID for whom the status needs to be updated
-  key: string // New due status to be set
+  id: string,
+  key: string
 ): Promise<any> => {
   try {
-    // Update the due status for the specified user ID in the UserKYC1 collection
-    const result = await UserKYC1.findOneAndUpdate(
-      { user: id }, // Find the document by its user ID
-      { $set: { due: key } }, // Set the 'due' field with the new status provided in 'key'
-      { new: true } // Return the updated document after the update operation
-    );
+    // Find the user document and select specific fields
+    const user = await UserKYC1.findOne({ user: id })
 
-    
-    return [true, result];
-  } catch (error) {
+    if (!user) {
+      return { success: false, error: "User not found." };
+    }
+
+    // Check if the activities array exists and has at least one element
+    console.log(user)
+
+    const lastElement = user.activities[user.activities.length - 1];
+    console.log(lastElement)
+    user.due=key;
+    lastElement.Admin_AadhaarS1_Verification_Clarification=user.Admin_AadhaarS1_Verification_Clarification
+    lastElement.Admin_AadhaarS2_Verification_Clarification=user.Admin_AadhaarS2_Verification_Clarification
+    lastElement.Admin_Pan_Verification_Clarification=user.Admin_Pan_Verification_Clarification
+    lastElement.Admin_GST_Verification_Clarification=user.Admin_GST_Verification_Clarification
   
-    return error;
+    const result =await user.save();
+
+    console.log(result)
+    return ([ true , "result" ]);
+  } catch (error) {
+    return { success: false, error: "An error occurred during the update." };
   }
 };
 
@@ -284,6 +292,18 @@ export const rejectDocumentInternal = async (
     return [false, error];
   }
 };
-
+export const getAllActivitiesInternal = async (id): Promise<any[]> => {
+  try {
+    // Retrieve business user activities for the specified user ID from the UserKYC1 collection
+    // Select specific fields to include in the result set
+    const result = await UserKYC1.find({ user: id })
+    const activitiesArray = result.map(item => item.activities);
+     console.log("RESULT FOR ACTIVITY",activitiesArray)
+    return [true, activitiesArray];
+  } catch (error) {
+  
+    return [false, error];
+  }
+};
 
 

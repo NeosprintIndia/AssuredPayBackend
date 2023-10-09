@@ -310,3 +310,41 @@ export const getGlobalStatusInternal = async (
     return [false, error];
   }
 };
+
+export const kycRedoRequestedInternal = async (
+  id: string,
+  key: string,
+  mac:string,
+  ip:string
+): Promise<any> => {
+  try {
+    // Find the user document and select specific fields
+    const user = await UserKYC1.findOne({ user: id })
+
+    if (!user) {
+      return { success: false, error: "User not found." };
+    }
+
+    // Check if the activities array exists and has at least one element
+    console.log(user)
+
+    user.Admin_AadhaarS1_Verification_Clarification=""
+    user.Admin_AadhaarS2_Verification_Clarification=""
+   user.Admin_Pan_Verification_Clarification=""
+   user.Admin_GST_Verification_Clarification=""
+   const update = {
+    "macaddress": mac,
+    "ipAddress": ip
+  };
+  
+  (user as any).activities.push(update)
+    user.due=key;
+    const result =await user.save();
+
+    console.log(result)
+    return ([ true , "result" ]);
+  } catch (error) {
+    return { success: false, error: "An error occurred during the update." };
+  }
+};
+

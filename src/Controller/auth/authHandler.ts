@@ -491,7 +491,7 @@ export const resendverifycodeInternalAdmin = async (
       VariablesEmail: [updatedUser.username, otpGenerated],
 
       receiverNo: updatedUser.business_mobile,
-      Message_slug: "registration",
+      Message_slug: "Two_step_Verification_OTP",
       VariablesMessage: [updatedUser.username, otpGenerated],
     };
     await sendDynamicMail(reqData);
@@ -574,6 +574,7 @@ export const handleForgotPassword = async (
     if (user.forgotpasswordotp != otp) return "Wrong OTP";
 
     const tempPassword = generateTemporaryPassword();
+  
     const encryptedNewPassword = CryptoJS.AES.encrypt(
       tempPassword,
       process.env.PASS_PHRASE
@@ -588,20 +589,18 @@ export const handleForgotPassword = async (
     user.oldPasswords = oldPasswords;
     user.password = encryptedNewPassword;
     await user.save();
-
-    //Send an email with the temporary password
-    const reqData = {
-      Email_slug: "Admin_Password_Reset",
-      email: user.business_email,
-      VariablesEmail: [username, tempPassword],
-
-      receiverNo: user.business_mobile,
-      Message_slug: "Admin_Password_Reset",
-      VariablesMessage: [username, tempPassword],
-    };
-
-    await sendDynamicMail(reqData);
-    await sendSMS(reqData);
+       //Send an email with the temporary password
+       const reqData = {
+        Email_slug: "Admin_New_Reset",
+        email: user.business_email,
+        VariablesEmail: [username, tempPassword],
+  
+        receiverNo: user.business_mobile,
+        Message_slug: "Admin_New_Reset",
+        VariablesMessage: [username, tempPassword],
+      };
+      await sendDynamicMail(reqData);
+      await sendSMS(reqData);
 
     return null;
   } catch (error) {

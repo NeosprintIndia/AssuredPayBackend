@@ -11,7 +11,8 @@ import {
     verifyAadharNumberOTP,
     saveGSTDetails,
     getsavedgstdetail,
-    userreferencenumber
+    userreferencenumber,
+    kycRedoRequested
  } from '../../Controller/user/userKYCControllers';
 
 
@@ -23,6 +24,6 @@ router.post('/savegstdetail',[VerifyToken],saveGSTDetails)
 router.post('/verifyadhar',[VerifyToken],verifyAadharNumber)
 router.post('/verifyadharotp',[VerifyToken],verifyAadharNumberOTP)
 router.post("/getglobalstatus",[VerifyToken],getglobalstatus) 
-
+router.post("/kycRedoRequested",[VerifyToken],kycRedoRequested)
 
 export default router;
