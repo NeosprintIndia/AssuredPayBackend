@@ -14,6 +14,13 @@ import {
     userreferencenumber
  } from '../../Controller/user/userKYCControllers';
 
+ import {
+   getBusinessDetails,
+   addBusinessInBusinessNetwork,
+   getBusinessesFromBusinessNetwork,
+   updateBusinessInBusinessNetwork, 
+   getAllBusinessNamesByString
+ } from '../../Controller/user/businessNetworkController';
 
 router.post('/verifypan',[VerifyToken],verifyPAN)
 router.post('/generateuuid',VerifyToken,userreferencenumber)
@@ -24,5 +31,11 @@ router.post('/verifyadhar',[VerifyToken],verifyAadharNumber)
 router.post('/verifyadharotp',[VerifyToken],verifyAadharNumberOTP)
 router.post("/getglobalstatus",[VerifyToken],getglobalstatus) 
 
+// buinessNetworkRoutes
+router.get("/getBusinessDetails",getBusinessDetails)
+router.get("/getAllBusinessNamesByString", getAllBusinessNamesByString)
+router.post("/addBusinessNetwork",addBusinessInBusinessNetwork)
+router.get("/getBusinessNetwork",getBusinessesFromBusinessNetwork)
+router.put("/updateBusinessNetwork",updateBusinessInBusinessNetwork)
 
 export default router;
