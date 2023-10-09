@@ -56,6 +56,15 @@ interface IUserKYC extends Document {
   createdAt: Date;
   updatedAt: Date;
   kycrequested: Date;
+  activities: {
+    ipAddress: string;
+    macaddress: string;
+    timestamp: Date;
+    Admin_AadhaarS1_Verification_Clarification: string;
+    Admin_AadhaarS2_Verification_Clarification: string;
+    Admin_Pan_Verification_Clarification: string;
+    Admin_GST_Verification_Clarification: string;
+  }[];
 }
 
 // Define the reference interface for the user field
@@ -203,6 +212,18 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>(
     Place_of_Business: { type: String , default: ""},
     Nature_of_Place_of_Business: { type: String , default: ""},
     Nature_of_Business_Activity: { type: String , default: ""},
+   
+    activities: [
+      {
+        ipAddress: String,
+        macaddress: String,
+        timestamp: { type: Date, default: Date.now },
+        Admin_AadhaarS1_Verification_Clarification: String,
+        Admin_AadhaarS2_Verification_Clarification: String,
+        Admin_Pan_Verification_Clarification: String,
+        Admin_GST_Verification_Clarification: String,
+      },
+    ],
     due: {
       type: String,
       default: "New",

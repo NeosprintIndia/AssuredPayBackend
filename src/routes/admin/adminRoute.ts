@@ -13,7 +13,8 @@ import {
     approveDocument,
     getbusinessrepresentativedetail,
     finalstatus,
-    rejectDocument
+    rejectDocument,
+    allActivities,
    
 }
 from '../../Controller/admin/adminControllers';
@@ -34,9 +35,10 @@ router.get("/businessrepresentativedetail",VerifyAdmin,getbusinessrepresentative
 router.post("/approvedocument",VerifyAdmin,approveDocument)
 router.post("/rejectDocument",VerifyAdmin,rejectDocument)
 router.post("/finalstatus",VerifyAdmin,finalstatus)
+router.get("/allactivities",VerifyAdmin,allActivities)
 
 ///////////////////////////////////////////////////////////////////////////////-------------------
-router.post("/searchbusiness",VerifyAdmin,finalstatus)  
+
 
 
 // couponMangementRoutes
