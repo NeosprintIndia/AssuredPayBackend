@@ -15,6 +15,13 @@ import {
     kycRedoRequested
  } from '../../Controller/user/userKYCControllers';
 
+ import {
+   getBusinessDetails,
+   addBusinessInBusinessNetwork,
+   getBusinessesFromBusinessNetwork,
+   updateBusinessInBusinessNetwork, 
+   getAllBusinessNamesByString
+ } from '../../Controller/user/businessNetworkController';
 
 router.post('/verifypan',[VerifyToken],verifyPAN)
 router.post('/generateuuid',VerifyToken,userreferencenumber)
@@ -24,6 +31,16 @@ router.post('/savegstdetail',[VerifyToken],saveGSTDetails)
 router.post('/verifyadhar',[VerifyToken],verifyAadharNumber)
 router.post('/verifyadharotp',[VerifyToken],verifyAadharNumberOTP)
 router.post("/getglobalstatus",[VerifyToken],getglobalstatus) 
+
+
+// buinessNetworkRoutes
+router.get("/getBusinessDetails",getBusinessDetails)
+router.get("/getAllBusinessNamesByString", getAllBusinessNamesByString)
+router.post("/addBusinessNetwork",addBusinessInBusinessNetwork)
+router.get("/getBusinessNetwork",getBusinessesFromBusinessNetwork)
+router.put("/updateBusinessNetwork",updateBusinessInBusinessNetwork)
+
 router.post("/kycRedoRequested",[VerifyToken],kycRedoRequested)
+
 
 export default router;
