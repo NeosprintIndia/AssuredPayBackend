@@ -444,6 +444,18 @@ export const authenticateAdmin = async (
       },
       { new: true }
     );
+    //Send MFA over email
+    const reqData = {
+      Email_slug: "Verification_OTP",
+      email: business_email,
+      VariablesEmail: [user.username, user.MFA],
+
+      receiverNo: user.business_mobile,
+      Message_slug: "Verification_OTP",
+      VariablesMessage: [user.username,  user.MFA],
+    };
+    await sendDynamicMail(reqData);
+    await sendSMS(reqData);
 
     return [true, updatedUser];
   } catch (error) {

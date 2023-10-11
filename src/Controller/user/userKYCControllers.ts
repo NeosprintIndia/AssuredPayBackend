@@ -57,7 +57,7 @@ export const saveGSTDetails = async (
   res: Response
 ): Promise<void> => {
   const {
-    Constituion_of_Business,
+    Constitution_of_Business,
     Taxpayer_Type,
     GSTIN_of_the_entity,
     Legal_Name_of_Business,
@@ -72,7 +72,7 @@ export const saveGSTDetails = async (
   } = req.body;
   const userId = (req as any).userId;
   const [success, result] = await saveGSTDetailsInternal(
-    Constituion_of_Business,
+    Constitution_of_Business,
     Taxpayer_Type,
     GSTIN_of_the_entity,
     Legal_Name_of_Business,

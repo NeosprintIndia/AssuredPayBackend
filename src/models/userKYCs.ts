@@ -24,7 +24,7 @@ interface IUserKYC extends Document {
   Admin_Pan_Verification_Clarification: string;
   Admin_GST_Verification_Clarification: string;
   due: string;
-  Constituion_of_Business: string;
+  Constitution_of_Business: string;
   Taxpayer_Type: string;
   GSTIN_of_the_entity: string;
   Legal_Name_of_Business: string;
@@ -200,7 +200,7 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>(
     aadharGender: { type: String, default: "" },
     isAadharDetailSave: { type: Boolean, default: false },
     isGSTDetailSave: { type: Boolean, default: false },
-    Constituion_of_Business: { type: String, default: "" },
+    Constitution_of_Business: { type: String, default: "" },
     Taxpayer_Type: { type: String , default: ""},
     GSTIN_of_the_entity: { type: String, default: "" },
     Legal_Name_of_Business: { type: String, default: "",},

@@ -42,7 +42,7 @@ export const getGSTDetailsInternal = async (
 
 // Function to save GST Details
 export const saveGSTDetailsInternal = async (
-  Constituion_of_Business: string,
+  Constitution_of_Business: string,
   Taxpayer_Type: string,
   GSTIN_of_the_entity: string,
   Legal_Name_of_Business: string,
@@ -58,7 +58,7 @@ export const saveGSTDetailsInternal = async (
 ): Promise<any> => {
   try {
     const gstDetails = await UserKYC1.create({
-      Constituion_of_Business: Constituion_of_Business,
+      Constitution_of_Business: Constitution_of_Business,
       Taxpayer_Type: Taxpayer_Type,
       GSTIN_of_the_entity: GSTIN_of_the_entity,
       Legal_Name_of_Business: Legal_Name_of_Business,
@@ -167,7 +167,7 @@ export const verifyAadharNumberOTPInternal = async (
       //aadharPhotoLink: s3ObjectUrl,
     };
 
-    const resultSaved = await UserKYC1.findOneAndUpdate(
+    await UserKYC1.findOneAndUpdate(
       { user: userId },
       { $set: results, isAadharDetailSave: true },
       { new: true }

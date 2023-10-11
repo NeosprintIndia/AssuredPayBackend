@@ -194,9 +194,7 @@ export const getbusinessrepresentativedetailInternal = async (id): Promise<any[]
     const resultFiles = await UserKYC1.find({ user: id }).select({
       aadharFileUrl: 1,
       aadharBackUrl: 1,
-      PANFile: 1,
-      aadharPhotoLink: 1,
-      aadharNumber: 1,
+      PANFile: 1
     });
     const resultAadharPhoto = await UserKYC1.find({ user: id }).select({
       aadharPhotoLink: 1,
