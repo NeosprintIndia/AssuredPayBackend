@@ -1,4 +1,5 @@
 import UserKYC1 from '../../models/userKYCs'; // Import your UserKYC1 model
+import Registration from "../../models/userRegisterations"
 import adminGlobalSetting from "../../models/globalAdminSettings";
 
 
@@ -174,11 +175,49 @@ export const getuserbusinessdetailInternal = async (id): Promise<any[]> => {
 
 // Function to retrieve business representative details for a specific user from the UserKYC1 collection in the database
 
+// export const getbusinessrepresentativedetailInternal = async (id): Promise<any[]> => {
+//   try {
+//     // Retrieve specific business representative details for the specified user ID from the UserKYC1 collection
+//     // Select specific fields to include in the result set
+//     const result = await UserKYC1.find({ user: id }).select({
+//       aadharCO: 1,
+//       aadharDOB: 1,
+//       aadharGender: 1,
+//       nameInAadhaar: 1,
+//       aadharCountry: 1,
+//       distInAadhar: 1,
+//       aadharHouse: 1,
+//       aadharPincode: 1,
+//       aadharPO: 1,
+//       aadharState: 1,
+//       aadharStreet: 1,
+//       aadharFileUrl: 1,
+//       aadharBackUrl: 1,
+//       PANFile: 1,
+//       aadharPhotoLink: 1,
+//       aadharNumber: 1,
+//     });
+//     const resultFiles = await UserKYC1.find({ user: id }).select({
+//       aadharFileUrl: 1,
+//       aadharBackUrl: 1,
+//       PANFile: 1
+//     });
+//     const resultAadharPhoto = await UserKYC1.find({ user: id }).select({
+//       aadharPhotoLink: 1,
+//       aadharNumber: 1,
+//     });
+//     const leftCOunt = await Registration.find({ user: id }).select({Aadhaar_Attempt:1})
+//     return [true, {result,resultFiles,resultAadharPhoto,leftCOunt}]; // Future mai dekhna hai result mao zero kyu aara
+//   } catch (error) {
+    
+//     return [false, error];
+//   }
+// };
 export const getbusinessrepresentativedetailInternal = async (id): Promise<any[]> => {
   try {
     // Retrieve specific business representative details for the specified user ID from the UserKYC1 collection
-    // Select specific fields to include in the result set
-    const result = await UserKYC1.find({ user: id }).select({
+    const leftCount = await Registration.findOne({ _id: id }).select({ Aadhaar_Attempt: 1 });
+    const result = await UserKYC1.findOne({ user: id }).select({
       aadharCO: 1,
       aadharDOB: 1,
       aadharGender: 1,
@@ -190,20 +229,40 @@ export const getbusinessrepresentativedetailInternal = async (id): Promise<any[]
       aadharPO: 1,
       aadharState: 1,
       aadharStreet: 1,
-    });
-    const resultFiles = await UserKYC1.find({ user: id }).select({
       aadharFileUrl: 1,
       aadharBackUrl: 1,
-      PANFile: 1
-    });
-    const resultAadharPhoto = await UserKYC1.find({ user: id }).select({
+      PANFile: 1,
       aadharPhotoLink: 1,
       aadharNumber: 1,
     });
-  
-    return [true, {result,resultFiles,resultAadharPhoto}]; // Future mai dekhna hai result mao zero kyu aara
+    if (!result || !leftCount) {
+      return [false, "User KYC data or left count not found"];
+    }
+    const resultFiles = {
+      aadharFileUrl: result?.aadharFileUrl || null,
+      aadharBackUrl: result?.aadharBackUrl || null,
+      PANFile: result?.PANFile || null
+    };
+    const restResult = {
+      aadharCO: result?.aadharCO || null,
+      aadharDOB: result?.aadharDOB || null,
+      aadharGender: result?.aadharGender || null,
+      nameInAadhaar: result?.nameInAadhaar || null,
+      aadharCountry: result?.aadharCountry || null,
+      distInAadhar: result?.distInAadhar || null,
+      aadharHouse: result?.aadharHouse || null,
+      aadharPincode: result?.aadharPincode || null,
+      aadharPO: result?.aadharPO || null,
+      aadharState: result?.aadharState || null,
+      aadharStreet: result?.aadharStreet || null
+    };
+    const resultAadharPhoto = {
+      aadharPhotoLink: result?.aadharPhotoLink || null,
+      aadharNumber: result?.aadharNumber || null
+    };
+
+    return [true, { restResult, resultFiles, resultAadharPhoto, leftCount }];
   } catch (error) {
-    
     return [false, error];
   }
 };
