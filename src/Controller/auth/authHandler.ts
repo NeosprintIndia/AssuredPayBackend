@@ -448,11 +448,11 @@ export const authenticateAdmin = async (
     const reqData = {
       Email_slug: "Verification_OTP",
       email: business_email,
-      VariablesEmail: [user.username, user.MFA],
+      VariablesEmail: [user.username, otpGenerated],
 
       receiverNo: user.business_mobile,
       Message_slug: "Verification_OTP",
-      VariablesMessage: [user.username,  user.MFA],
+      VariablesMessage: [user.username,  otpGenerated],
     };
     await sendDynamicMail(reqData);
     await sendSMS(reqData);
