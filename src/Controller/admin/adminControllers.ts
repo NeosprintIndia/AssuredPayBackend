@@ -149,9 +149,9 @@ export const approveDocument = async (req: Request, res: Response): Promise<void
     const [success, result] = await approveDocumentInternal(_flag,status,id);
 
     if (success) {
-      res.status(200).send({result,Active:true});
+      res.status(200).send({Active:true});
     } else {
-      res.status(400).send({ message:result,Active:false});
+      res.status(400).send({ message:"Something Went Wrong",Active:false});
     }
   } catch (error) {
     console.error('Error in Approval:', error);
@@ -168,9 +168,9 @@ export const rejectDocument = async (req: Request, res: Response): Promise<void>
     const [success, result] = await rejectDocumentInternal(filename,status,id,docNameKey,clarification);
 
     if (success) {
-      res.status(200).send({result,Active:true});
+      res.status(200).send({Active:true});
     } else {
-      res.status(400).send({ message:result,Active:false});
+      res.status(400).send({ message:"Something Went Wrong",Active:false});
     }
   } catch (error) {
     console.error('Error in Rejection:', error);
@@ -188,7 +188,7 @@ export const finalstatus = async (
   const [success, result] = await finalstatusInternal(id, key);
 
   if (success) {
-    res.send({ result, Active: true });
+    res.send({Active: true });
   } else {
     res.status(500).send({
       message: result,

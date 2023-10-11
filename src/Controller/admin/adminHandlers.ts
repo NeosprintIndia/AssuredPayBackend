@@ -149,8 +149,8 @@ export const getuserbusinessdetailInternal = async (id): Promise<any[]> => {
   try {
     // Retrieve business details for the specified user ID from the UserKYC1 collection
     // Select specific fields to include in the result set
-    const result = await UserKYC1.find({ user: id }).select({
-      Constituion_of_Business: 1,
+    const result:any = await UserKYC1.findOne({ user: id }).select({
+      Constitution_of_Business: 1,
       Taxpayer_Type: 1,
       GSTIN_of_the_entity: 1,
       State: 1,
@@ -159,14 +159,31 @@ export const getuserbusinessdetailInternal = async (id): Promise<any[]> => {
       Nature_of_Place_of_Business: 1,
       Trade_Name: 1,
       Place_of_Business: 1,
-      Nature_of_Business_Activity: 1,
-      
+      Nature_of_Business_Activity: 1, 
+      isGSTDetailSaveManually:1, 
+      GSTFILE: 1,
     });
-    const resultFiles = await UserKYC1.find({ user: id }).select({
-      GSTFILE: 1
-    });
-   
-    return [true, {result,resultFiles}];
+
+    if (!result) {
+      return [false, "User KYC data not found"];
+    }
+    const resultFiles = {
+      GSTFILE: result?.GSTFILE || null,
+    };
+    const restResult = {
+      Constitution_of_Business: result?.Constitution_of_Business || null,
+      Taxpayer_Type: result?.Taxpayer_Type || null,
+      GSTIN_of_the_entity: result?.GSTIN_of_the_entity || null,
+      State: result?.State || null,
+      Business_PAN: result?.Business_PAN || null,
+      Date_of_Registration: result?.Date_of_Registration || null,
+      Nature_of_Place_of_Business: result?.Nature_of_Place_of_Business || null,
+      Trade_Name: result?.Trade_Name || null,
+      Place_of_Business: result?.Place_of_Business || null,
+      Nature_of_Business_Activity: result?.Nature_of_Business_Activity || null,
+    };
+    const fetchType={ isGSTDetailSaveManually: result?.isGSTDetailSaveManually || null,} 
+    return [true, {resultFiles,restResult,fetchType}];
   } catch (error) {
   
     return [false, error];
@@ -175,44 +192,6 @@ export const getuserbusinessdetailInternal = async (id): Promise<any[]> => {
 
 // Function to retrieve business representative details for a specific user from the UserKYC1 collection in the database
 
-// export const getbusinessrepresentativedetailInternal = async (id): Promise<any[]> => {
-//   try {
-//     // Retrieve specific business representative details for the specified user ID from the UserKYC1 collection
-//     // Select specific fields to include in the result set
-//     const result = await UserKYC1.find({ user: id }).select({
-//       aadharCO: 1,
-//       aadharDOB: 1,
-//       aadharGender: 1,
-//       nameInAadhaar: 1,
-//       aadharCountry: 1,
-//       distInAadhar: 1,
-//       aadharHouse: 1,
-//       aadharPincode: 1,
-//       aadharPO: 1,
-//       aadharState: 1,
-//       aadharStreet: 1,
-//       aadharFileUrl: 1,
-//       aadharBackUrl: 1,
-//       PANFile: 1,
-//       aadharPhotoLink: 1,
-//       aadharNumber: 1,
-//     });
-//     const resultFiles = await UserKYC1.find({ user: id }).select({
-//       aadharFileUrl: 1,
-//       aadharBackUrl: 1,
-//       PANFile: 1
-//     });
-//     const resultAadharPhoto = await UserKYC1.find({ user: id }).select({
-//       aadharPhotoLink: 1,
-//       aadharNumber: 1,
-//     });
-//     const leftCOunt = await Registration.find({ user: id }).select({Aadhaar_Attempt:1})
-//     return [true, {result,resultFiles,resultAadharPhoto,leftCOunt}]; // Future mai dekhna hai result mao zero kyu aara
-//   } catch (error) {
-    
-//     return [false, error];
-//   }
-// };
 export const getbusinessrepresentativedetailInternal = async (id): Promise<any[]> => {
   try {
     // Retrieve specific business representative details for the specified user ID from the UserKYC1 collection
