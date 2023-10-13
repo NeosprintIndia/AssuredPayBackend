@@ -61,7 +61,7 @@ try {
 
 export const findAndInsertBusinessInBusinessNetwork = async (userEmail, businessGstNumberToAdd): Promise<any> => {
     try {
-      const userId = await getUserId(userEmail);
+      const userId = await getUserId(userEmail); 
       const businessId = await userKyc.find({"GSTIN_of_the_entity": businessGstNumberToAdd}, "_id");
       if(!businessId) throw({message : "No business exist with this gst number."})
       const query = {
@@ -103,7 +103,7 @@ export const  getBusinessFromBusinessNetwork = async (email, page, rowsLimitInPa
         {
           $lookup:{
             from: "userkycs",      
-            localField: "gst",   
+            localField: "gst",          // Join ID pe lgate Business ID mai array
             foreignField: "GSTIN_of_the_entity", 
             as: "businessDetails"        
           }

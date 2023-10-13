@@ -332,6 +332,54 @@ export const rejectDocumentInternal = async (
     return [false, error];
   }
 };
+
+// export const filenameToDocNameKeyMap: { [key: string]: string } = {
+//   'AdminAadhaarS1Verified': 'Admin_AadhaarS1_Verification_Clarification',
+//   'AdminAadhaarS2Verified': 'Admin_AadhaarS2_Verification_Clarification',
+//   'AdminPanVerified': 'Admin_Pan_Verification_Clarification',
+//   'AdminGSTVerified': 'Admin_GST_Verification_Clarification',
+//   // Add more mappings as needed
+// };
+
+// export const rejectDocumentInternal = async (
+//   _flag: string,
+//   status: string,
+//   id: string,
+//   clarification: string
+// ): Promise<[boolean, any]> => {
+//   try {
+//     // Validate the input filename
+//     if (!filenameToDocNameKeyMap.hasOwnProperty(filename)) {
+//       throw new Error('Invalid filename');
+//     }
+
+//     // Get docNameKey from the map
+//     const docNameKey = filenameToDocNameKeyMap[filename];
+
+//     // Prepare update data with specified properties
+//     const updateData = {
+//       [filename]: status,
+//       [docNameKey]: clarification,
+//     };
+
+//     // Find and update the document in the UserKYC1 collection
+//     const result = await UserKYC1.findOneAndUpdate(
+//       { user: id },
+//       updateData,
+//       { new: true }
+//     );
+
+//     if (!result) {
+//       throw new Error('Document update failed');
+//     }
+
+//     return [true, result];
+//   } catch (error) {
+//     return [false, error.message || 'Unknown error occurred'];
+//   }
+// };
+
+
 export const getAllActivitiesInternal = async (id): Promise<any[]> => {
   try {
     // Retrieve business user activities for the specified user ID from the UserKYC1 collection

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { generateUUID } from "../../services/generateUUID";
+
 import {
   getGlobalStatusInternal,
   getGSTDetailsInternalsaved,
@@ -204,11 +204,7 @@ export const userreferencenumber = async (
 ): Promise<void> => {
   try {
     const id = (req as any).userId;
-    const generatedUUID = await generateUUID();
-    const [success, result] = await userreferencenumberInternal(
-      id,
-      generatedUUID
-    );
+    const [success, result] = await userreferencenumberInternal( id );
     if (success) {
       res.status(200).send({ result, Active: true });
     } else {

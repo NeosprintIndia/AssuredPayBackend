@@ -259,8 +259,8 @@ export async function forgotPassotp(req: Request, res: Response) {
   const { username } = req.body;
   const [success, result] = await forgotPassotpInternal(username);
   if (success) {
-    res.status(200).send({ result, Active: true });
+    res.status(200).send({  Active: true });
   } else {
-    res.status(500).send({ result, Active: false });
+    res.status(500).send({  Active: false });
   }
 }
