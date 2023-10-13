@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 
 import {
   getGlobalStatusInternal,
+  setGlobalStatusInternal,
   getGSTDetailsInternalsaved,
   verifyPANDetails,
   getGSTDetailsInternal,
@@ -220,13 +221,30 @@ export const userreferencenumber = async (
   }
 };
 
-export const getglobalstatus = async (
+export const setglobalstatus = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   const { globalStatus } = req.body;
   const userId = (req as any).userId;
-  const [success, result] = await getGlobalStatusInternal(globalStatus, userId);
+  const [success, result] = await setGlobalStatusInternal(globalStatus, userId);
+
+  if (success) {
+    res.send({ result, Active: true });
+  } else {
+    res.status(400).send({
+      message: result,
+      Active: false,
+    });
+  }
+};
+
+export const getglobalstatus = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const userId = (req as any).userId;
+  const [success, result] = await getGlobalStatusInternal(userId);
 
   if (success) {
     res.send({ result, Active: true });

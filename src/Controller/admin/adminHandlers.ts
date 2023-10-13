@@ -249,10 +249,14 @@ export const getbusinessrepresentativedetailInternal = async (id): Promise<any[]
 export const finalstatusInternal = async (
   id: string,
   key: string
-): Promise<any> => {
+): Promise<any> => { 
   try {
     // Find the user document and select specific fields
     const user = await UserKYC1.findOne({ user: id })
+    if(key==="Approved" && (user.AdminAadhaarS1Verified!="Approved" || user.AdminAadhaarS2Verified!="Approved" || user.AdminPanVerified!="Approved" || user.AdminGSTVerified!="Approved"))
+    {
+      return ([ true , "Please make sure all documents are approved before final approval" ]);
+    }
 
     if (!user) {
       return { success: false, error: "User not found." };

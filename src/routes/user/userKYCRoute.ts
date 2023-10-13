@@ -12,7 +12,8 @@ import {
     saveGSTDetails,
     getsavedgstdetail,
     userreferencenumber,
-    kycRedoRequested
+    kycRedoRequested,
+    setglobalstatus
  } from '../../Controller/user/userKYCControllers';
 
  import {
@@ -30,8 +31,9 @@ router.get('/getsavedgstdetail',[VerifyToken],getsavedgstdetail)
 router.post('/savegstdetail',[VerifyToken],saveGSTDetails)
 router.post('/verifyadhar',[VerifyToken],verifyAadharNumber)
 router.post('/verifyadharotp',[VerifyToken],verifyAadharNumberOTP)
-router.post("/getglobalstatus",[VerifyToken],getglobalstatus) 
+router.post("/setglobalstatus",[VerifyToken],setglobalstatus) 
 router.post("/kycRedoRequested",[VerifyToken],kycRedoRequested)
+router.get("/getglobalstatus",[VerifyToken],getglobalstatus)
 
 // buinessNetworkRoutes
 router.get("/getBusinessDetails",[VerifyToken],getBusinessDetails)

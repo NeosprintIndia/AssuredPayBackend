@@ -352,7 +352,7 @@ export const userreferencenumberInternal = async (id: string): Promise<any | str
 //   }
 // };
 
-export const getGlobalStatusInternal = async (
+export const setGlobalStatusInternal = async (
   globalStatus: string,
   userId: string
 ): Promise<[boolean, any]> => {
@@ -361,6 +361,23 @@ export const getGlobalStatusInternal = async (
       { user: userId },
       { $set: { globalStatus: globalStatus } },
       { new: true }
+    );
+
+    return [true, getGlobalStatus];
+  } catch (error) {
+    console.error("Error in Saving Status:", error);
+    return [false, error];
+  }
+};
+
+export const getGlobalStatusInternal = async (
+  userId: string
+): Promise<[boolean, any]> => {
+  try {
+
+    const getGlobalStatus = await UserKYC1.findOneAndUpdate(
+      { user: userId },
+      { due: 1, globalStatus: 1 }
     );
 
     return [true, getGlobalStatus];
