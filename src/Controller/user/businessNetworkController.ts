@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import mongoose, { ObjectId } from "mongoose";
+
 import {
     findAndInsertBusinessInBusinessNetwork,
     getBusinessFromBusinessNetwork,
@@ -32,33 +34,26 @@ export const getBusinessDetails = async (req: Request, res: Response): Promise<v
 };
 
 export const addBusinessInBusinessNetwork = async (req: Request, res: Response): Promise<void> => {
-    const {userEmail, businessGstNumberToAdd} = req.query;
-    if(!userEmail || !businessGstNumberToAdd){
-        console.log("Please pass valid user email and gst number in query parameters.");
-        sendResponse(res, false, "Please pass valid user email and gst number in query parameters.");
-    } else {
-        const [success,result] = await findAndInsertBusinessInBusinessNetwork(userEmail, businessGstNumberToAdd);
-        sendResponse(res,success,result);
-    }
+    const userId = (req as any).userId as string;
+    const businessDetails = req.body;
+    const [success,result] = await findAndInsertBusinessInBusinessNetwork(userId, businessDetails);
+    sendResponse(res,success,result);
+    
 };
 
 export const getBusinessesFromBusinessNetwork = async (req: Request, res: Response): Promise<void> => {
-    const email = req.query.email;
-    const {page, rowsLimitInPage} = req.query;
-    const [success,result] = await getBusinessFromBusinessNetwork(email, page, rowsLimitInPage);
+    const userId = (req as any).userId as string;
+    const businessQuery = req.body;
+    const [success,result] = await getBusinessFromBusinessNetwork(userId, businessQuery);
     sendResponse(res,success,result);
 };
   
 export const updateBusinessInBusinessNetwork = async (req: Request, res: Response): Promise<void> => {
-    const {userEmail, gst} = req.query;
+    const userId = (req as any).userId as string;
+    const {businessId} = req.query;
     const businessDetails = req.body;
-    if(!userEmail || !gst) {
-        console.log("Please pass valid user email and gst number in query parameters.");
-        sendResponse(res, false, "Please pass valid user email and gst number in query parameters.");
-    } else {
-        const [success,result] = await findAndUpdate(userEmail, gst, businessDetails);
-        sendResponse(res,success,result);
-    }
+    const [success,result] = await findAndUpdate(userId, businessId, businessDetails);
+    sendResponse(res,success,result);
 };
 
 export const getAllBusinessNamesByString = async (req: Request, res: Response): Promise<void> => {

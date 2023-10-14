@@ -15,31 +15,22 @@ export const findAndInsert = async (industryDetails): Promise<any> => {
   }
 };
 
-export const find = async (page, rowsLimitInPage): Promise<any> => {
+export const find = async (searchBy: any, page, rowsLimitInPage): Promise<[boolean, any]> => {
   try {
+    let query;
+    if(searchBy) query = {industryName: {$regex: searchBy, $options: "i"}}
+    else query = {};
     if(!Number(page)) page = 1;
     const rowsLimitPerPage = rowsLimitInPage || 10;
     const skipLimit  = page*rowsLimitPerPage - rowsLimitPerPage;
-    const result = await industry.find().limit(rowsLimitPerPage).skip(skipLimit);
-    console.log("Industrys fetched successfully");
-    return [true, result];
-  } catch (error) {
-    console.log("Error occured while fetching the industry", error);
-    return  [false, error.message];
-  }
-};
-
-export const findBySearchKey = async (searchBy: any): Promise<[boolean, any]> => {
-  try {
-    let query = {industryName: {$regex: searchBy, $options: "i"}}
-    const industries = await industry.find(query)
-    if(!industries.length) throw ({message: "No industry exist matching this string"})
+    const industries = await industry.find(query).limit(rowsLimitPerPage).skip(skipLimit)
+    if(!industries.length) throw ({message: "No industry found in db."})
     else {
-      console.log("Industries names fetched successfully")
+      console.log("Industries fetched successfully")
       return [true, industries];
     }
   } catch (error) {
-    console.error("Error in fetching industries names by the string provided.", error);
+    console.error("Error in fetching industries names.", error);
     return [false, error.message];
   }
 };

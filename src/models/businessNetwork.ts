@@ -4,9 +4,11 @@ import mongoose, { Schema, Document, Model, Types } from 'mongoose';
 interface IReferralCode extends Document {
   userId : Types.ObjectId | IUser,
   businessId: Types.ObjectId | IUser,
+  industryId: Types.ObjectId | IUser,
+  categoryId: Types.ObjectId | IUser,
+  productIds: [String],
   status: String,
   favourite: Boolean
-  gst: String
 }
 interface IUser extends Document {_id: Types.ObjectId }
 // Define the schema
@@ -19,8 +21,16 @@ const BusinessNetworkSchema: Schema<IReferralCode> = new Schema<IReferralCode>({
     type: Schema.Types.ObjectId,
     required: true
   },
-  gst: {
-    type: String,
+  industryId :{
+    type: Schema.Types.ObjectId,
+    required: true
+  },
+  categoryId :{
+    type: Schema.Types.ObjectId,
+    required: true
+  },
+  productIds :{
+    type: [{ type : Schema.Types.ObjectId}],
     required: true
   },
   status: {

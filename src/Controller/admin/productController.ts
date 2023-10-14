@@ -2,9 +2,7 @@ import { Request, Response } from 'express';
 import {
   findAndInsert,
   find,
-  findAndUpdate,
-  findBySearchKey,
-  findByCategoryId
+  findAndUpdate
 } from './productHandler';
 
 function sendResponse(res: Response, success: Boolean, result: any){
@@ -19,25 +17,8 @@ export const addProduct = async (req: Request, res: Response): Promise<void> => 
 };
 
 export const getProduct = async (req: Request, res: Response): Promise<void> => {
-  const {page, rowsLimitInPage} = req.query;
-  const [success,result] = await find(page, rowsLimitInPage);
-  sendResponse(res,success,result);
-};
-
-export const getAllProductsByString = async (req: Request, res: Response): Promise<void> => {
-  const {searchKey} = req.query;
-  if(!searchKey) {
-      console.log("Please pass valid search key query parameter.");
-      sendResponse(res, false, "Please pass valid searchKey in query parameters.");
-  } else {
-      const [success,result] = await findBySearchKey(searchKey);
-      sendResponse(res,success,result);
-  }
-};
-
-export const getProductByCategoryId = async (req: Request, res: Response): Promise<void> => {
-  const {categoryId} = req.query;
-  const [success,result] = await findByCategoryId(categoryId);
+  const {searchKey,categoryId, page, rowsLimitInPage} = req.query;
+  const [success,result] = await find(searchKey, categoryId, page, rowsLimitInPage);
   sendResponse(res,success,result);
 };
 
