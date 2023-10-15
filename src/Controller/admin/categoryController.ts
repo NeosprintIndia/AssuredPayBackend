@@ -2,9 +2,7 @@ import { Request, Response } from 'express';
 import {
   findAndInsert,
   find,
-  findAndUpdate,
-  findBySearchKey,
-  findByIndustryId
+  findAndUpdate
 } from './categoryHandler';
 
 function sendResponse(res: Response, success: Boolean, result: any){
@@ -19,25 +17,8 @@ export const addCategory = async (req: Request, res: Response): Promise<void> =>
 };
 
 export const getCategory = async (req: Request, res: Response): Promise<void> => {
-  const {page, rowsLimitInPage} = req.query;
-  const [success,result] = await find(page, rowsLimitInPage);
-  sendResponse(res,success,result);
-};
-
-export const getAllCategoriesByString = async (req: Request, res: Response): Promise<void> => {
-  const {searchKey} = req.query;
-  if(!searchKey) {
-      console.log("Please pass valid search key query parameter.");
-      sendResponse(res, false, "Please pass valid searchKey in query parameters.");
-  } else {
-      const [success,result] = await findBySearchKey(searchKey);
-      sendResponse(res,success,result);
-  }
-};
-
-export const getCategoryByIndustryId = async (req: Request, res: Response): Promise<void> => {
-  const {industryId} = req.query;
-  const [success,result] = await findByIndustryId(industryId);
+  const {searchKey, industryId, page, rowsLimitInPage} = req.query;
+  const [success,result] = await find(searchKey, industryId, page, rowsLimitInPage);
   sendResponse(res,success,result);
 };
 

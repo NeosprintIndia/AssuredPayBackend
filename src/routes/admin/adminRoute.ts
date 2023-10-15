@@ -27,23 +27,18 @@ import {
 import { 
     addIndustry,
     getIndustry,
-    getAllIndustriesByString,
-    updateIndustry,
+    updateIndustry
 } from '../../Controller/admin/industryController';
 
 import { 
     addCategory,
     getCategory,
-    getAllCategoriesByString,
-    getCategoryByIndustryId,
-    updateCategory,
+    updateCategory
 } from '../../Controller/admin/categoryController';
 
 import { 
     addProduct,
     getProduct,
-    getAllProductsByString,
-    getProductByCategoryId,
     updateProduct
 } from '../../Controller/admin/productController';
 
@@ -69,23 +64,18 @@ router.put("/updateCoupon",VerifyAdmin,updateCoupon)
 router.delete("/deleteCoupon",VerifyAdmin,deleteCoupon)
 
 // industryRoutes
-router.post("/addIndustry",VerifyAdmin,addIndustry)
-router.get("/getIndustry",VerifyAdmin,getIndustry)
-router.get("/getIndustryBySearchKey",VerifyAdmin,getAllIndustriesByString)
-router.put("/updateIndustry",VerifyAdmin,updateIndustry)
+router.post("/addIndustry",addIndustry)
+router.get("/getIndustry",getIndustry)
+router.put("/updateIndustry",updateIndustry)
 
 // categoryRoutes
-router.post("/addCategory",VerifyAdmin,addCategory)
-router.get("/getCategory",VerifyAdmin,getCategory)
-router.get("/getCategoryBySearchKey",VerifyAdmin,getAllCategoriesByString)
-router.get("/getCategoryByIndustryId",VerifyAdmin,getCategoryByIndustryId)
-router.put("/updateCategory",VerifyAdmin,updateCategory)
+router.post("/addCategory",addCategory)
+router.get("/getCategory",getCategory)
+router.put("/updateCategory",updateCategory)
 
 // productRoutes
-router.post("/addProduct",VerifyAdmin,addProduct)
-router.get("/getProduct",VerifyAdmin,getProduct)
-router.get("/getProductBySearchKey",VerifyAdmin,getAllProductsByString)
-router.get("/getProductByCategoryId",VerifyAdmin,getProductByCategoryId)
-router.put("/updateProduct",VerifyAdmin,updateProduct)
+router.post("/addProduct",addProduct)
+router.get("/getProduct",getProduct)
+router.put("/updateProduct",updateProduct)
 
 export default router;

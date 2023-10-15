@@ -24,6 +24,19 @@ import {
    getAllBusinessNamesByString
  } from '../../Controller/user/businessNetworkController';
 
+ import { 
+  getIndustry
+} from '../../Controller/admin/industryController';
+
+import { 
+  getCategory
+} from '../../Controller/admin/categoryController';
+
+import { 
+  addProduct,
+  getProduct
+} from '../../Controller/admin/productController';
+
 router.post('/verifypan',[VerifyToken],verifyPAN)
 router.post('/generateuuid',VerifyToken,userreferencenumber)
 router.post('/getgstdetail',[VerifyToken],getGSTDetails)
@@ -42,7 +55,14 @@ router.post("/addBusinessNetwork",[VerifyToken],addBusinessInBusinessNetwork)
 router.get("/getBusinessNetwork",[VerifyToken],getBusinessesFromBusinessNetwork)
 router.put("/updateBusinessNetwork",[VerifyToken],updateBusinessInBusinessNetwork)
 
+// industryRoutes
+router.get("/getIndustry",[VerifyToken],getIndustry)
 
+// categoryRoutes
+router.get("/getCategory",[VerifyToken],getCategory)
 
+// productRoutes
+router.post("/addProduct",[VerifyToken],addProduct)
+router.get("/getProduct",[VerifyToken],getProduct)
 
 export default router;
