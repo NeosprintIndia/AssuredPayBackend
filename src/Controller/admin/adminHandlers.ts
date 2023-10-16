@@ -265,7 +265,7 @@ export const finalstatusInternal = async (
     // Check if the activities array exists and has at least one element
     console.log(user)
 
-    const lastElement = user.activities[user.activities.length - 1];
+    const lastElement = user.activities[user.activities.length-1];
     console.log(lastElement)
     user.due=key;
     lastElement.Admin_AadhaarS1_Verification_Clarification=user.Admin_AadhaarS1_Verification_Clarification

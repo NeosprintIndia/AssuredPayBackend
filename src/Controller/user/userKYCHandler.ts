@@ -21,7 +21,7 @@ export const getGSTDetailsInternal = async (
     const user = await Registration.findOne({ _id: userId });
     const userLimit = user.GST_Attempt;
     if (userLimit <= 0) {
-      return [false, "Your GST Verification Attempt exceeded "];
+      return [false, "Your GST Verification Attempt exceeded"];
     }
     const GSTresult = await GST_KYC_SB({ id_number: gst,userlog:userId });
     const newAttempt = user.GST_Attempt - 1;
@@ -250,59 +250,58 @@ export const verifyPANDetails = async (
   }
 };
 
-export const userreferencenumberInternal = async (id: string): Promise<any | string> => {
-  try {
-    // Check if user already has a userRequestReference
-    const existingUser = await UserKYC1.findOne({ user: id, userRequestReference: { $exists: true } });
+// export const userreferencenumberInternal = async (id: string): Promise<any | string> => {
+//   try {
+//     // Check if user already has a userRequestReference
+//     const existingUser = await UserKYC1.findOne({ user: id, userRequestReference: { $exists: true } });
 
-    if (existingUser) {
-      // User already has a userRequestReference
-      return [false, "User already has a userRequestReference"];
-    }
+//     if (existingUser) {
+//       // User already has a userRequestReference
+//       return [false, "User already has a userRequestReference"];
+//     }
 
-    const generatedUUID = await generateUUID();
-    const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-    const currentDate = new Date();
-    const day = ("0" + currentDate.getDate()).slice(-2);
-    const monthAbbreviation = months[currentDate.getMonth()];
-    const year = currentDate.getFullYear().toString().slice(-2);
-    const formattedDate = `${day} ${monthAbbreviation} ${year}`;
+//     const generatedUUID = await generateUUID();
+//     const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+//     const currentDate = new Date();
+//     const day = ("0" + currentDate.getDate()).slice(-2);
+//     const monthAbbreviation = months[currentDate.getMonth()];
+//     const year = currentDate.getFullYear().toString().slice(-2);
+//     const formattedDate = `${day} ${monthAbbreviation} ${year}`;
+//     const updatedUser = await UserKYC1.findOneAndUpdate(
+//       { user: id },
+//       {
+//         $set: {
+//           userRequestReference: generatedUUID,
+//           kycrequested: formattedDate,
+//         },
+//       },
+//       { new: true }
+//     );
 
-    const updatedUser = await UserKYC1.findOneAndUpdate(
-      { user: id },
-      {
-        $set: {
-          userRequestReference: generatedUUID,
-          kycrequested: formattedDate,
-        },
-      },
-      { new: true }
-    );
+//     if (!updatedUser) {
+//       // Handle case where the user is not found in the database.
+//       return [false, "User not found"];
+//     }
 
-    if (!updatedUser) {
-      // Handle case where the user is not found in the database.
-      return [false, "User not found"];
-    }
+//     const res = updatedUser.userRequestReference;
+//     const user = await Registration.findOne({ _id: updatedUser.user });
+//     const reqData = {
+//       Email_slug: "Application_Under_Review",
+//       email: user.business_email,
+//       VariablesEmail: [user.username, generatedUUID],
+//       receiverNo: user.business_mobile,
+//       Message_slug: "Application_Under_Review",
+//       VariablesMessage: [user.username, generatedUUID],
+//     };
 
-    const res = updatedUser.userRequestReference;
-    const user = await Registration.findOne({ _id: updatedUser.user });
-    const reqData = {
-      Email_slug: "Application_Under_Review",
-      email: user.business_email,
-      VariablesEmail: [user.username, generatedUUID],
-      receiverNo: user.business_mobile,
-      Message_slug: "Application_Under_Review",
-      VariablesMessage: [user.username, generatedUUID],
-    };
+//     await sendDynamicMail(reqData);
+//     await sendSMS(reqData);
 
-    await sendDynamicMail(reqData);
-    await sendSMS(reqData);
-
-    return [true, { userRequestReference: res }];
-  } catch (error) {
-    return [false, "Something Went Wrong"];
-  }
-};
+//     return [true, { userRequestReference: res }];
+//   } catch (error) {
+//     return [false, "Something Went Wrong"];
+//   }
+// };
 
 
 // export const userreferencenumberInternal = async (
@@ -352,6 +351,68 @@ export const userreferencenumberInternal = async (id: string): Promise<any | str
 //   }
 // };
 
+export const userreferencenumberInternal = async (id: string,
+  mac:string,
+  ip:string
+  ): Promise<any | string> => {
+  try {
+    // Check if user already has a userRequestReference
+    const existingUser = await UserKYC1.findOne({ user: id, userRequestReference: { $exists: true } });
+    console.log(existingUser)
+    if (existingUser.userRequestReference) {
+      // User already has a userRequestReference
+      return [false, "User already has a userRequestReference"];
+    }
+    const update = {
+      "macaddress": mac,
+      "ipAddress": ip
+    };
+    (existingUser as any).activities.push(update)
+    const result =await existingUser.save();
+    console.log(result)
+    const generatedUUID = await generateUUID();
+    const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+    const currentDate = new Date();
+    const day = ("0" + currentDate.getDate()).slice(-2);
+    const monthAbbreviation = months[currentDate.getMonth()];
+    const year = currentDate.getFullYear().toString().slice(-2);
+    const formattedDate = `${day} ${monthAbbreviation} ${year}`;
+
+    const updatedUser = await UserKYC1.findOneAndUpdate(
+      { user: id },
+      {
+        $set: {
+          userRequestReference: generatedUUID,
+          kycrequested: formattedDate,
+        },
+      },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      // Handle case where the user is not found in the database.
+      return [false, "User not found"];
+    }
+
+    const res = updatedUser.userRequestReference;
+    const user = await Registration.findOne({ _id: updatedUser.user });
+    const reqData = {
+      Email_slug: "Application_Under_Review",
+      email: user.business_email,
+      VariablesEmail: [user.username, generatedUUID],
+      receiverNo: user.business_mobile,
+      Message_slug: "Application_Under_Review",
+      VariablesMessage: [user.username, generatedUUID],
+    };
+
+    await sendDynamicMail(reqData);
+    await sendSMS(reqData);
+
+    return [true, { userRequestReference: res }];
+  } catch (error) {
+    return [false, "Something Went Wrong"];
+  }
+};
 export const setGlobalStatusInternal = async (
   globalStatus: string,
   userId: string

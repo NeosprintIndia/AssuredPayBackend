@@ -48,7 +48,7 @@ export const getGSTDetails = async (
     }
   } catch (error) {
     console.error({ message: "Error in getGSTDetails:", error, Active: false });
-    res.status(500).send({ error: "An error occurred", Active: false });
+    res.status(500).send({ message: "An error occurred", Active: false });
   }
 };
 
@@ -205,7 +205,8 @@ export const userreferencenumber = async (
 ): Promise<void> => {
   try {
     const id = (req as any).userId;
-    const [success, result] = await userreferencenumberInternal( id );
+    const{ip,mac}=req.body
+    const [success, result] = await userreferencenumberInternal( id,mac,ip );
     if (success) {
       res.status(200).send({ result, Active: true });
     } else {
