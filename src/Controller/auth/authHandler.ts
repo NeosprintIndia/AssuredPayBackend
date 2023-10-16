@@ -138,7 +138,7 @@ const createUser = async (
       }
     }
     const { gstLimit, aadharLimit, panLimit, cin } =
-      await globalSetting.findOne({ id: "globalSetting" });
+      await globalSetting.findOne({ });
 
     const newUser = await Registration.create({
       business_email,
@@ -569,9 +569,36 @@ export const changePassword = async (
 
 //********************* Handler function to Generate Temp Password*********************
 function generateTemporaryPassword(): string {
-  return crypto.randomBytes(8).toString("hex"); // 16 characters long hexadecimal string
+  const uppercaseLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const lowercaseLetters = 'abcdefghijklmnopqrstuvwxyz';
+  const digits = '0123456789';
+  const specialCharacters = '!@#$%^&*()-_+=<>?';
+
+  let password = '';
+
+  // Add at least one uppercase letter
+  password += uppercaseLetters[Math.floor(Math.random() * uppercaseLetters.length)];
+  // Add at least one lowercase letter
+  password += lowercaseLetters[Math.floor(Math.random() * lowercaseLetters.length)];
+  // Add at least one digit
+  password += digits[Math.floor(Math.random() * digits.length)];
+  // Add at least one special character
+  password += specialCharacters[Math.floor(Math.random() * specialCharacters.length)];
+
+  // Generate the remaining characters randomly
+  const remainingLength = 8 - password.length;
+  const allCharacters = uppercaseLetters + lowercaseLetters + digits + specialCharacters;
+  for (let i = 0; i < remainingLength; i++) {
+    password += allCharacters[Math.floor(Math.random() * allCharacters.length)];
+  }
+
+  // Shuffle the password characters to make it random
+  password = password.split('').sort(() => Math.random() - 0.5).join('');
+
+  return password;
 }
 
+const temporaryPassword = generateTemporaryPassword();
 //**************************** Function to handle forgot password logic****************************
 export const handleForgotPassword = async (
   username: string,

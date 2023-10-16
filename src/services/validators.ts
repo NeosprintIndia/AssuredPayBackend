@@ -33,7 +33,7 @@ const loginValidatorUser = [
     .withMessage('Username must be at least 4 characters long.'),
 
     check('password')
-    .isLength({ min: 8 }) // At least 8 characters long
+    .isLength({ min: 7 }) // At least 8 characters long
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/) // Contains at least one uppercase letter, one lowercase letter, one digit, and one special character
     .withMessage('Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one digit, and one special character.'),
 ];

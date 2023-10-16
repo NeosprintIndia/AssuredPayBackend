@@ -1,5 +1,3 @@
-import * as otpGenerator from 'otp-generator';
-
 const OTP_LENGTH: number = 6;
 
 export const generateOTP = (): string => {

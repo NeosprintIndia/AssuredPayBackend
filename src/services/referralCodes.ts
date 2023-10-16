@@ -10,7 +10,6 @@ function generateReferralCode(username: string, business_mobile: string): string
     // Take the last 4 characters of the businessMobile
     const businessMobileSuffix: string = business_mobile.slice(-4);
 
-    // Concatenate the two parts to generate the referral code
     const referralCode: string = usernamePrefix + businessMobileSuffix;
 
     return referralCode;
