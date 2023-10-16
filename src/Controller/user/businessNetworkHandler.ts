@@ -44,7 +44,7 @@ export const getBusinessByBusinessDetails = async ( gst: any, businessName: any)
     try {
       let query;
       if(gst) query = {"GSTIN_of_the_entity": gst}
-      else query = {"Legal_Name_of_Business": businessName}
+      else query = {Legal_Name_of_Business: {$regex: businessName, $options: "i"}}
       const businessDetails = await userKyc.find(query, businessProjectionFields)
       if(!businessDetails.length) throw ({message: "Buiness does not exists with the passed business details."})
       else {
@@ -105,7 +105,7 @@ export const sendResponse = (success,response) => {
   else return [false, response]
 }
 
-export const getBusinessNetworkDetails = async (userId, gst, businessName)=> {
+export const getBusinessNetworkDetails = async (userId, gst, businessName)=> { 
   try {
   let matchQuery;
   if(gst) matchQuery = {$match:  {"GSTIN_of_the_entity": gst}}
