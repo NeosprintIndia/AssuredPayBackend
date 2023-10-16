@@ -20,27 +20,27 @@ export const findAndInsert = async (categoryDetails): Promise<any> => {
   }
 };
 
-export const find = async (page, rowsLimitInPage): Promise<any> => {
+export const find = async (searchBy: any, industryId: any, page, rowsLimitInPage): Promise<[boolean, any]> => {
   try {
+    let query;
+    if(searchBy && industryId) {
+      query = {
+        $and: [
+          {categoryName: {$regex: searchBy, $options: "i"}},
+          {industryIds: industryId}] 
+      }
+    } else if(searchBy) query = {categoryName: {$regex: searchBy, $options: "i"}}
+    else if (industryId)  query = {industryIds: industryId}
+    else query = {}
+    
     if(!Number(page)) page = 1;
     const rowsLimitPerPage = rowsLimitInPage || 10;
     const skipLimit  = page*rowsLimitPerPage - rowsLimitPerPage;
-    const result = await category.find().limit(rowsLimitPerPage).skip(skipLimit);
-    console.log("Categorys fetched successfully");
-    return [true, result];
-  } catch (error) {
-    console.log("Error occured while fetching the category", error);
-    return  [false, error.message];
-  }
-};
-
-export const findBySearchKey = async (searchBy: any): Promise<[boolean, any]> => {
-  try {
-    let query = {categoryName: {$regex: searchBy, $options: "i"}}
-    const categories = await category.find(query)
-    if(!categories.length) throw ({message: "No category exist matching this string"})
+   
+    const categories = await category.find(query).limit(rowsLimitPerPage).skip(skipLimit);
+    if(!categories.length) throw ({message: "No category found in db."})
     else {
-      console.log("categories names fetched successfully")
+      console.log("Categories fetched successfully.")
       return [true, categories];
     }
   } catch (error) {
@@ -65,16 +65,5 @@ export const findAndUpdate = async (categoryId, categoryDetails): Promise<any> =
   } catch (error) {
     console.log("Error occured while updating the category", error);
     return  [false, error.message];
-  }
-};
-
-export const findByIndustryId = async (industryId): Promise<[boolean, any]> => {
-  try {
-  if(!industryId) throw ({message : "Please provide industryId."})
-  const categories = await category.find({industryIds: industryId}, {"categoryName": 1,"categoryStatus":1})
-  return [true, categories];
-  } catch (error) {
-    console.error("Error in fetching categories by industry id.", error);
-    return [false, error.message];
   }
 };
