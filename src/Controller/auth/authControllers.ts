@@ -13,6 +13,8 @@ import {
   resendverifycodeInternalAdmin,
   forgotPassotpInternal,
   searchexistingrefercodeInternal,
+  getlegaldocumentsInternal
+  
 } from "./authHandler";
 
 import { sendDynamicMail } from "../../services/sendEmail";
@@ -87,7 +89,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 export async function searchExistingController(req: Request, res: Response) {
   try {
     const { business_email, business_mobile, username } = req.body;
-    console.log(business_email, business_mobile, username);
+  
     const [success, result] = await searchExisting(
       business_email,
       username,
@@ -134,6 +136,26 @@ export async function resendOtp(req: Request, res: Response) {
   }
 }
 
+export const getlegaldocuments = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+   
+    const [success, result] = await getlegaldocumentsInternal();
+    if (success) {
+      res.status(200).send({result, Active: true} );
+    } else {
+      res.status(400).send({
+        message: result,
+        Active: false,
+      });
+    }
+  } catch (error) {
+    console.error("Error in fetching Legal Documents:", error);
+    res.status(500).json({ error: "An error occurred", Active: false });
+  }
+};
 //************************************ADMIN*********************************** */
 
 ////********************* Controller function to handle registering an admin user*********************
@@ -214,7 +236,7 @@ export const changePass = async (
   res: Response
 ): Promise<void> => {
   const { username, oldPassword, newPassword } = req.body;
-  console.log(username, oldPassword, newPassword);
+ 
 
   const errorMessage = await changePassword(username, oldPassword, newPassword);
 

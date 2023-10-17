@@ -1,6 +1,6 @@
 import  AlertsTemplateDB from '../models/NotificationTemplate'
 export const findAlertsTemplate = async (slug: string): Promise<any> => {
-    console.log("Finding Template", slug);
+   
     try {
         const succ = await AlertsTemplateDB.findOne({ SLUG: slug }).exec();
         if (succ) {

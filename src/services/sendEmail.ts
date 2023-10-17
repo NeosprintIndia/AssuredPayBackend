@@ -2,11 +2,11 @@ import * as AWS from "aws-sdk";
 import { SESConfig } from "../services/awsInitialise";
 import { findAlertsTemplate } from "../services/findTemplate";
 import { replaceVarsInSequence } from "../services/replaceVariableInTemplate";
-// Import other necessary modules as needed
+
 
 const sendDynamicMail = async (data: any) => {
     try {
-        // Fetch the template using the provided slug
+        
         const templateDoc = await findAlertsTemplate(data.Email_slug);
 
         const emailContent: string = replaceVarsInSequence(
@@ -18,7 +18,7 @@ const sendDynamicMail = async (data: any) => {
 
         AWS.config.update(SESConfig);
 
-        // Create sendEmail params
+       
         const params: AWS.SES.SendEmailRequest = {
             Destination: {
                 CcAddresses: [data.email],
@@ -28,7 +28,7 @@ const sendDynamicMail = async (data: any) => {
                 Body: {
                     Html: {
                         Charset: "UTF-8",
-                        Data: emailContent, // Use the updated email content
+                        Data: emailContent, 
                     },
                     Text: {
                         Charset: "UTF-8",
@@ -37,21 +37,21 @@ const sendDynamicMail = async (data: any) => {
                 },
                 Subject: {
                     Charset: "UTF-8",
-                    Data: subject, // Use the updated subject
+                    Data: subject, 
                 },
             },
             Source: "developer@neosprint.in",
             ReplyToAddresses: ["developer@neosprint.in"],
         };
 
-        // Create the promise and SES service object
+      
         const sendPromise = new AWS.SES({ apiVersion: "2010-12-01" })
             .sendEmail(params)
             .promise();
 
-        // Handle promise's fulfilled/rejected states
+       
         const response = await sendPromise;
-        console.log(response.MessageId);
+       
     } catch (error) {
         console.error(error, error.stack);
     }

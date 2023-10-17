@@ -13,6 +13,7 @@ import {
   resendverifycode,
   forgotPassotp,
   searchexistingrefercode,
+  getlegaldocuments
 } from "../../Controller/auth/authControllers";
 
 import {
@@ -70,11 +71,13 @@ authRouter.post(
 authRouter.post("/searchexistingrefercode", searchexistingrefercode);
 
 authRouter.post("/resendotp", resendOtp);
+authRouter.get("/getlegaldocuments",getlegaldocuments );
 
 
 
 
 //---------------------------Routes for Admin Till login---------------------------------
+
 authRouter.post(
   "/registeradmin",
   checkForUnexpectedProperties(allowedRegistrationProperties),
@@ -108,5 +111,7 @@ authRouter.post(
 );
 
 authRouter.post("/sendforgotpassotp", forgotPassotp);
+
+
 
 export default authRouter;

@@ -8,14 +8,14 @@ import log from "../models/vendorAPILogs"
 // Function to fetch admin data
 const adminGetData = async () => {
   try {
-    const response = await AUTHENTICATE_SB(); // Call AUTHENTICATE_SB function
-    // Assuming the response structure is { body: { token: 'yourTokenValue' } }
-    const token = response.body.access_token; // Extract the token from the response
+    const response = await AUTHENTICATE_SB(); 
+   
+    const token = response.body.access_token; 
 
     return { sandbox_token: token };
   } catch (error) {
     console.error("Error fetching admin data:", error);
-    throw error; // You might want to handle or rethrow the error accordingly
+    throw error; 
   }
 };
 // Function to authenticate with Sandbox API
@@ -122,7 +122,6 @@ export const GST_KYC_SB = async (dynamicData: { id_number: string,userlog:any })
 
 export const Aadhaar_KYC_S1 = async (dynamicData: { id_number: string }) => {
 
-  console.log(dynamicData, "dynamicData")
 
   const adminData = await adminGetData()
   const token = adminData.sandbox_token
@@ -151,7 +150,7 @@ export const Aadhaar_KYC_S1 = async (dynamicData: { id_number: string }) => {
     instance
       .request(config)
       .then((response: AxiosResponse) => {
-        console.log(response.data);
+        
         resolve({ body: response.data });
       })
       .catch(error => {
@@ -224,7 +223,7 @@ export const IFSC_Verify = async (dynamicData: { ifsc: string }) => {
     instance
       .request(config)
       .then((response: AxiosResponse) => {
-        console.log(response.data);
+    
         resolve({ body: response.data });
       })
       .catch(error => {
@@ -256,7 +255,7 @@ export const Bank_Account_Verify = async (dynamicData: { ifsc: string; account_n
     instance
       .request(config)
       .then((response: AxiosResponse) => {
-        console.log(response.data);
+       
         resolve({ body: response.data });
       })
       .catch(error => {
@@ -287,7 +286,7 @@ export const UPI_Verify = async (dynamicData: { VPA: string }) => {
     instance
       .request(config)
       .then((response: AxiosResponse) => {
-        console.log(response.data);
+      
         resolve({ body: response.data });
       })
       .catch(error => {

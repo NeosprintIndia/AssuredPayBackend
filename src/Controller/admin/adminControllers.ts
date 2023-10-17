@@ -28,6 +28,10 @@ export const setAllLimits = async (
     privacyPolicy,
     disclaimer,
     enrollmentFees,
+    sellerpaymentRequestDuration,
+    sellerfeePercentageRecieveable,
+    buyerpaymentRequestDuration,
+    buyerfeePercentageRecieveable,
   } = req.body;
 
   const [success, result] = await setLimitInternal(
@@ -38,7 +42,11 @@ export const setAllLimits = async (
     termsOfService,
     privacyPolicy,
     disclaimer,
-    enrollmentFees
+    enrollmentFees,
+    sellerpaymentRequestDuration,
+    sellerfeePercentageRecieveable,
+    buyerpaymentRequestDuration,
+    buyerfeePercentageRecieveable,
   );
 
   if (success) {
@@ -51,6 +59,7 @@ export const setAllLimits = async (
   }
 };
 
+
 // Route handler Function to retrieve all configuration settings from the global admin configuration
 
 export const getconfiguration = async (
@@ -58,7 +67,7 @@ export const getconfiguration = async (
   res: Response
 ): Promise<void> => {
   try {
-    // Call the internal function to retrieve all KYC records
+   
     const [success, result] = await getAllConfigurationInternal();
     if (success) {
       res.status(200).send({result, Active: true} );
@@ -83,7 +92,7 @@ export const getAllKYCRecords = async (
   try {
     const {due,page,pageSize,search}= (req as any).query 
 
-    // Call the internal function to retrieve all KYC records
+    
     const [success, result] = await getAllKYCRecordsInternal(page,pageSize,due,search);
     if (success) {
       res.status(200).send({ result, Active: true });
@@ -105,7 +114,7 @@ export const getuserbusinessdetail = async (
   try {
     const { id } = req.query;
 
-    // Call the internal function to retrieve user KYC records
+  
     const [success, result] = await getuserbusinessdetailInternal(id);
     if (success) {
       res.status(200).send({ result, Active: true });
@@ -126,7 +135,7 @@ export const getbusinessrepresentativedetail = async (
   try {
     const { id } = req.query;
 
-    // Call the internal function to retrieve user KYC records
+
     const [success, result] = await getbusinessrepresentativedetailInternal(id);
     if (success) {
       res.status(200).send({ result, Active: true });
@@ -145,7 +154,7 @@ export const approveDocument = async (req: Request, res: Response): Promise<void
   try {
     const {_flag,status,id } = req.body;
 
-    // Call the internal function to approve Admin Aadhar S1 verification
+ 
     const [success, result] = await approveDocumentInternal(_flag,status,id);
 
     if (success) {
@@ -164,7 +173,7 @@ export const rejectDocument = async (req: Request, res: Response): Promise<void>
   try {
     const {filename,status,id,docNameKey,clarification } = req.body;
 
-    // Call the internal function to approve Admin Aadhar S1 verification
+
     const [success, result] = await rejectDocumentInternal(filename,status,id,docNameKey,clarification);
 
     if (success) {
@@ -188,7 +197,7 @@ export const finalstatus = async (
   const [success, result] = await finalstatusInternal(id, key);
 
   if (success) {
-    res.send({Active: true });
+    res.status(200).send({Active:true});
   } else {
     res.status(500).send({
       message: result,
@@ -205,7 +214,7 @@ export const allActivities = async (
   try {
     const {id}= (req as any).query 
 
-    // Call the internal function to retrieve all KYC records
+   
     const [success, result] = await getAllActivitiesInternal(id);
     if (success) {
       res.status(200).send({ result, Active: true });

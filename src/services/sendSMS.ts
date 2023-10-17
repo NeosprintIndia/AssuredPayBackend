@@ -6,12 +6,11 @@ export const sendSMS = async (
     data:any
 ) => {
     try {
-        // Fetch the SMS template using the provided slug
+    
         const templateDoc = await findAlertsTemplate(data.Message_slug);
 
-        // Replace placeholders in the message with the provided OTP
         const message: string = replaceVarsInSequence(templateDoc.data.Message, data.VariablesMessage);
-        // const message = templateDoc.data.Message.replace('{#var#}', replace);
+     
 
         const instance = axios.create({
             baseURL: 'http://103.16.101.52:8080',
@@ -36,10 +35,10 @@ export const sendSMS = async (
             },
         };
 
-        console.log(config);
+      
 
         const response = await instance.request(config);
-        console.log(response.data)
+      
         return response.data;
     } catch (error) {
         console.error(error);

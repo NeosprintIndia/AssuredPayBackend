@@ -6,8 +6,6 @@ export function replaceVarsInSequence(template: string, variables: string[]): st
       currentIndex++;
       return replacement;
     }
-    // If you run out of variables, keep the placeholder as is.
-    console.log(template);
     return "{#var#}";
   });
 }

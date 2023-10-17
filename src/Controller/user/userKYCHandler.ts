@@ -188,7 +188,7 @@ const uploadtos3 = async (refId: string, imageBuffer: any): Promise<any> => {
         console.error(err);
         reject(err);
       } else {
-        console.log("DATA LOCATION", data.Location);
+  
         resolve(data.Location);
       }
     });
@@ -356,11 +356,11 @@ export const userreferencenumberInternal = async (id: string,
   ip:string
   ): Promise<any | string> => {
   try {
-    // Check if user already has a userRequestReference
+    
     const existingUser = await UserKYC1.findOne({ user: id, userRequestReference: { $exists: true } });
-    console.log(existingUser)
+  
     if (existingUser.userRequestReference) {
-      // User already has a userRequestReference
+     
       return [false, "User already has a userRequestReference"];
     }
     const update = {
@@ -369,7 +369,7 @@ export const userreferencenumberInternal = async (id: string,
     };
     (existingUser as any).activities.push(update)
     const result =await existingUser.save();
-    console.log(result)
+ 
     const generatedUUID = await generateUUID();
     const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
     const currentDate = new Date();
@@ -390,7 +390,6 @@ export const userreferencenumberInternal = async (id: string,
     );
 
     if (!updatedUser) {
-      // Handle case where the user is not found in the database.
       return [false, "User not found"];
     }
 
@@ -455,15 +454,12 @@ export const kycRedoRequestedInternal = async (
   ip:string
 ): Promise<any> => {
   try {
-    // Find the user document and select specific fields
+
     const user = await UserKYC1.findOne({ user: id })
 
     if (!user) {
       return { success: false, error: "User not found." };
     }
-
-    // Check if the activities array exists and has at least one element
-    console.log(user)
 
     user.Admin_AadhaarS1_Verification_Clarification=""
     user.Admin_AadhaarS2_Verification_Clarification=""
@@ -478,7 +474,7 @@ export const kycRedoRequestedInternal = async (
     user.due=key;
     const result =await user.save();
 
-    console.log(result)
+   
     return ([ true , "result" ]);
   } catch (error) {
     return { success: false, error: "An error occurred during the update." };

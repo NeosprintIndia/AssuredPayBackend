@@ -1,4 +1,3 @@
-import { AnyLengthString } from "aws-sdk/clients/comprehend";
 import businessNetwork  from "../../models/businessNetwork";
 import userKyc from "../../models/userKYCs"; 
 import registration from "../../models/userRegisterations";

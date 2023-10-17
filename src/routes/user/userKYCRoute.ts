@@ -37,6 +37,8 @@ import {
   getProduct
 } from '../../Controller/admin/productController';
 
+//onboardingRoutes
+
 router.post('/verifypan',[VerifyToken],verifyPAN)
 router.post('/generateuuid',VerifyToken,userreferencenumber)
 router.post('/getgstdetail',[VerifyToken],getGSTDetails)

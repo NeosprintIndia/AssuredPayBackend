@@ -18,6 +18,9 @@ import { uploadMiddleware } from '../../services/uploads';
 
 const router = express.Router();
 
+
+//templateManagementRoutes
+
 router.post('/addTemplate',addSMSTemplateValidation,handleValidationErrors, addTemplate);
 router.get('/getTemplate', getTemplate);
 router.get('/getTemplate/:id', getTemplateById);

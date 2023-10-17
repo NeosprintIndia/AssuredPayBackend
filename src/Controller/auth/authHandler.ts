@@ -7,7 +7,6 @@ import * as jwt from "jsonwebtoken";
 import "dotenv/config";
 import { generateOTP } from "../../services/otpGenrators";
 import { generateReferralCode } from "../../services/referralCodes";
-import * as crypto from "crypto";
 import { sendDynamicMail } from "../../services/sendEmail";
 import { sendSMS } from "../../services/sendSMS";
 
@@ -155,7 +154,7 @@ const createUser = async (
       cin: cin,
     });
 
-    const Generate_Referral = await Referral.create({
+    await Referral.create({
       user: newUser._id,
       refferal_code: Refer_code,
     });
@@ -171,11 +170,11 @@ const createUser = async (
     await sendDynamicMail(reqData);
     await sendSMS(reqData);
 
-    // In future Frontend doesnt need otp require only id
+    
     return [true, newUser];
   } catch (error) {
     console.error("Error in createUser:", error);
-    return [false, error]; // Include the error in the return value
+    return [false, error]; 
   }
 };
 
@@ -242,8 +241,7 @@ export const authenticateUser = async (
       process.env.PASS_PHRASE
     );
     const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
-    console.log("originalPassword", originalPassword);
-    console.log("password", password);
+   
 
     if (originalPassword !== password) {
       return [false, "Wrong Password"];
@@ -331,6 +329,17 @@ export const resendOtpInternal = async (
   }
 };
 
+export const getlegaldocumentsInternal = async (): Promise<any[]> => {
+  try {
+    
+    const result = await globalSetting.find().select('privacyPolicy termsOfService disclaimer').exec();
+    
+    return [true, result];
+  } catch (error) {
+   
+    return error;
+  }
+};
 //****************************Admin Access Starts*****************************************
 
 export const registerAdminUser = async (
@@ -568,7 +577,7 @@ export const changePassword = async (
 };
 
 //********************* Handler function to Generate Temp Password*********************
-function generateTemporaryPassword(): string {
+export function generateTemporaryPassword(): string {
   const uppercaseLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   const lowercaseLetters = 'abcdefghijklmnopqrstuvwxyz';
   const digits = '0123456789';
@@ -576,13 +585,13 @@ function generateTemporaryPassword(): string {
 
   let password = '';
 
-  // Add at least one uppercase letter
+ 
   password += uppercaseLetters[Math.floor(Math.random() * uppercaseLetters.length)];
-  // Add at least one lowercase letter
+
   password += lowercaseLetters[Math.floor(Math.random() * lowercaseLetters.length)];
-  // Add at least one digit
+  
   password += digits[Math.floor(Math.random() * digits.length)];
-  // Add at least one special character
+ 
   password += specialCharacters[Math.floor(Math.random() * specialCharacters.length)];
 
   // Generate the remaining characters randomly
@@ -598,7 +607,6 @@ function generateTemporaryPassword(): string {
   return password;
 }
 
-const temporaryPassword = generateTemporaryPassword();
 //**************************** Function to handle forgot password logic****************************
 export const handleForgotPassword = async (
   username: string,
