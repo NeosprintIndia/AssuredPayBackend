@@ -484,7 +484,7 @@ export const getGlobalStatusInternal = async (
 ): Promise<[boolean, any]> => {
   try {
 
-    const getGlobalStatus = await UserKYC1.findOneAndUpdate(
+    const getGlobalStatus = await UserKYC1.findOne(
       { user: userId },
       { due: 1, globalStatus: 1 }
     );
