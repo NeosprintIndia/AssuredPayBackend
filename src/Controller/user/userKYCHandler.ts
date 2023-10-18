@@ -41,6 +41,47 @@ export const getGSTDetailsInternal = async (
 };
 
 // Function to save GST Details
+// export const saveGSTDetailsInternal = async (
+//   Constitution_of_Business: string,
+//   Taxpayer_Type: string,
+//   GSTIN_of_the_entity: string,
+//   Legal_Name_of_Business: string,
+//   Business_PAN: string,
+//   Date_of_Registration: string,
+//   State: string,
+//   Trade_Name: string,
+//   Place_of_Business: string,
+//   Nature_of_Place_of_Business: string,
+//   Nature_of_Business_Activity: string,
+//   userId: string,
+//   isGSTDetailSaveManually: string
+// ): Promise<any> => {
+//   try {
+//     const gstDetails = await UserKYC1.create({
+//       Constitution_of_Business: Constitution_of_Business,
+//       Taxpayer_Type: Taxpayer_Type,
+//       GSTIN_of_the_entity: GSTIN_of_the_entity,
+//       Legal_Name_of_Business: Legal_Name_of_Business,
+//       Business_PAN: Business_PAN,
+//       Date_of_Registration: Date_of_Registration,
+//       State: State,
+//       Trade_Name: Trade_Name,
+//       Place_of_Business: Place_of_Business,
+//       Nature_of_Place_of_Business: Nature_of_Place_of_Business,
+//       Nature_of_Business_Activity: Nature_of_Business_Activity,
+//       user: userId,
+//       isGSTDetailSave: true,
+//       isGSTDetailSaveManually: isGSTDetailSaveManually,
+//     },{ upsert: true, new: true });
+//     return [true, gstDetails];
+//   } catch (error) {
+//     console.error("Error in Saving Details:", error);
+//     return [false, error];
+//   }
+// };
+
+
+
 export const saveGSTDetailsInternal = async (
   Constitution_of_Business: string,
   Taxpayer_Type: string,
@@ -57,28 +98,35 @@ export const saveGSTDetailsInternal = async (
   isGSTDetailSaveManually: string
 ): Promise<any> => {
   try {
-    const gstDetails = await UserKYC1.create({
-      Constitution_of_Business: Constitution_of_Business,
-      Taxpayer_Type: Taxpayer_Type,
-      GSTIN_of_the_entity: GSTIN_of_the_entity,
-      Legal_Name_of_Business: Legal_Name_of_Business,
-      Business_PAN: Business_PAN,
-      Date_of_Registration: Date_of_Registration,
-      State: State,
-      Trade_Name: Trade_Name,
-      Place_of_Business: Place_of_Business,
-      Nature_of_Place_of_Business: Nature_of_Place_of_Business,
-      Nature_of_Business_Activity: Nature_of_Business_Activity,
+    const filter = { user: userId }; // Filter by userId to find existing document
+    const update = {
+      Constitution_of_Business,
+      Taxpayer_Type,
+      GSTIN_of_the_entity,
+      Legal_Name_of_Business,
+      Business_PAN,
+      Date_of_Registration,
+      State,
+      Trade_Name,
+      Place_of_Business,
+      Nature_of_Place_of_Business,
+      Nature_of_Business_Activity,
       user: userId,
       isGSTDetailSave: true,
-      isGSTDetailSaveManually: isGSTDetailSaveManually,
-    });
+      isGSTDetailSaveManually
+    };
+
+    const options = { upsert: true, new: true };
+
+    const gstDetails = await UserKYC1.findOneAndUpdate(filter, update, options);
     return [true, gstDetails];
   } catch (error) {
     console.error("Error in Saving Details:", error);
     return [false, error];
   }
 };
+
+
 
 // Function to get saved GST Details
 export const getGSTDetailsInternalsaved = async (

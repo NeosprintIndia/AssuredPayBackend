@@ -186,7 +186,6 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>(
     },
     isGSTDetailSaveManually: {
       type: String,
-      default: "",
     },
     aadharSubDistrict: { type: String , default: ""},
     aadharStreet: { type: String, default: "" },
@@ -201,7 +200,7 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>(
     isAadharDetailSave: { type: Boolean, default: false },
     isGSTDetailSave: { type: Boolean, default: false },
     Constitution_of_Business: { type: String},
-    Taxpayer_Type: { type: String , default: ""},
+    Taxpayer_Type: { type: String },
     GSTIN_of_the_entity: { type: String, },
     Legal_Name_of_Business: { type: String, },
     Business_PAN: { type: String , },
