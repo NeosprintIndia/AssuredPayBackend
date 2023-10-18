@@ -23,8 +23,8 @@ export const getGSTDetailsInternal = async (
     if (userLimit <= 0) {
       return [false, "Your GST Verification Attempt exceeded"];
     }
-    const GSTresult = await GST_KYC_SB({ id_number: gst,userlog:userId });
     const newAttempt = user.GST_Attempt - 1;
+    const GSTresult = await GST_KYC_SB({ id_number: gst,userlog:userId });
     const attemptResult = await Registration.findOneAndUpdate(
       { _id: userId },
       { $set: { GST_Attempt: newAttempt } },
@@ -480,4 +480,6 @@ export const kycRedoRequestedInternal = async (
     return { success: false, error: "An error occurred during the update." };
   }
 };
+
+
 

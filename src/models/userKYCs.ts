@@ -202,7 +202,7 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>(
     isGSTDetailSave: { type: Boolean, default: false },
     Constitution_of_Business: { type: String, default: "" },
     Taxpayer_Type: { type: String , default: ""},
-    GSTIN_of_the_entity: { type: String, default: "" },
+    GSTIN_of_the_entity: { type: String, },
     Legal_Name_of_Business: { type: String, default: "",},
     Business_PAN: { type: String , default: ""},
     Date_of_Registration: { type:String },

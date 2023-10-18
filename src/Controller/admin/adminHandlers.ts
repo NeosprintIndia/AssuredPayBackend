@@ -1,4 +1,4 @@
-import UserKYC1 from '../../models/userKYCs'; // Import your UserKYC1 model
+import UserKYC1 from '../../models/userKYCs'; 
 import Registration from "../../models/userRegisterations"
 import adminGlobalSetting from "../../models/globalAdminSettings";
 

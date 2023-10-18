@@ -42,9 +42,10 @@ const RegisterUserSchema: Schema<IRegisterUser> = new Schema({
     unique: true,
     validate: {
       validator: function (value: string) {
-        return value.length >= 4;
+        // Use a case-insensitive regular expression to check minimum length
+        return /^[a-zA-Z0-9]{4,}$/.test(value);
       },
-      message: "Username must be at least 4 characters long.",
+      message: "Username must be at least 4 characters long and can only contain letters and numbers.",
     },
   },
   password: { type: String, required: true },
