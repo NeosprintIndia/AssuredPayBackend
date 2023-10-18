@@ -20,6 +20,7 @@ export const getGSTDetailsInternal = async (
   try {
     const user = await Registration.findOne({ _id: userId });
     const userLimit = user.GST_Attempt;
+    console.log(userLimit)
     if (userLimit <= 0) {
       return [false, "Your GST Verification Attempt exceeded"];
     }

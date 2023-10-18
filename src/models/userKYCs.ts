@@ -3,7 +3,6 @@ import mongoose, { Document, Schema, Model, Types } from "mongoose";
 // Define the interface for the document
 interface IUserKYC extends Document {
   user: Types.ObjectId | IUser;
-  GSTNumber: string;
   PAN_number: string;
   aadharFileUrl: string;
   aadharBackUrl: string;
@@ -78,11 +77,6 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>(
     user: {
       type: Schema.Types.ObjectId,
       ref: "RegisterUser",
-    },
-
-    GSTNumber: {
-      type: String,
-      default: "",
     },
     GSTFILE: {
       type: String,
@@ -187,40 +181,58 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>(
     isGSTDetailSaveManually: {
       type: String,
     },
-    aadharSubDistrict: { type: String , default: ""},
-    aadharStreet: { type: String, default: "" },
-    aadharState: { type: String, default: "" },
-    aadharPO: { type: String , default: ""},
-    aadharHouse: { type: String, default: "", },
-    aadharCountry: { type: String, default: "", },
+    aadharSubDistrict: {
+      type: String,
+      default: ""
+    },
+    aadharStreet: {
+      type: String,
+      default: ""
+    },
+    aadharState: {
+      type: String,
+      default: ""
+    },
+    aadharPO: {
+      type: String,
+      default: ""
+    },
+    aadharHouse: { type: String, default: "" },
+    aadharCountry: { type: String, default: "" },
     aadharPhotoLink: { type: String, default: "" },
-    aadharDOB: { type: String , default: ""},
+    aadharDOB: { type: String, default: "" },
     aadharCO: { type: String, default: "" },
     aadharGender: { type: String, default: "" },
     isAadharDetailSave: { type: Boolean, default: false },
     isGSTDetailSave: { type: Boolean, default: false },
-    Constitution_of_Business: { type: String},
-    Taxpayer_Type: { type: String },
-    GSTIN_of_the_entity: { type: String, },
-    Legal_Name_of_Business: { type: String, },
-    Business_PAN: { type: String , },
-    Date_of_Registration: { type:String },
+    Constitution_of_Business: { type: String, default: "" },
+    Taxpayer_Type: { type: String, default: "" },
+    GSTIN_of_the_entity: { type: String, default: "" },
+    Legal_Name_of_Business: { type: String, default: "" },
+    Business_PAN: { type: String, default: "" },
+    Date_of_Registration: { type: String, default: "" },
     kycrequested: { Date },
-    State: { type: String , },
-    Trade_Name: { type: String , },
-    Place_of_Business: { type: String , },
-    Nature_of_Place_of_Business: { type: String , },
-    Nature_of_Business_Activity: { type: String , },
-   
+    State: { type: String, default: "" },
+    Trade_Name: { type: String, default: "" },
+    Place_of_Business: { type: String },
+    Nature_of_Place_of_Business: { type: String, default: "" },
+    Nature_of_Business_Activity: { type: String, default: "" },
+
     activities: [
       {
-        ipAddress: String,
-        macaddress: String,
+        ipAddress: { type: String, default: "" },
+        macaddress: { type: String, default: "" },
         timestamp: { type: Date, default: Date.now },
-        Admin_AadhaarS1_Verification_Clarification: String,
-        Admin_AadhaarS2_Verification_Clarification: String,
-        Admin_Pan_Verification_Clarification: String,
-        Admin_GST_Verification_Clarification: String,
+        Admin_AadhaarS1_Verification_Clarification: {
+          type: String,
+          default: "",
+        },
+        Admin_AadhaarS2_Verification_Clarification: {
+          type: String,
+          default: "",
+        },
+        Admin_Pan_Verification_Clarification: { type: String, default: "" },
+        Admin_GST_Verification_Clarification: { type: String, default: "" },
       },
     ],
     due: {
