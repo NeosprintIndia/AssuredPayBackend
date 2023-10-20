@@ -42,7 +42,7 @@ export const addBusinessInBusinessNetwork = async (req: Request, res: Response):
 
 export const getBusinessesFromBusinessNetwork = async (req: Request, res: Response): Promise<void> => {
     const userId = (req as any).userId as string;
-    const businessQuery = req.body;
+    const businessQuery = req.query;
     const [success,result] = await getBusinessFromBusinessNetwork(userId, businessQuery);
     sendResponse(res,success,result);
 };

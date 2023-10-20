@@ -1,4 +1,5 @@
 import coupon from '../../models/coupon';
+import {getSkipAndLimitRange} from "../../utils/pagination"
  
 export const findAndInsert = async (couponDetails): Promise<any> => {
   try {
@@ -16,10 +17,9 @@ export const findAndInsert = async (couponDetails): Promise<any> => {
   }
 };
 
-export const find = async (page): Promise<any> => {
+export const find = async (page, rowsLimitInPage): Promise<any> => {
   try {
-    const limitRange = 10;
-    const skipLimit  = page*limitRange - limitRange; 
+    const [skipLimit, limitRange] = await getSkipAndLimitRange(page, rowsLimitInPage);
     const result = await coupon.find().limit(limitRange).skip(skipLimit);
     console.log("Coupons fetched successfully");
     return [true, result];
