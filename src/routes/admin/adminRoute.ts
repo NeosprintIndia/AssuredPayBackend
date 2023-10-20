@@ -61,7 +61,7 @@ router.get("/allactivities",VerifyAdmin,allActivities)
 
 // couponMangementRoutes
 router.post("/addCoupon",VerifyAdmin,addCoupon)
-router.get("/getCoupons/:page",VerifyAdmin,getCoupons)
+router.get("/getCoupons",VerifyAdmin,getCoupons)
 router.put("/updateCoupon",VerifyAdmin,updateCoupon)
 router.delete("/deleteCoupon",VerifyAdmin,deleteCoupon)
 

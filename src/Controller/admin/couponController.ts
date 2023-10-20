@@ -19,8 +19,8 @@ export const addCoupon = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const getCoupons = async (req: Request, res: Response): Promise<void> => {
-  const page = req.params.page;
-  const [success,result] = await find(page);
+  const {page, rowsLimitInPage} = req.query;
+  const [success,result] = await find(page, rowsLimitInPage);
   if (success) {
     res.send({result,Active:true});
   } else {
