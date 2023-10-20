@@ -67,6 +67,8 @@ export const setLimitInternal = async (
   sellerfeePercentageRecieveable:number,
   buyerpaymentRequestDuration:number,
   buyerfeePercentageRecieveable:number,
+  commissionEligibility:number,
+  refferalCommission:number
 ): Promise<any> => {
   try {
   
@@ -118,6 +120,12 @@ export const setLimitInternal = async (
 
     if (buyerfeePercentageRecieveable !== undefined) {
       (limitUpdate as any).buyerfeePercentageRecieveable = buyerfeePercentageRecieveable;
+    }
+    if (commissionEligibility !== undefined) {
+      (limitUpdate as any).commissionEligibility = commissionEligibility;
+    }
+    if (refferalCommission !== undefined) {
+      (limitUpdate as any).refferalCommission = refferalCommission;
     }
    
    

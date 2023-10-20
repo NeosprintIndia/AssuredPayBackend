@@ -14,6 +14,8 @@ interface IReferralCode extends Document {
     buyerpaymentRequestDuration: number;
     sellerfeePercentageRecieveable: number;
     sellerpaymentRequestDuration: number;
+    refferalCommission:number;
+    commissionEligibility:number;
 
 }
 
@@ -78,8 +80,16 @@ const globalSettingSchema: Schema<IReferralCode> = new Schema<IReferralCode>({
         default: 1,
 
     },
+    refferalCommission: {
+        type: Number,
+        default: 1,
 
+    },
+    commissionEligibility: {
+        type: Number,
+        default: 1,
 
+    },
 
 });
 

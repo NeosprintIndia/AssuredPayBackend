@@ -32,6 +32,9 @@ export const setAllLimits = async (
     sellerfeePercentageRecieveable,
     buyerpaymentRequestDuration,
     buyerfeePercentageRecieveable,
+    commissionEligibility,
+    refferalCommission
+    
   } = req.body;
 
   const [success, result] = await setLimitInternal(
@@ -47,6 +50,8 @@ export const setAllLimits = async (
     sellerfeePercentageRecieveable,
     buyerpaymentRequestDuration,
     buyerfeePercentageRecieveable,
+    commissionEligibility,
+    refferalCommission
   );
 
   if (success) {

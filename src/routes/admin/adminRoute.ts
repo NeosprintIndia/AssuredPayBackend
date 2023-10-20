@@ -13,9 +13,11 @@ import {
     finalstatus,
     rejectDocument,
     allActivities,
+    
    
 }
 from '../../Controller/admin/adminControllers';
+import{inviteLogs} from "../../Controller/admin/invitelogController"
 
 import {
     addCoupon,
@@ -78,4 +80,6 @@ router.post("/addProduct",addProduct)
 router.get("/getProduct",getProduct)
 router.put("/updateProduct",updateProduct)
 
+// affiliateRoutes
+router.get("/invitelogs",inviteLogs)
 export default router;
