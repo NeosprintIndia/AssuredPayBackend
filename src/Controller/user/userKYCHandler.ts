@@ -213,17 +213,16 @@ export const verifyAadharNumberOTPInternal = async (
       aadharSubDistrict: data.split_address.subdist,
       cityInAadhar: data.split_address.vtc,
       addressInAadhar: data.split_address.country,
-    
+      aadharPhotoLink: s3ObjectUrl,
     };
-    const resultImage={ aadharPhotoLink: s3ObjectUrl,}
-
     await UserKYC1.findOneAndUpdate(
       { user: userId },
       { $set: results, isAadharDetailSave: true },
       { new: true }
     );
-
-    return [true,{ results,resultImage}];
+const {aadharNumber,...resultSend}=results
+const resultSendImage = {aadharPhotoLink: s3ObjectUrl, };
+    return [true,{resultSend,resultSendImage}];
   } catch (error) {
     return [false, error];
   }
