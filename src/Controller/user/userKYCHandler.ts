@@ -220,9 +220,9 @@ export const verifyAadharNumberOTPInternal = async (
       { $set: results, isAadharDetailSave: true },
       { new: true }
     );
-const {aadharNumber,...resultSend}=results
+const {aadharNumber,aadharPhotoLink,...resultSend}=results
 const resultSendImage = {aadharPhotoLink: s3ObjectUrl, };
-    return [true,{resultSend,resultSendImage}];
+  return [true,{resultSend,resultSendImage}];
   } catch (error) {
     return [false, error];
   }
