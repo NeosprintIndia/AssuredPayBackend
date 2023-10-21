@@ -14,15 +14,15 @@ export const inviteLogsInternal = async (): Promise<any[]> => {
           businessOnboardedStatusCount: { $sum: { $cond: ['$businessOnboardedStatus', 1, 0] }},
           businessEscrowOpenedStatusCount: { $sum: { $cond: ['$businessEscrowOpenedStatus', 1, 0] }},
           businessConvertedStatusCount: { $sum: { $cond: ['$businessConvertedStatus', 1, 0] }},
-          TotalCount: { $sum: 1 } // Calculate the total count within the group
+          TotalCount: { $sum: 1 } 
         }
       },
       {
         $project: {
-          _id: 0, // Exclude the default _id field
+          _id: 0,
           affiliateId: '$_id.affiliateId',
           businessInvitedThrough: '$_id.businessInvitedThrough',
-          TotalCount: 1, // Include the TotalCount field
+          TotalCount: 1, 
           notsignedup: { $subtract: ['$TotalCount', '$businessSignupStatusCount'] },
           businessSignupStatusCount: 1,
           businessOnboardedStatusCount: 1,
