@@ -215,7 +215,7 @@ export const verifyAadharNumberOTPInternal = async (
       addressInAadhar: data.split_address.country,
     
     };
-    const resultImage={  aadharPhotoLink: s3ObjectUrl,}
+    const resultImage={ aadharPhotoLink: s3ObjectUrl,}
 
     await UserKYC1.findOneAndUpdate(
       { user: userId },
@@ -223,7 +223,7 @@ export const verifyAadharNumberOTPInternal = async (
       { new: true }
     );
 
-    return [true, results,resultImage];
+    return [true,{ results,resultImage}];
   } catch (error) {
     return [false, error];
   }
