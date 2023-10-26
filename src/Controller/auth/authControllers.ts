@@ -22,14 +22,15 @@ import { sendSMS } from "../../services/sendSMS";
 
 // *********************Controller function to handle the registration request***********************
 export const register = async (req: Request, res: Response): Promise<void> => {
-  const { business_email, username, business_mobile, password, refferal_code } =
+  const { business_email, username, business_mobile, password, refferal_code,role,} =
     req.body;
   const [success, result] = await performRegistration(
     business_email,
     username,
     business_mobile,
     password,
-    refferal_code
+    refferal_code,
+    role
   );
   const reqData = {
     Email_slug: "Business_Succesfully_Registered",

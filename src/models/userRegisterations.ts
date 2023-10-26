@@ -11,18 +11,8 @@ interface IRegisterUser extends Document {
   lastActive?: string;
   active: boolean;
   role: string;
-  mobileotp:string;
-  emailotp: string;
-  isemailotpverified:boolean;
-  ismobileotpverified:boolean
-  MFA: string;
-  refferedBy: string;
-  PAN_Attempt: number;
-  GST_Attempt: number;
-  Aadhaar_Attempt: number;
-  cin: number;
   forgotpasswordotp:string;
-  
+  MFA: string;
 }
 
 // Define the schema
@@ -61,43 +51,13 @@ const RegisterUserSchema: Schema<IRegisterUser> = new Schema({
   },
   role: {
     type: String,
-    default: "Business_User",
-  },
-  emailotp: {
-    type: String,
-  },
-  mobileotp: {
-    type: String,
-  },
-  isemailotpverified: {
-    type: Boolean,
-    default: false,
-  },
-  ismobileotpverified: {
-    type: Boolean,
-    default: false,
+    enum: ["Admin", "Business_User", "Maker","Checker"],
+    required: true,
   },
   forgotpasswordotp:{type: String},
   MFA: {
     type: String,
-  },
-  PAN_Attempt: {
-    type: Number,
-    default: 0,
-  },
-  GST_Attempt: {
-    type: Number,
-    default: 0,
-  },
-  Aadhaar_Attempt: {
-    type: Number,
-    default: 0,
-  },
-  cin: {
-    type: Number,
-    default: 0,
-  },
-  refferedBy: { type: String, default: "" }
+  }
 });
 
 // Define the model

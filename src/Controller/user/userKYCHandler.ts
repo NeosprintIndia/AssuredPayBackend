@@ -1,5 +1,6 @@
 import UserKYC1 from "../../models/userKYCs";
 import Registration from "../../models/userRegisterations";
+import businessUser from "../../models/businessUser";
 import { awsinitialise } from "../../services/awsInitialise";
 import { generateUUID } from "../../services/generateUUID";
 import {
@@ -18,7 +19,7 @@ export const getGSTDetailsInternal = async (
   userId: string
 ): Promise<any> => {
   try {
-    const user = await Registration.findOne({ _id: userId });
+    const user = await businessUser.findOne({ _id: userId });
     const userLimit = user.GST_Attempt;
     console.log(userLimit)
     if (userLimit <= 0) {
@@ -26,7 +27,7 @@ export const getGSTDetailsInternal = async (
     }
     const newAttempt = user.GST_Attempt - 1;
     const GSTresult = await GST_KYC_SB({ id_number: gst,userlog:userId });
-    const attemptResult = await Registration.findOneAndUpdate(
+    const attemptResult = await businessUser.findOneAndUpdate(
       { _id: userId },
       { $set: { GST_Attempt: newAttempt } },
       { new: true }
@@ -153,7 +154,7 @@ export const verifyAadharNumberInternal = async (
     if (isGSTDetailSave != true) {
       return [false, "Please complete your GST first"];
     }
-    const userRemain = await Registration.findOne({ _id: userId });
+    const userRemain = await businessUser.findOne({ _id: userId });
     const userLimit = userRemain.Aadhaar_Attempt;
     if (userLimit <= 0) {
       return [false, "Your Aadhar Verification Attempt exceeded "];
@@ -263,7 +264,7 @@ export const verifyPANDetails = async (
     if (user.isAadharDetailSave != true) {
       return [false, "User Aadhar details not Found"];
     }
-    const userRemain = await Registration.findOne({ _id: id });
+    const userRemain = await businessUser.findOne({ _id: id });
     const userLimit = userRemain.PAN_Attempt;
     if (userLimit <= 0) {
       return [false, "Your GST Verification Attempt exceeded "];
@@ -281,7 +282,7 @@ export const verifyPANDetails = async (
         { new: true }
       );
       const newAttempt = userRemain.GST_Attempt - 1;
-      await Registration.findOneAndUpdate(
+      await businessUser.findOneAndUpdate(
         { _id: id },
         { $set: { GST_Attempt: newAttempt } },
         { new: true }

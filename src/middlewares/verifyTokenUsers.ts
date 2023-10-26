@@ -20,6 +20,12 @@ export default (req: CustomRequest, res: Response, next: NextFunction): void => 
 
 
     const userId = decodedToken.userId;
+    
+    req.userId = userId;
+    if ((decodedToken as any).role==="Maker"|| "Checker")
+    {
+      (req as any).belongsto = decodedToken.belongsTo;
+    }
     req.userId = userId;
 
     if (!userId) {

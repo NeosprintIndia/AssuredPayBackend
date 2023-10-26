@@ -58,8 +58,6 @@ authRouter.post(
 authRouter.post(
   "/login",
   checkForUnexpectedProperties(allowedPropertiesForLoginUser),
-  loginValidatorUser,
-  handleValidationErrors,
   login
 );
 authRouter.post(

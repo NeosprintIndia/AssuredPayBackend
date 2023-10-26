@@ -1,5 +1,7 @@
 import Registration from "../../models/userRegisterations";
+import businessUser from "../../models/businessUser";
 import UserKYC from "../../models/userKYCs";
+import subUsers from "../../models/subUsers";
 import Referral from "../../models/refferalCodes";
 import globalSetting from "../../models/globalAdminSettings";
 import * as CryptoJS from "crypto-js";
@@ -16,7 +18,8 @@ export const performRegistration = async (
   username: string,
   business_mobile: string,
   password: string,
-  refferal_code: string | null
+  refferal_code: string | null,
+  role:string
 ): Promise<[boolean, any]> => {
   let referralCode: string | null = null;
 
@@ -34,7 +37,8 @@ export const performRegistration = async (
       password,
       business_mobile,
       username,
-      referralCode
+      referralCode,
+      role
     );
 
     if (!newUser[0]) {
@@ -91,7 +95,7 @@ export const searchExisting = async (
 };
 
 // **********************Function to handle Exisitng User during registration************************
-const findUserByEmailUsername = async (
+export const findUserByEmailUsername = async (
   business_email: string,
   username: string
 ): Promise<boolean | any> => {
@@ -109,7 +113,8 @@ const createUser = async (
   password: string,
   business_mobile: string,
   username: string,
-  refferal_code: string | null
+  refferal_code: string | null,
+  role:string
 ): Promise<[boolean, any]> => {
   try {
     const hashedPassword = await CryptoJS.AES.encrypt(
@@ -136,8 +141,7 @@ const createUser = async (
         referredBy = (referUserProfile as any).Legal_Name_of_Business;
       }
     }
-    const { gstLimit, aadharLimit, panLimit, cin } =
-      await globalSetting.findOne({ });
+   
 
     const newUser = await Registration.create({
       business_email,
@@ -145,13 +149,19 @@ const createUser = async (
       password: hashedPassword,
       username,
       oldPasswords: [hashedPassword],
-      mobileotp: otpGeneratedMobile,
-      emailotp: otpGeneratedEmail,
+      role:role
+    });
+    const { gstLimit, aadharLimit, panLimit, cin } =
+    await globalSetting.findOne({ });
+    const newBU = await businessUser.create({
+      userId:newUser._id,
       refferedBy: referredBy,
       PAN_Attempt: panLimit,
       GST_Attempt: gstLimit,
       Aadhaar_Attempt: aadharLimit,
       cin: cin,
+      mobileotp: otpGeneratedMobile,
+      emailotp: otpGeneratedEmail,
     });
 
     await Referral.create({
@@ -161,11 +171,11 @@ const createUser = async (
     const reqData = {
       Email_slug: "Verification_OTP",
       email: business_email,
-      VariablesEmail: [username, newUser.emailotp],
+      VariablesEmail: [username, newBU.emailotp],
 
       receiverNo: business_mobile,
       Message_slug: "Verification_OTP",
-      VariablesMessage: [username, newUser.mobileotp],
+      VariablesMessage: [username, newBU.mobileotp],
     };
     await sendDynamicMail(reqData);
     await sendSMS(reqData);
@@ -186,15 +196,18 @@ export const validateUserSignUp = async (
 ): Promise<[boolean, string | any]> => {
   let user;
 
+  
   if (otpVerifyType === "email") {
-    user = await Registration.findOneAndUpdate(
-      { business_email: business_email_or_mobile, emailotp: otp },
+    const userid =await Registration.findOne({ business_email: business_email_or_mobile }).select('_id');
+    user = await businessUser.findOneAndUpdate(
+      { userId: userid, emailotp: otp },
       { $set: { isemailotpverified: true } },
       { new: true }
     );
   } else if (otpVerifyType === "mobile") {
-    user = await Registration.findOneAndUpdate(
-      { business_mobile: business_email_or_mobile, mobileotp: otp },
+    const userid =await Registration.findOne({ business_mobile: business_email_or_mobile }).select('_id');
+    user = await businessUser.findOneAndUpdate(
+      { userId: userid, mobileotp: otp },
       { $set: { ismobileotpverified: true } },
       { new: true }
     );
@@ -207,14 +220,14 @@ export const validateUserSignUp = async (
   }
 
   if (user.isemailotpverified && user.ismobileotpverified) {
-    await Registration.findOneAndUpdate(
+   const result= await Registration.findOneAndUpdate(
       { business_email: user.business_email },
       { $set: { active: true } },
       { new: true }
     );
 
     const token = await jwt.sign(
-      { userId: user._id, role: user.role },
+      { userId: result._id, role: result.role },
       process.env.JWT_SECRET,
       { expiresIn: "3D" }
     );
@@ -246,12 +259,28 @@ export const authenticateUser = async (
     if (originalPassword !== password) {
       return [false, "Wrong Password"];
     }
-
-    const token = jwt.sign(
+   let token;
+   if ((user as any).role==="Maker"|| "Checker")
+   {
+    console.log("suOwner")
+    const userId=(user as any)._id
+    console.log(userId)
+    const suOwner = await subUsers.findOne({userId}).select('belongsTo');
+    console.log(suOwner)
+     token = jwt.sign(
+      { userId: user._id, role: user.role,belongsTo:suOwner.belongsTo},
+      process.env.JWT_SECRET,
+      { expiresIn: "3D" }
+    );
+   }
+   else{
+     token = jwt.sign(
       { userId: user._id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "3D" }
     );
+   }
+   
 
     return [true, { token: token }];
   } catch (error) {

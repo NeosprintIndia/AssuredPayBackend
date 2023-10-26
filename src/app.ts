@@ -14,6 +14,7 @@ import adminRoutes from "./routes/admin/adminRoute";
 import TemplateRoutes from "./routes/admin/templateRoutes";
 import userKYCRoutes from "./routes/user/userKYCRoute";
 import uploadRoutes from "./routes/upload/uploadRoute";
+import makerRoutes from "./routes/maker/makerRouters";
 
 
 const app: Application = express();
@@ -33,6 +34,7 @@ app.use("/admin", adminRoutes);
 app.use("/template", TemplateRoutes);
 app.use("/userkyc", userKYCRoutes);
 app.use("/uploadRoutes", uploadRoutes); 
+app.use("/maker", makerRoutes); 
 
 // Define the port number for the server**************************************************
 

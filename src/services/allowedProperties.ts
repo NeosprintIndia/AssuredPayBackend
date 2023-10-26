@@ -1,4 +1,4 @@
-export const allowedRegistrationProperties = ['business_email','username','business_mobile','password','refferal_code'];
+export const allowedRegistrationProperties = ['business_email','username','business_mobile','password','refferal_code',"role"];
 
 export const allowedPropertiesForVerify = ["otpVerifyType", "otp","business_email_or_mobile"];
 
