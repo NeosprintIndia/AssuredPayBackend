@@ -24,7 +24,6 @@ const RegisterUserSchema: Schema<IRegisterUser> = new Schema({
   business_mobile: {
     type: String,
     required: true,
-    unique: true
   },
   username: {
     type: String,

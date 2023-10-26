@@ -27,7 +27,9 @@ export const performRegistration = async (
     referralCode = refferal_code;
   }
 
-  const isExisting = await findUserByEmailUsername(business_email, username);
+  const isExisting = await findUserByEmailUsername(
+    //business_email, 
+    username);
 
   if (isExisting) {
     return [false, "Already existing business or Username"];
@@ -51,25 +53,26 @@ export const performRegistration = async (
 
 //********************* Handler function to handle Existing Search*********************
 export const searchExisting = async (
-  business_email: string,
+  //business_email: string,
+  //business_mobile: string,
   username: string,
-  business_mobile: string
 ): Promise<boolean | any> => {
   try {
     const searchExist = {};
 
-    if (business_email !== undefined) {
-      (searchExist as any).business_email = business_email;
-    }
+    // if (business_email !== undefined) {
+    //   (searchExist as any).business_email = business_email;
+    // }
+    // if (business_mobile !== undefined) {
+    //   (searchExist as any).business_mobile = business_mobile;
+    // }
+
 
     if (username !== undefined) {
       (searchExist as any).username = username;
     }
 
-    if (business_mobile !== undefined) {
-      (searchExist as any).business_mobile = business_mobile;
-    }
-
+   
     if (Object.keys(searchExist).length === 0) {
       const errorResponse = {
         error: "At least one search parameter is required.",
@@ -96,11 +99,11 @@ export const searchExisting = async (
 
 // **********************Function to handle Exisitng User during registration************************
 export const findUserByEmailUsername = async (
-  business_email: string,
+  //business_email: string,
   username: string
 ): Promise<boolean | any> => {
   const user = await Registration.findOne({
-    $and: [{ business_email }, { username }],
+    $and: [{username}, {}],
   });
   if (!user) {
     return false;
@@ -260,7 +263,7 @@ export const authenticateUser = async (
       return [false, "Wrong Password"];
     }
    let token;
-   if ((user as any).role==="Maker"|| "Checker")
+   if ((user as any).role === ("Maker"|| "Checker"))
    {
     console.log("suOwner")
     const userId=(user as any)._id
@@ -269,7 +272,7 @@ export const authenticateUser = async (
     console.log(suOwner)
      token = jwt.sign(
       { userId: user._id, role: user.role,belongsTo:suOwner.belongsTo},
-      process.env.JWT_SECRET,
+       process.env.JWT_SECRET,
       { expiresIn: "3D" }
     );
    }
@@ -379,7 +382,9 @@ export const registerAdminUser = async (
   refferal_code: string | null
 ): Promise<[boolean, any]> => {
   try {
-    const isExisting = await findUserByEmailUsername(business_email, username);
+    const isExisting = await findUserByEmailUsername(
+     // business_email,
+      username);
 
     if (isExisting) {
       return [false, "Already existing Admin "];
@@ -522,7 +527,7 @@ export const validateMFA = async (
     { expiresIn: "3D" }
   );
 
-  return [true, { token: token }];
+  return [true, { token: token ,username:user.username}];
 };
 
 export const resendverifycodeInternalAdmin = async (

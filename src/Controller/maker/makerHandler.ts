@@ -55,7 +55,9 @@ export const performRegistration = async (
   userid:string
 ): Promise<boolean | any> => {
   try {
-    const isExisting = await findUserByEmailUsername(business_email, username);
+    const isExisting = await findUserByEmailUsername(
+     // business_email,
+       username);
 
     if (isExisting) {
       return [false, "Already existing business or Username"];

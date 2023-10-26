@@ -89,12 +89,16 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 //********************* Controller function to handle Existing Search*********************
 export async function searchExistingController(req: Request, res: Response) {
   try {
-    const { business_email, business_mobile, username } = req.body;
+    const { 
+      //business_email,
+       //business_mobile,
+        username } = req.body;
   
     const [success, result] = await searchExisting(
-      business_email,
+      //business_email,
+      //business_mobile,
       username,
-      business_mobile
+      
     );
 
     if (success) {
