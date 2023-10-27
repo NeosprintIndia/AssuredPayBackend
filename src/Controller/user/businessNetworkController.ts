@@ -21,14 +21,17 @@ function sendResponse(res, success, result){
 
 export const getBusinessDetails = async (req: Request, res: Response): Promise<void> => {
     const {gst, businessName, email, mobile} = req.query;
+    const {rowsPerPage, page} = req.query;
     if(gst ||  businessName) {
-        const [success,result] = await getBusinessByBusinessDetails(gst, businessName);
+        const [success,result] = await getBusinessByBusinessDetails(gst, businessName, rowsPerPage, page);
         sendResponse(res,success,result);
     } else if(email || mobile) {
-        const [success,result] = await getBusinessByOwnerDetails(email, mobile);
+        const [success,result] = await getBusinessByOwnerDetails(email, mobile, rowsPerPage, page);
         sendResponse(res,success,result);
     } else {
-        sendResponse(res, false, "Please pass proper query parameters");
+        const [success,result] = await getBusinessByBusinessDetails(gst, businessName, rowsPerPage, page);
+        sendResponse(res,success,result);
+        // sendResponse(res, false, "Please pass proper query parameters");
     }
 };
 
