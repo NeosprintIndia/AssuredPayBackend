@@ -324,6 +324,36 @@ export const validateUserMFA = async (
     return [false, error.message];
   }
 };
+export const resendverifycodeInternalUser = async (
+  username: string
+): Promise<[boolean, any]> => {
+  try {
+    const otpGenerated = await generateOTP();
+    const updatedUser = await Registration.findOneAndUpdate(
+      { username: username },
+      { $set: { MFA: otpGenerated } },
+      { new: true }
+    );
+    const reqData = {
+      Email_slug: "Two_step_Verification_OTP",
+      email: updatedUser.business_email,
+      VariablesEmail: [updatedUser.username, otpGenerated],
+
+      receiverNo: updatedUser.business_mobile,
+      Message_slug: "Two_step_Verification_OTP",
+      VariablesMessage: [updatedUser.username, otpGenerated],
+    };
+    await sendDynamicMail(reqData);
+    await sendSMS(reqData);
+    if (updatedUser) return [true, updatedUser];
+    else {
+      return [false, updatedUser];
+    }
+  } catch (error) {
+    console.error("Error in Sending OTP:", error);
+    return [false, error];
+  }
+};
 
 
 export const searchexistingrefercodeInternal = async (

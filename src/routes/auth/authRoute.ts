@@ -14,7 +14,8 @@ import {
   forgotPassotp,
   searchexistingrefercode,
   getlegaldocuments,
-  userLoginOTPVerify
+  userLoginOTPVerify,
+  resendUserverifycode
 } from "../../Controller/auth/authControllers";
 
 import {
@@ -60,7 +61,9 @@ authRouter.post(
 authRouter.post(
   "/verifyuserlogin",
   userLoginOTPVerify
-);
+); resendUserverifycode
+authRouter.post("/resendverifycodeuser", resendUserverifycode);
+
 authRouter.post(
   "/searchexisting",
   checkForUnexpectedProperties(allowedPropertiesForsearchexisting),

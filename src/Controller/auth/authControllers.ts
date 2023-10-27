@@ -14,7 +14,8 @@ import {
   forgotPassotpInternal,
   searchexistingrefercodeInternal,
   getlegaldocumentsInternal,
-  validateUserMFA
+  validateUserMFA,
+  resendverifycodeInternalUser
 } from "./authHandler";
 
 import { sendDynamicMail } from "../../services/sendEmail";
@@ -119,6 +120,15 @@ export const userLoginOTPVerify = async (
   }
 };
 
+export async function resendUserverifycode(req: Request, res: Response) {
+  const { username } = req.body;
+  const [success, result] = await resendverifycodeInternalUser(username);
+  if (success) {
+    res.status(200).send({ result, Active: true });
+  } else {
+    res.status(500).send({ result, Active: false });
+  }
+}
 // Controller function to handle existing user search
 export async function searchExistingController(req: Request, res: Response) {
   try {
