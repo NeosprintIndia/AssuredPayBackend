@@ -2,6 +2,7 @@ import businessNetwork  from "../../models/businessNetwork";
 import userKyc from "../../models/userKYCs"; 
 import registration from "../../models/userRegisterations";
 import mongoose, {isValidObjectId} from "mongoose";
+import {getSkipAndLimitRange} from "../../utils/pagination"
 
 
 const  businessProjectionFields = {
@@ -39,32 +40,29 @@ const getUserId = async (email, mobileNumber = "") => {
   }
 }
 
-export const getBusinessByBusinessDetails = async ( gst: any, businessName: any): Promise<[boolean, any]> => {
+export const getBusinessByBusinessDetails = async ( gst: any, businessName: any, rowsPerPage, page): Promise<[boolean, any]> => {
     try {
       let query;
       if(gst) query = {"GSTIN_of_the_entity": gst}
-      else query = {Legal_Name_of_Business: {$regex: businessName, $options: "i"}}
-      const businessDetails = await userKyc.find(query, businessProjectionFields)
-      if(!businessDetails.length) throw ({message: "Buiness does not exists with the passed business details."})
-      else {
-        console.log("Business details fetched successfully")
-        return [true, businessDetails];
-      }
+      else if (businessName) query = {Legal_Name_of_Business: {$regex: businessName, $options: "i"}}
+      else query = {}
+      const [skipLimit, limitRange] = await getSkipAndLimitRange(page, rowsPerPage);
+      const businessDetails = await userKyc.find(query, businessProjectionFields).limit(limitRange).skip(skipLimit);
+      console.log("Business details fetched successfully")
+      return [true, businessDetails];
     } catch (error) {
       console.error("Error in fetching business details by gst or business name.", error);
       return [false, error.message];
     }
   };
   
-export const getBusinessByOwnerDetails = async ( email: any, number: any): Promise<[boolean, any]> => {
+export const getBusinessByOwnerDetails = async ( email: any, number: any, rowsPerPage, page): Promise<[boolean, any]> => {
 try {
+      const [skipLimit, limitRange] = await getSkipAndLimitRange(page, rowsPerPage);
       const userId = await getUserId(email, number);
-      const businessDetails = await userKyc.find({user: userId},businessProjectionFields);
-      if(!businessDetails.length) throw({message: "Business does not exists with the provided owner details"});
-      else {
-          console.log("Business details fetched successfully")
-          return [true, businessDetails];
-      }
+      const businessDetails = await userKyc.find({user: userId},businessProjectionFields).limit(limitRange).skip(skipLimit);;
+      console.log("Business details fetched successfully")
+      return [true, businessDetails];
     } catch (error) {
         console.error("Error in fetching business details by business email or mobile.", error);
         return [false, error.message];
@@ -108,7 +106,7 @@ export const getBusinessNetworkDetails = async (userId, gst, businessName)=> {
   try {
   let matchQuery;
   if(gst) matchQuery = {$match:  {"GSTIN_of_the_entity": gst}}
-  else matchQuery = {$match: {"Legal_Name_of_Business": businessName}}
+  else matchQuery = {$match: {"Legal_Name_of_Business": {$regex: businessName, $options: "i"}}}
   const result = await userKyc.aggregate([ 
     matchQuery,
     {
@@ -158,11 +156,8 @@ export const getBusinessNetworkDetails = async (userId, gst, businessName)=> {
         }
       }
   ])
-  if(!result.length) throw({message: "No business exists in business n/w."});
-  else {
-    console.log("Businesses n/w details fetched successfully.");
-    return [true, result];
-  }
+  console.log("Businesses n/w details fetched successfully.");
+  return [true, result];
   } catch(error){
     console.log("Error Occured while fetching the business n/w details.", error)
     return [false, error.message]
@@ -172,7 +167,6 @@ export const getBusinessNetworkDetails = async (userId, gst, businessName)=> {
 export const  getBusinessFromBusinessNetwork = async (id, businessQuery): Promise<any> => {
     try {
       let userId = new mongoose.Types.ObjectId(id);
-      if(!Object.keys(businessQuery).length) throw({message: ""});
       if(businessQuery.gst ||  businessQuery.businessName){
         const [isSuccess, res] = await getBusinessNetworkDetails(userId, businessQuery.gst, businessQuery.businessName)
         return sendResponse(isSuccess,res);
@@ -231,11 +225,8 @@ export const  getBusinessFromBusinessNetwork = async (id, businessQuery): Promis
             }
           }
         ])
-        if(!result.length) throw({message: "No business exists in business n/w."});
-        else {
-          console.log("Businesses fetched successfully.");
-          return [true, result];
-        }
+        console.log("Businesses fetched successfully.");
+        return [true, result];
       }
     } catch (error) {
       console.log("Error occured while finding the business from business n/w.", error);
