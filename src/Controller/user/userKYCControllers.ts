@@ -143,9 +143,7 @@ export const verifyAadharNumber = async (
     }
   } catch (error) {
     console.error({
-      message: "Error in verifyAadharNumber:",
-      error,
-      Active: false,
+      message: "Error in verifyAadharNumber:",error,Active: false,
     });
     res.status(500).json({ error: "An error occurred", Active: false });
   }

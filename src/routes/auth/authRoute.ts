@@ -13,7 +13,8 @@ import {
   resendverifycode,
   forgotPassotp,
   searchexistingrefercode,
-  getlegaldocuments
+  getlegaldocuments,
+  userLoginOTPVerify
 } from "../../Controller/auth/authControllers";
 
 import {
@@ -38,10 +39,7 @@ import verifyAdminToken from "../../middlewares/adminTokens";
 
 const authRouter: Router = Router();
 
-
-
-//********************* Routes for User Till login**********************************************
-
+// Routes for User Till login
 authRouter.post(
   "/registerbusiness",
   checkForUnexpectedProperties(allowedRegistrationProperties),
@@ -54,28 +52,25 @@ authRouter.post(
   checkForUnexpectedProperties(allowedPropertiesForVerify),
   verifyEmailAndMobile
 );
-
 authRouter.post(
   "/login",
   checkForUnexpectedProperties(allowedPropertiesForLoginUser),
   login
 );
 authRouter.post(
+  "/verifyuserlogin",
+  userLoginOTPVerify
+);
+authRouter.post(
   "/searchexisting",
   checkForUnexpectedProperties(allowedPropertiesForsearchexisting),
   searchExistingController
 );
-
 authRouter.post("/searchexistingrefercode", searchexistingrefercode);
-
 authRouter.post("/resendotp", resendOtp);
-authRouter.get("/getlegaldocuments",getlegaldocuments );
+authRouter.get("/getlegaldocuments", getlegaldocuments);
 
-
-
-
-//---------------------------Routes for Admin Till login---------------------------------
-
+// Routes for Admin Till login
 authRouter.post(
   "/registeradmin",
   checkForUnexpectedProperties(allowedRegistrationProperties),
@@ -88,10 +83,7 @@ authRouter.post("/loginadmin", loginAdmin);
 authRouter.post("/verifyadmin", adminOTPVerify);
 authRouter.post("/resendverifycode", resendverifycode);
 
-
-
-// -----------------------------Common route for ADMIN/USER-----------------------------
-
+// Common route for ADMIN/USER
 authRouter.post(
   "/change-password",
   checkForUnexpectedProperties(allowedPropertiesForchangepassword),
@@ -99,7 +91,6 @@ authRouter.post(
   handleValidationErrors,
   changePass
 );
-
 authRouter.post(
   "/forgot-password",
   checkForUnexpectedProperties(allowedPropertiesForforgotpassword),
@@ -107,9 +98,6 @@ authRouter.post(
   handleValidationErrors,
   forgotPass
 );
-
 authRouter.post("/sendforgotpassotp", forgotPassotp);
-
-
 
 export default authRouter;

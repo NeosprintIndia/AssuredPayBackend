@@ -54,6 +54,7 @@ const RegisterUserSchema: Schema<IRegisterUser> = new Schema({
     required: true,
   },
   forgotpasswordotp:{type: String},
+  
   MFA: {
     type: String,
   }

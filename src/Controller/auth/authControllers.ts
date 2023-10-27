@@ -13,17 +13,26 @@ import {
   resendverifycodeInternalAdmin,
   forgotPassotpInternal,
   searchexistingrefercodeInternal,
-  getlegaldocumentsInternal
-  
+  getlegaldocumentsInternal,
+  validateUserMFA
 } from "./authHandler";
 
 import { sendDynamicMail } from "../../services/sendEmail";
 import { sendSMS } from "../../services/sendSMS";
 
-// *********************Controller function to handle the registration request***********************
+// Controller function to handle the registration request
 export const register = async (req: Request, res: Response): Promise<void> => {
-  const { business_email, username, business_mobile, password, refferal_code,role,} =
-    req.body;
+  // Extract data from the request body
+  const {
+    business_email,
+    username,
+    business_mobile,
+    password,
+    refferal_code,
+    role,
+  } = req.body;
+
+  // Perform user registration
   const [success, result] = await performRegistration(
     business_email,
     username,
@@ -32,40 +41,50 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     refferal_code,
     role
   );
+
+  // Prepare data for email and SMS notifications
   const reqData = {
     Email_slug: "Business_Succesfully_Registered",
     email: business_email,
     VariablesEmail: [username, "Agent"],
-
     receiverNo: business_mobile,
     Message_slug: "Business_Succesfully_Registered",
     VariablesMessage: [username, "Agent"],
   };
 
   if (success) {
+    // Send email and SMS notifications
     await sendDynamicMail(reqData);
     await sendSMS(reqData);
-    const result = { business_email:business_email,business_mobile:business_mobile,username:username };
-    res.status(200).send({ result, Active: true });
+
+    // Respond with success message and user data
+    const resultData = {
+      business_email: business_email,
+      business_mobile: business_mobile,
+      username: username,
+    };
+    res.status(200).send({ result: resultData, Active: true });
   } else {
+    // Respond with error message
     res.status(400).send({ message: result, Active: false });
   }
 };
 
-//********************* Controller function to handle verify OTP*********************
 
-export const verifyEmailAndMobile = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  const { otpVerifyType, otp, business_email_or_mobile } = req.body;
+// Controller function to handle OTP verification
+export const verifyEmailAndMobile = async (req: Request, res: Response): Promise<void> => {
+  // Extract data from the request body
+  const { otpVerifyType, otp, business_email_or_mobile, username } = req.body;
 
+  // Validate user sign-up using provided OTP and data
   const [success, result] = await validateUserSignUp(
     otpVerifyType,
     otp,
-    business_email_or_mobile
+    business_email_or_mobile,
+    username
   );
 
+  // Respond based on the verification result
   if (success) {
     res.status(200).send({ result, Active: true });
   } else {
@@ -73,34 +92,49 @@ export const verifyEmailAndMobile = async (
   }
 };
 
-// *********************Controller function to handle user login*********************
+
+// Controller function to handle user login
 export const login = async (req: Request, res: Response): Promise<void> => {
   const { username, password } = req.body;
-
   const [success, result] = await authenticateUser(username, password);
-
   if (success) {
     res.status(200).send({ result, Active: true });
   } else {
     res.status(400).send({ error: result, Active: false });
   }
 };
+// Controller function to handle Admin MFA
+export const userLoginOTPVerify = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { username, otp } = req.body;
 
-//********************* Controller function to handle Existing Search*********************
+  const [success, result] = await validateUserMFA(username, otp);
+
+  if (success) {
+    res.status(200).send({ result, Active: true });
+  } else {
+    res.status(500).send({ message: result, Active: false });
+  }
+};
+
+// Controller function to handle existing user search
 export async function searchExistingController(req: Request, res: Response) {
   try {
-    const { 
+    const {
       //business_email,
-       //business_mobile,
-        username } = req.body;
-  
+      //business_mobile,
+      username
+    } = req.body;
+
     const [success, result] = await searchExisting(
       //business_email,
       //business_mobile,
-      username,
-      
+      username
     );
 
+  
     if (success) {
       res.status(200).send({ result });
     } else {
@@ -111,7 +145,7 @@ export async function searchExistingController(req: Request, res: Response) {
     res.status(500).send({ message: "Internal Server Error" });
   }
 }
-
+// Controller function to handle existingReferCode 
 export async function searchexistingrefercode(req: Request, res: Response) {
   try {
     const { refercode } = req.body;
@@ -127,12 +161,13 @@ export async function searchexistingrefercode(req: Request, res: Response) {
     res.status(500).send({ message: "Internal Server Error" });
   }
 }
-//********************* Controller function to handle Resend Mail OTP*********************
+//Controller function to handle Resend Mail OTP
 export async function resendOtp(req: Request, res: Response) {
-  const { verificationType, business_email_or_mobile } = req.body;
+  const { verificationType, business_email_or_mobile,username } = req.body;
   const [success, result] = await resendOtpInternal(
     verificationType,
-    business_email_or_mobile
+    business_email_or_mobile,
+    username
   );
   if (success) {
     res.status(200).send({ result, Active: true });
@@ -141,6 +176,7 @@ export async function resendOtp(req: Request, res: Response) {
   }
 }
 
+//Controller function to getLegalDocuments
 export const getlegaldocuments = async (
   req: Request,
   res: Response
@@ -163,7 +199,7 @@ export const getlegaldocuments = async (
 };
 //************************************ADMIN*********************************** */
 
-////********************* Controller function to handle registering an admin user*********************
+// Controller function to handle registering an admin user
 export const registerAdmin = async (
   req: Request,
   res: Response
@@ -190,7 +226,7 @@ export const registerAdmin = async (
     res.status(400).send({ message: result, Active: false });
   }
 };
-
+// Controller function to handle Admin login
 export const loginAdmin = async (
   req: Request,
   res: Response
@@ -208,6 +244,7 @@ export const loginAdmin = async (
   }
 };
 
+// Controller function to handle Admin MFA
 export const adminOTPVerify = async (
   req: Request,
   res: Response
@@ -223,6 +260,7 @@ export const adminOTPVerify = async (
   }
 };
 
+// Controller function to handle Admin MFA to resend
 export async function resendverifycode(req: Request, res: Response) {
   const { business_email } = req.body;
   const [success, result] = await resendverifycodeInternalAdmin(business_email);
@@ -233,55 +271,38 @@ export async function resendverifycode(req: Request, res: Response) {
   }
 }
 
-// Common Function for Both ADMIN/USER------------------------------------
+//-------------------- Common Function for Both ADMIN/USER------------------------------------
 
-//********************* Controller function to handle changing the user's /Admin password*********************
+// Controller function to handle changing the user's /Admin password
 export const changePass = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   const { username, oldPassword, newPassword } = req.body;
- 
-
   const errorMessage = await changePassword(username, oldPassword, newPassword);
-
   if (errorMessage) {
     res
-      .status(
-        errorMessage === "Internal server error"
-          ? 500
-          : errorMessage === "User not found"
-          ? 404
-          : 401
-      )
+      .status(errorMessage === "Internal server error"? 500: errorMessage === "User not found"? 404: 401)
       .json({ message: errorMessage, Active: false });
   } else {
-    res
-      .status(200)
-      .json({ message: "Password changed successfully", Active: true });
+    res.status(200).json({ message: "Password changed successfully", Active: true });
   }
 };
 
-//********************* Controller function to handle forgot password for admin/user request*********************
+// Controller function to handle forgot password for admin/user request
 export const forgotPass = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   const { username, otp } = req.body;
-
   const errorMessage = await handleForgotPassword(username, otp);
-
   if (errorMessage) {
-    res
-      .status(errorMessage === "Internal server error" ? 500 : 404)
-      .json({ message: errorMessage, Active: false });
+    res.status(errorMessage === "Internal server error" ? 500 : 404).json({ message: errorMessage, Active: false });
   } else {
-    res
-      .status(200)
-      .json({ message: "Password has been sent to an email", Active: true });
+    res.status(200).json({ message: "Password has been sent to an email", Active: true });
   }
 };
-
+// Controller function to handle forgot password OTP resend for admin/user request
 export async function forgotPassotp(req: Request, res: Response) {
   const { username } = req.body;
   const [success, result] = await forgotPassotpInternal(username);
