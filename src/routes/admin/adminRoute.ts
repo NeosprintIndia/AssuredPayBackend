@@ -88,7 +88,6 @@ router.put("/updateProduct",updateProduct)
 
 // affiliateRoutes
 router.get("/invitelogs",inviteLogs)
-
 router.post("/createAffiliate", createAffiliate)
 router.get("/getAffiliates", getAffiliates)
 router.put("/updateAffiliate", updateAffiliate)

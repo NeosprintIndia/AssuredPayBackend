@@ -246,12 +246,10 @@ export const authenticateUser = async (
   password: string
 ): Promise<[boolean, string | any]> => {
   try {
-    const user = await Registration.findOne({ username: username });
-
+    const user = await Registration.findOne({username:username });
     if (!user) {
       return [false, "Username not found"]; 
     }
-
     const hashedPassword = CryptoJS.AES.decrypt(
       user.password,
       process.env.PASS_PHRASE
@@ -271,13 +269,13 @@ export const authenticateUser = async (
     );
     //Send MFA over email
     const reqData = {
-      Email_slug: "Verification_OTP",
+      Email_slug: "User_Login_OTP",
       email: updatedUser.business_email,
-      VariablesEmail: [user.username, otpGenerated],
+      VariablesEmail: [otpGenerated],
 
       receiverNo: updatedUser.business_mobile,
-      Message_slug: "Verification_OTP",
-      VariablesMessage: [user.username,  otpGenerated],
+      Message_slug: "User_Login_OTP",
+      VariablesMessage: [otpGenerated],
     };
     await sendDynamicMail(reqData);
     await sendSMS(reqData);

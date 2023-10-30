@@ -5,5 +5,4 @@ function generateUUID(): string {
   const generatedUUID = uuidv4().replace(/-/g, '').substring(0, 12);
   return generatedUUID;
 }
-
 export { generateUUID };

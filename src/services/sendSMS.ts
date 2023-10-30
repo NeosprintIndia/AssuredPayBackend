@@ -13,7 +13,7 @@ export const sendSMS = async (
      
 
         const instance = axios.create({
-            baseURL: 'http://103.16.101.52:8080',
+            baseURL: "http://sms6.rmlconnect.net:8080",
         });
 
         const config: AxiosRequestConfig = {
@@ -25,20 +25,18 @@ export const sendSMS = async (
             params: {
                 username: process.env.Route_Mobile_SMS_USERID,
                 password: process.env.Route_Mobile_SMS_PASSWORD,
-                entityid: "1601100000000000368",
-                tempid: templateDoc.data.Template_ID,
                 type: "0",
-                destination: data.receiverNo,
                 dlr: "1",
+                destination: data.receiverNo,
                 source: "ASRDPY",
                 message:message,
+                entityid:1401743190000042074,
+                tempid: templateDoc.data.Template_ID,   
             },
         };
-
-      
-
+        console.log("config",config)
         const response = await instance.request(config);
-      
+        console.log("response",response.data)
         return response.data;
     } catch (error) {
         console.error(error);

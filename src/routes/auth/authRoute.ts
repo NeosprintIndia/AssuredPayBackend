@@ -31,12 +31,9 @@ import {
   registrationValidator,
   handleValidationErrors,
   checkForUnexpectedProperties,
-  loginValidatorUser,
   changepasswordValidator,
   forgotpasswordValidator,
 } from "../../services/validators";
-
-import verifyAdminToken from "../../middlewares/adminTokens";
 
 const authRouter: Router = Router();
 
@@ -54,17 +51,6 @@ authRouter.post(
   verifyEmailAndMobile
 );
 authRouter.post(
-  "/login",
-  checkForUnexpectedProperties(allowedPropertiesForLoginUser),
-  login
-);
-authRouter.post(
-  "/verifyuserlogin",
-  userLoginOTPVerify
-); resendUserverifycode
-authRouter.post("/resendverifycodeuser", resendUserverifycode);
-
-authRouter.post(
   "/searchexisting",
   checkForUnexpectedProperties(allowedPropertiesForsearchexisting),
   searchExistingController
@@ -74,19 +60,30 @@ authRouter.post("/resendotp", resendOtp);
 authRouter.get("/getlegaldocuments", getlegaldocuments);
 
 // Routes for Admin Till login
-authRouter.post(
-  "/registeradmin",
-  checkForUnexpectedProperties(allowedRegistrationProperties),
-  registrationValidator,
-  handleValidationErrors,
-  verifyAdminToken,
-  registerAdmin
-);
-authRouter.post("/loginadmin", loginAdmin);
-authRouter.post("/verifyadmin", adminOTPVerify);
-authRouter.post("/resendverifycode", resendverifycode);
+// authRouter.post(
+//   "/registeradmin",
+//   checkForUnexpectedProperties(allowedRegistrationProperties),
+//   registrationValidator,
+//   handleValidationErrors,
+//   verifyAdminToken,
+//   registerAdmin
+// );
+// authRouter.post("/loginadmin", loginAdmin);
+// authRouter.post("/verifyadmin", adminOTPVerify);
+// authRouter.post("/resendverifycode", resendverifycode);
 
-// Common route for ADMIN/USER
+//--------------------------------------- Common route for ADMIN/USER
+
+authRouter.post(
+  "/login",
+  checkForUnexpectedProperties(allowedPropertiesForLoginUser),
+  login
+);
+authRouter.post(
+  "/veriflogin",
+  userLoginOTPVerify
+); 
+authRouter.post("/resendverifycodeuser", resendUserverifycode);
 authRouter.post(
   "/change-password",
   checkForUnexpectedProperties(allowedPropertiesForchangepassword),
