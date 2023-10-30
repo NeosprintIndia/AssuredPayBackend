@@ -13,7 +13,7 @@ export const sendSMS = async (
      
 
         const instance = axios.create({
-            baseURL: "http://sms6.rmlconnect.net:8080",
+            baseURL: "http://103.16.101.52:8443",
         });
 
         const config: AxiosRequestConfig = {

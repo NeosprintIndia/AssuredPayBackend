@@ -80,7 +80,7 @@ authRouter.post(
   login
 );
 authRouter.post(
-  "/veriflogin",
+  "/verifylogin",
   userLoginOTPVerify
 ); 
 authRouter.post("/resendverifycode", resendverifycode);
