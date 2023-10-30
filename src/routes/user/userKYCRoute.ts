@@ -36,7 +36,9 @@ import {
   addProduct,
   getProduct
 } from '../../Controller/admin/productController';
-
+import {
+  addIvite, 
+  getInvite} from "../../Controller/user/affiliates/affiliatePortalController"
 //onboardingRoutes
 
 router.post('/verifypan',[VerifyToken],verifyPAN)
@@ -66,5 +68,11 @@ router.get("/getCategory",[VerifyToken],getCategory)
 // productRoutes
 router.post("/addProduct",[VerifyToken],addProduct)
 router.get("/getProduct",[VerifyToken],getProduct)
+
+
+// affiliatePortal
+router.post("/invite",[VerifyToken],addIvite)
+router.get("/getInvite",[VerifyToken],getInvite)
+
 
 export default router;

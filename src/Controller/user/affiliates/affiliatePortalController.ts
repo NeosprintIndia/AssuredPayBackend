@@ -1,0 +1,24 @@
+import { Request, Response } from 'express';
+import {
+  findAndInsert,
+  get
+} from './affiliatePortalHandler';
+
+function sendResponse(res: Response, success: Boolean, result: any){
+  if(success)  res.send({result, Active:true});
+  else res.status(500).send({message: result, Active:false});
+}
+
+export const addIvite = async (req: Request, res: Response): Promise<void> => {
+  const userId = (req as any).userId as string;
+  const {businessInvitedMail, businessInvitedNumber} = req.body;
+  const [success,result] = await findAndInsert(userId, businessInvitedMail, businessInvitedNumber);
+  sendResponse(res,success,result);
+};
+
+export const getInvite = async (req: Request, res: Response): Promise<void> => {
+    const userId = (req as any).userId as string;
+    const {rowsPerPage, page} = req.query;
+    const [success,result] = await get(userId, rowsPerPage, page);
+    sendResponse(res,success,result);
+  };
