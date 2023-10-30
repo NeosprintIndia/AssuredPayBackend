@@ -22,7 +22,9 @@ export const createPaymentRequestHandler = async (
   try {
     console.log("MilestoneDetails")
    console.log(MilestoneDetails)
-    const requester = await subUsers.findOne({userId}).select('belongsTo');
+    const requester = await subUsers.findOne({"userId":userId})
+    //.select('belongsTo');  bad mai sahi krna hai projection se belong to lena hai
+    console.log(requester.belongsTo)
     const paymentRequestData = {
       paymentType: paymentType,
       POPI: POPI,
@@ -31,7 +33,7 @@ export const createPaymentRequestHandler = async (
       paymentDays: paymentDays,
       MilestoneDetails: MilestoneDetails,
       createdby: userId,
-      requester: requester,
+      requester: requester.belongsTo,  // CHnage after
       checkerStatus:"pending",
       recipientStatus:"pending",
       recipient: business_id,

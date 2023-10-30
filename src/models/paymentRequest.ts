@@ -8,6 +8,7 @@ interface IPaymentRequest extends Document {
   paymentType: "full" | "partial";
   checkerStatus: "pending" | "approved" | "rejected";
   recipientStatus: "pending" | "approved" | "rejected";
+  remark:string;
   orderTitle: string;
   POPI: string;
   orderAmount: number;
@@ -32,17 +33,17 @@ interface IUser extends Document {
 const paymentRequestSchema = new Schema<IPaymentRequest>({
   createdby: {
     type: Types.ObjectId,
-    ref: "User", // Assuming your User model is named 'User'
+    ref: "RegisterUsers", // Assuming your User model is named 'User'
     required: true,
   },
   requester: {
     type: Types.ObjectId,
-    ref: "User",
+    ref: "RegisterUsers",
     required: true,
   },
   recipient: {
     type: Types.ObjectId,
-    ref: "User",
+    ref: "RegisterUsers",
     required: true,
   },
   orderID: {
@@ -66,6 +67,10 @@ const paymentRequestSchema = new Schema<IPaymentRequest>({
   orderTitle: {
     type: String,
     required: true,
+  },
+  remark: {
+    type: String,
+    required: false,
   },
   POPI: {
     type: String,

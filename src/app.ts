@@ -12,6 +12,8 @@ import TemplateRoutes from "./routes/admin/templateRoutes";
 import userKYCRoutes from "./routes/user/userKYCRoute";
 import uploadRoutes from "./routes/upload/uploadRoute";
 import makerRoutes from "./routes/maker/makerRouters";
+import checkerRoutes from "./routes/checker/checker";
+
 
 const app: Application = express();
 const cors = require("cors");
@@ -27,6 +29,7 @@ app.use("/template", TemplateRoutes);
 app.use("/userkyc", userKYCRoutes);
 app.use("/uploadRoutes", uploadRoutes);
 app.use("/maker", makerRoutes);
+app.use("/checker",checkerRoutes)
 
 // Define the port number for the server
 const port: number = 3010;

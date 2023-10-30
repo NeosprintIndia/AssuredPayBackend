@@ -30,7 +30,7 @@ export const sendSMS = async (
                 type: "0",
                 destination: data.receiverNo,
                 dlr: "1",
-                source: "TRAMOP",
+                source: "ASRDPY",
                 message:message,
             },
         };

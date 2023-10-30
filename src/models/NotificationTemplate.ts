@@ -8,10 +8,10 @@ interface IemailTemplates extends Document {
     SLUG: string;
     For: string;
     Template_Name: string;
+    Template_ID: string;
     Message: string;
     Length: number;
     Status: string;
-    Template_ID: string;
     VAR_1: string;
     VAR_2: string;
     VAR_3: string;

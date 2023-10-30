@@ -61,6 +61,6 @@ const RegisterUserSchema: Schema<IRegisterUser> = new Schema({
 });
 
 // Define the model
-const User: Model<IRegisterUser> = mongoose.model<IRegisterUser>("RegisterUser", RegisterUserSchema);
+const User: Model<IRegisterUser> = mongoose.model<IRegisterUser>("RegisterUsers", RegisterUserSchema);
 
 export default User;
