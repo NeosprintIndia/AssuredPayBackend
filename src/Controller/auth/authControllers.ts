@@ -269,8 +269,8 @@ export const adminOTPVerify = async (
 
 // Controller function to handle Admin MFA to resend
 export async function resendverifycode(req: Request, res: Response) {
-  const { business_email } = req.body;
-  const [success, result] = await resendverifycodeInternalAdmin(business_email);
+  const { username } = req.body;
+  const [success, result] = await resendverifycodeInternalAdmin(username);
   if (success) {
     res.status(200).send({ result, Active: true });
   } else {

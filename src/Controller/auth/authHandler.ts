@@ -595,18 +595,18 @@ export const validateMFA = async (
 };
 
 export const resendverifycodeInternalAdmin = async (
-  business_email: string
+  username: string
 ): Promise<[boolean, any]> => {
   try {
     const otpGenerated = await generateOTP();
     const updatedUser = await Registration.findOneAndUpdate(
-      { business_email: business_email },
+      { username: username },
       { $set: { MFA: otpGenerated } },
       { new: true }
     );
     const reqData = {
       Email_slug: "Two_step_Verification_OTP",
-      email: business_email,
+      email: updatedUser.business_email,
       VariablesEmail: [updatedUser.username, otpGenerated],
 
       receiverNo: updatedUser.business_mobile,

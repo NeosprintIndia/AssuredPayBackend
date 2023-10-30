@@ -70,7 +70,7 @@ authRouter.get("/getlegaldocuments", getlegaldocuments);
 // );
 // authRouter.post("/loginadmin", loginAdmin);
 // authRouter.post("/verifyadmin", adminOTPVerify);
-// authRouter.post("/resendverifycode", resendverifycode);
+
 
 //--------------------------------------- Common route for ADMIN/USER
 
@@ -83,6 +83,7 @@ authRouter.post(
   "/veriflogin",
   userLoginOTPVerify
 ); 
+authRouter.post("/resendverifycode", resendverifycode);
 authRouter.post("/resendverifycodeuser", resendUserverifycode);
 authRouter.post(
   "/change-password",
