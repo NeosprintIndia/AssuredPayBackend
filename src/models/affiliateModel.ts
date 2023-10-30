@@ -10,9 +10,11 @@ interface ISettlement {
   transactionId: string;
 }
 interface IAffiliate extends Document {
-  userName : String,
-  email: String,
-  phoneNumber: Number,
+  userId: Types.ObjectId | IUser
+  type: String,
+  referralCode: String,
+  status: String,
+  date: Date
   panNumber: String,
   panFirstName: String,
   panLastName: String,
@@ -32,19 +34,32 @@ interface IAffiliate extends Document {
   commissionSettle:number
 
 }
+
+// Define the reference interface for the user field
+interface IUser extends Document {
+  _id: Types.ObjectId;
+}
 // Define the schema
 const AffiliateSchema: Schema<IAffiliate> = new Schema<IAffiliate>({
-    userName: {
+  userId: { type: Types.ObjectId},
+  type: {
     type: String,
-    required: true
+    // required: true, 
+    enum: ["individual", "businessFirm"] 
   },
-  email: {
+  referralCode : {
     type: String,
-    required: true
+    // required: true
   },
-  phoneNumber :{
-    type: Number,
-    required: true
+  status: {
+    type: String,
+    // required: true,
+    default: "active"
+  },
+  date:{
+    type: Date,
+    required: true,
+    default: new Date()
   },
   panNumber: {
     type: String

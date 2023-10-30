@@ -44,6 +44,12 @@ import {
     updateProduct
 } from '../../Controller/admin/productController';
 
+import { 
+    createAffiliate,
+    getAffiliates,
+    updateAffiliate
+} from '../../Controller/admin/affiliates/affiliateController';
+
 //onboardingRoutes
 router.post('/setLimits',VerifyAdmin,setAllLimits)
 router.get('/getconfiguration',VerifyAdmin,getconfiguration)
@@ -82,4 +88,9 @@ router.put("/updateProduct",updateProduct)
 
 // affiliateRoutes
 router.get("/invitelogs",inviteLogs)
+
+router.post("/createAffiliate", createAffiliate)
+router.get("/getAffiliates", getAffiliates)
+router.put("/updateAffiliate", updateAffiliate)
+
 export default router;

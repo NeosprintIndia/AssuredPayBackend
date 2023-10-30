@@ -50,7 +50,7 @@ const RegisterUserSchema: Schema<IRegisterUser> = new Schema({
   },
   role: {
     type: String,
-    enum: ["Admin", "Business_User", "Maker","Checker"],
+    enum: ["Admin", "Business_User", "Maker","Checker", "affiliatePartner", "affiliateSales"],
     required: true,
   },
   forgotpasswordotp:{type: String},
