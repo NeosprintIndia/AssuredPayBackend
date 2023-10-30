@@ -23,7 +23,6 @@ import { sendSMS } from "../../services/sendSMS";
 
 // Controller function to handle the registration request
 export const register = async (req: Request, res: Response): Promise<void> => {
-  // Extract data from the request body
   const {
     business_email,
     username,
@@ -32,8 +31,6 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     refferal_code,
     role,
   } = req.body;
-
-  // Perform user registration
   const [success, result] = await performRegistration(
     business_email,
     username,
@@ -60,13 +57,12 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
     // Respond with success message and user data
     const resultData = {
-      business_email: business_email,
-      business_mobile: business_mobile,
-      username: username,
+      business_email:result.business_email,
+      business_mobile: result.business_mobile,
+      username: result.username,
     };
     res.status(200).send({ result: resultData, Active: true });
   } else {
-    // Respond with error message
     res.status(400).send({ message: result, Active: false });
   }
 };
