@@ -4,15 +4,21 @@ import mongoose, { Schema, Document, Model, Types } from 'mongoose';
 
 interface IAffiliate extends Document {
   affiliateId : String,
+  businessInvitedMail: String,
+  businessInvitedNumber: String,
+  invitedTimes: number //
+  commissionWhileLastInviting: number//
+  date: Date, //
   businessStatus: String,
+  businessStatusHistory: Object,//
+  commissionStatus: String//
   businessSignupStatus: Boolean,
+
   businessOnboardedStatus: Boolean,
   businessEscrowOpenedStatus: Boolean,
   businessConvertedStatus: Boolean,
-  businessInvitedThrough: String,
-  businessInvitedMail: String,
-  businessInvitedNumber: String,
-  commissionWhileInviting:number
+  commissionWhileInviting: number // change to commissionWhileLastInviting
+  businessInvitedThrough: String,// dont think its a required field
   commissionEarned:number
   commissionSettle:number
  
@@ -26,7 +32,8 @@ const AffiliateInviteSchema: Schema<IAffiliate> = new Schema<IAffiliate>({
   },
   businessStatus: {
     type: String,
-    required: false
+    required: false, 
+    default: "Not yet signed up"
   },
   businessSignupStatus: {
     type: Boolean,
@@ -35,6 +42,26 @@ const AffiliateInviteSchema: Schema<IAffiliate> = new Schema<IAffiliate>({
   businessOnboardedStatus: {
     type: Boolean,
     default:false
+  },
+  invitedTimes:{
+    type: Number,
+    default: 1
+  },
+  commissionWhileLastInviting: {
+    type: Number
+  },
+  date: {
+    type: Date,
+    default: new Date()
+  },
+  businessStatusHistory: {
+    type: Object, 
+    default: {}
+  },
+  commissionStatus: {
+    type: String,
+    default: "pending",
+    enum: ["pending", "eligible", "settled"]
   },
   businessEscrowOpenedStatus: {
     type: Boolean,
@@ -45,8 +72,7 @@ const AffiliateInviteSchema: Schema<IAffiliate> = new Schema<IAffiliate>({
     default:false
   },
   businessInvitedThrough :{
-    type: String,
-    required: true
+    type: String
   }, 
   businessInvitedMail:{
     type: String
