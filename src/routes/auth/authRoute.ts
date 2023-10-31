@@ -38,23 +38,9 @@ import {
 const authRouter: Router = Router();
 
 // Routes for User Till login
-authRouter.post(
-  "/registerbusiness",
-  checkForUnexpectedProperties(allowedRegistrationProperties),
-  registrationValidator,
-  handleValidationErrors,
-  register
-);
-authRouter.post(
-  "/verify",
-  checkForUnexpectedProperties(allowedPropertiesForVerify),
-  verifyEmailAndMobile
-);
-authRouter.post(
-  "/searchexisting",
-  checkForUnexpectedProperties(allowedPropertiesForsearchexisting),
-  searchExistingController
-);
+authRouter.post("/registerbusiness",checkForUnexpectedProperties(allowedRegistrationProperties),registrationValidator,handleValidationErrors,register);
+authRouter.post("/verify",checkForUnexpectedProperties(allowedPropertiesForVerify),verifyEmailAndMobile);
+authRouter.post("/searchexisting",checkForUnexpectedProperties(allowedPropertiesForsearchexisting),searchExistingController);
 authRouter.post("/searchexistingrefercode", searchexistingrefercode);
 authRouter.post("/resendotp", resendOtp);
 authRouter.get("/getlegaldocuments", getlegaldocuments);
@@ -70,35 +56,16 @@ authRouter.get("/getlegaldocuments", getlegaldocuments);
 // );
 // authRouter.post("/loginadmin", loginAdmin);
 // authRouter.post("/verifyadmin", adminOTPVerify);
+// authRouter.post("/resendverifycodeuser", resendUserverifycode);
 
 
 //--------------------------------------- Common route for ADMIN/USER
 
-authRouter.post(
-  "/login",
-  checkForUnexpectedProperties(allowedPropertiesForLoginUser),
-  login
-);
-authRouter.post(
-  "/verifylogin",
-  userLoginOTPVerify
-); 
+authRouter.post("/login",checkForUnexpectedProperties(allowedPropertiesForLoginUser),login);
+authRouter.post("/verifylogin",userLoginOTPVerify); 
 authRouter.post("/resendverifycode", resendverifycode);
-authRouter.post("/resendverifycodeuser", resendUserverifycode);
-authRouter.post(
-  "/change-password",
-  checkForUnexpectedProperties(allowedPropertiesForchangepassword),
-  changepasswordValidator,
-  handleValidationErrors,
-  changePass
-);
-authRouter.post(
-  "/forgot-password",
-  checkForUnexpectedProperties(allowedPropertiesForforgotpassword),
-  forgotpasswordValidator,
-  handleValidationErrors,
-  forgotPass
-);
+authRouter.post( "/change-password", checkForUnexpectedProperties(allowedPropertiesForchangepassword), changepasswordValidator, handleValidationErrors,changePass);
+authRouter.post("/forgot-password",checkForUnexpectedProperties(allowedPropertiesForforgotpassword),forgotpasswordValidator,handleValidationErrors,forgotPass);
 authRouter.post("/sendforgotpassotp", forgotPassotp);
 
 export default authRouter;

@@ -2,9 +2,7 @@ import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { findAlertsTemplate } from "../services/findTemplate";
 import {replaceVarsInSequence} from "../services/replaceVariableInTemplate"
 
-export const sendSMS = async (
-    data:any
-) => {
+export const sendSMS = async (data:any) => {
     try {
     
         const templateDoc = await findAlertsTemplate(data.Message_slug);
@@ -13,7 +11,7 @@ export const sendSMS = async (
      
 
         const instance = axios.create({
-            baseURL: "http://103.16.101.52:8443",
+            baseURL: "http://sms6.rmlconnect.net:8080",
         });
 
         const config: AxiosRequestConfig = {
@@ -30,7 +28,7 @@ export const sendSMS = async (
                 destination: data.receiverNo,
                 source: "ASRDPY",
                 message:message,
-                entityid:1401743190000042074,
+                entityid:"1401743190000042074",
                 tempid: templateDoc.data.Template_ID,   
             },
         };
