@@ -2,15 +2,17 @@ import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { findAlertsTemplate } from "../services/findTemplate";
 import {replaceVarsInSequence} from "../services/replaceVariableInTemplate"
 
-export const sendSMS = async (
-    data:any
-) => {
+export const sendSMS = async (data:any) => {
     try {
     
         const templateDoc = await findAlertsTemplate(data.Message_slug);
 
         const message: string = replaceVarsInSequence(templateDoc.data.Message, data.VariablesMessage);
-     
+        const encodedMessage =  encodeURIComponent(message);       
+        const encodedUsername = encodeURIComponent(process.env.Route_Mobile_SMS_USERID);
+        const encodedPassword = encodeURIComponent(process.env.Route_Mobile_SMS_PASSWORD);
+        const encodedReceiverNo = encodeURIComponent(data.receiverNo);
+        const encodedTemplateID = encodeURIComponent(templateDoc.data.Template_ID);
 
         const instance = axios.create({
             baseURL: "http://sms6.rmlconnect.net:8080",
@@ -23,19 +25,20 @@ export const sendSMS = async (
                 'Content-Type': 'application/json',
             },
             params: {
-                username: process.env.Route_Mobile_SMS_USERID,
-                password: process.env.Route_Mobile_SMS_PASSWORD,
+                username: encodedUsername,
+                password: encodedPassword,
                 type: "0",
                 dlr: "1",
-                destination: data.receiverNo,
+                destination: encodedReceiverNo,
                 source: "ASRDPY",
-                message:message,
-                entityid: "1401743190000042074",
-                tempid: templateDoc.data.Template_ID,   
+                message:encodedMessage,
+                entityid:"1401743190000042074",
+                tempid: encodedTemplateID,   
             },
         };
+        console.log("config",config)
         const response = await instance.request(config);
-        console.log(response)
+        console.log("response",response.data)
         return response.data;
     } catch (error) {
         console.error(error);
