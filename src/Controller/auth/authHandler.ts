@@ -172,13 +172,13 @@ const createUser = async (
       refferal_code: Refer_code,
     });
     const reqData = {
-      Email_slug: "Verification_OTP",
+      Email_slug: "User_Login_OTP",
       email: business_email,
-      VariablesEmail: [username, newBU.emailotp],
+      VariablesEmail: [newBU.emailotp],
 
       receiverNo: business_mobile,
-      Message_slug: "Verification_OTP",
-      VariablesMessage: [username, newBU.mobileotp],
+      Message_slug: "User_Login_OTP",
+      VariablesMessage: [newBU.mobileotp],
     };
     await sendDynamicMail(reqData);
     await sendSMS(reqData);
@@ -391,17 +391,17 @@ export const resendOtpInternal = async (
       query = { username: username };
       fieldToUpdate = "emailotp";
       await sendDynamicMail({
-        Email_slug: "Verification_OTP",
+        Email_slug: "User_Login_OTP",
         email: business_email_or_mobile,
-        VariablesEmail: [username, otpGenerated],
+        VariablesEmail: [otpGenerated],
       });
     } else if (verificationType === "mobile") {
       query = { username: username };
       fieldToUpdate = "mobileotp";
       await sendSMS({
         receiverNo: business_email_or_mobile,
-        Message_slug: "Verification_OTP",
-        VariablesMessage: [username, otpGenerated],
+        Message_slug: "User_Login_OTP",
+        VariablesMessage: [otpGenerated],
       }); 
     } else {
       return [false, "Invalid verification type"];
@@ -605,13 +605,13 @@ export const resendverifycodeInternalAdmin = async (
       { new: true }
     );
     const reqData = {
-      Email_slug: "Two_step_Verification_OTP",
+      Email_slug: "User_Login_OTP",
       email: updatedUser.business_email,
-      VariablesEmail: [updatedUser.username, otpGenerated],
+      VariablesEmail: [otpGenerated],
 
       receiverNo: updatedUser.business_mobile,
-      Message_slug: "Two_step_Verification_OTP",
-      VariablesMessage: [updatedUser.username, otpGenerated],
+      Message_slug: "User_Login_OTP",
+      VariablesMessage: [otpGenerated],
     };
     await sendDynamicMail(reqData);
     await sendSMS(reqData);
@@ -767,12 +767,12 @@ export const forgotPassotpInternal = async (
     );
     // Send OTP On Mail/Mobile
     const reqData = {
-      Email_slug: "Verification_OTP",
+      Email_slug: "User_Login_OTP",
       email: updatedUser.business_email,
-      VariablesEmail: [updatedUser.username, otpGenerated],
+      VariablesEmail: [otpGenerated],
 
       receiverNo: updatedUser.business_mobile,
-      Message_slug: "Verification_OTP",
+      Message_slug: "User_Login_OTP",
       VariablesMessage: [otpGenerated],
     };
     await sendDynamicMail(reqData);
