@@ -9,10 +9,8 @@ export const sendSMS = async (data:any) => {
 
         const message: string = replaceVarsInSequence(templateDoc.data.Message, data.VariablesMessage);
         const encodedMessage =  encodeURIComponent(message);       
-        const encodedUsername = encodeURIComponent(process.env.Route_Mobile_SMS_USERID);
         const encodedPassword = encodeURIComponent(process.env.Route_Mobile_SMS_PASSWORD);
-        const encodedReceiverNo = encodeURIComponent(data.receiverNo);
-        const encodedTemplateID = encodeURIComponent(templateDoc.data.Template_ID);
+       
 
         const instance = axios.create({
             baseURL: "http://sms6.rmlconnect.net:8080",
@@ -25,15 +23,15 @@ export const sendSMS = async (data:any) => {
                 'Content-Type': 'application/json',
             },
             params: {
-                username: encodedUsername,
+                username: process.env.Route_Mobile_SMS_USERID,
                 password: encodedPassword,
                 type: "0",
                 dlr: "1",
-                destination: encodedReceiverNo,
+                destination: data.receiverNo,
                 source: "ASRDPY",
                 message:encodedMessage,
                 entityid:"1401743190000042074",
-                tempid: encodedTemplateID,   
+                tempid:templateDoc.data.Template_ID,   
             },
         };
         console.log("config",config)
