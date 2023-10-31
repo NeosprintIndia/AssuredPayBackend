@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { findAlertsTemplate } from "../services/findTemplate";
 import {replaceVarsInSequence} from "../services/replaceVariableInTemplate"
 
@@ -8,7 +8,7 @@ export const sendSMS = async (data:any) => {
     const message: string = replaceVarsInSequence(templateDoc.data.Message, data.VariablesMessage);
     const customParamsSerializer =params => {return Object
               .keys(params)
-              .map(key => {return `${key}=${encodeURIComponent(params[key])}`;})
+              .map(key => {return `${key}=${encodeURIComponent(params[key])}`})
               .join('&');};
         const instance = axios.create({
         baseURL: "https://sms6.rmlconnect.net",

@@ -21,6 +21,8 @@ export const performRegistration = async (
   refferal_code: string | null,
   role:string
 ): Promise<[boolean, any]> => {
+
+
   let referralCode: string | null = null;
 
   if (refferal_code != null) {
@@ -52,64 +54,106 @@ export const performRegistration = async (
 };
 
 //********************* Handler function to handle Existing Search*********************
-export const searchExisting = async (
-  //business_email: string,
-  //business_mobile: string,
-  username: string,
-): Promise<boolean | any> => {
+// export const searchExisting = async (
+//   //business_email: string,
+//   //business_mobile: string,
+//   username: string,
+// ): Promise<boolean | any> => {
+//   try {
+//     const searchExist = {};
+//     // // if (business_email !== undefined) {
+//     // //   (searchExist as any).business_email = business_email;
+//     // // }
+//     // // if (business_mobile !== undefined) {
+//     // //   (searchExist as any).business_mobile = business_mobile;
+//     // // }
+//     if (username !== undefined) {
+//       (searchExist as any).username = username;
+//     }
+//     if (Object.keys(searchExist).length === 0) {
+//       const errorResponse = {
+//         error: "At least one search parameter is required.",
+//       };
+//       return [false, errorResponse];
+//     }
+//     console.log("username",username)
+//     const result = await Registration.find(searchExist);
+//     console.log(result)
+
+//     const activeStatus=result.length>0?result[0].active:false
+//     if (result && result.length > 0) {
+//       const finalresult = {
+//         found: true,
+//         active:activeStatus
+//       };
+//       return [true, finalresult];
+//     } 
+//     else {
+//       console.log("INNN ELSEEE")
+//       const finalresult = {
+//         found: false,
+//       };
+//       return [true, finalresult];
+//     }
+//   } catch (error) {
+//     return [false, error];
+//   }
+// };
+
+export const searchExisting = async (username: string): Promise<[boolean, any]> => {
   try {
-    const searchExist = {};
-
-    // if (business_email !== undefined) {
-    //   (searchExist as any).business_email = business_email;
-    // }
-    // if (business_mobile !== undefined) {
-    //   (searchExist as any).business_mobile = business_mobile;
-    // }
-
-
-    if (username !== undefined) {
-      (searchExist as any).username = username;
+    if (!username) {
+      throw new Error("No Username Provided");
     }
+    const result = await Registration.findOne({ username });
+    const found = !!result;
+    const active = found ? result.active : false;
+    const finalResult = {
+      found,
+      active,
+    };
 
-   
-    if (Object.keys(searchExist).length === 0) {
-      const errorResponse = {
-        error: "At least one search parameter is required.",
-      };
-      return [false, errorResponse];
-    }
-    const result = await Registration.find(searchExist);
-
-    if (result.length > 0) {
-      const finalresult = {
-        found: true,
-      };
-      return [true, finalresult];
-    } else {
-      const finalresult = {
-        found: false,
-      };
-      return [true, finalresult];
-    }
+    return [true, finalResult];
   } catch (error) {
-    return [false, error];
+    return [false, { error: error.message }];
   }
 };
 
 // **********************Function to handle Exisitng User during registration************************
+// export const findUserByEmailUsername = async (
+//   username: string
+// ): Promise<boolean | any> => {
+//   const user = await Registration.findOne({username});
+//   if (!user) {
+//     return false;
+//   }
+//   else {
+//     return user;
+//   }
+ 
+// };
 export const findUserByEmailUsername = async (
-  //business_email: string,
   username: string
-): Promise<boolean | any> => {
-  const user = await Registration.findOne({
-    $and: [{username}, {}],
-  });
+): Promise<boolean> => {
+  const user = await Registration.findOne({ username });
   if (!user) {
     return false;
-  }
-  return user;
-};
+  } else {
+    const userStatus = user.active;
+    const userId = user._id;
+    if (userStatus !== true) {
+      const otpGeneratedEmail = await generateOTP();
+      const otpGeneratedMobile = await generateOTP();
+      const updateField = { emailotp: otpGeneratedEmail, mobileotp: otpGeneratedMobile };
+      const updatedUser = await businessUser.findOneAndUpdate(
+          { userId: userId },
+          { $set: updateField },
+          { new: true }
+        );
+      return true 
+    }  
+    }
+    };
 
 const createUser = async (
   business_email: string,
@@ -383,12 +427,14 @@ export const resendOtpInternal = async (
   username: string
 ): Promise<[boolean, any]> => {
   try {
+    const user= await Registration.findOne({username:username})
+    const Id=user._id
     const otpGenerated = await generateOTP();
     let query = {};
     let fieldToUpdate = "";
 
     if (verificationType === "email") {
-      query = { username: username };
+      query = { userId: Id };
       fieldToUpdate = "emailotp";
       await sendDynamicMail({
         Email_slug: "User_Login_OTP",
@@ -396,7 +442,7 @@ export const resendOtpInternal = async (
         VariablesEmail: [otpGenerated],
       });
     } else if (verificationType === "mobile") {
-      query = { username: username };
+      query = { userId: Id };
       fieldToUpdate = "mobileotp";
       await sendSMS({
         receiverNo: business_email_or_mobile,
@@ -407,7 +453,7 @@ export const resendOtpInternal = async (
       return [false, "Invalid verification type"];
     }
 
-    const updatedUser = await Registration.findOneAndUpdate(
+    const updatedUser = await businessUser.findOneAndUpdate(
       query,
       { $set: { [fieldToUpdate]: otpGenerated } },
       { new: true }
