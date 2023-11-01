@@ -37,12 +37,9 @@ export const find = async (searchBy: any, categoryId: any, page, rowsLimitInPage
     const rowsLimitPerPage = rowsLimitInPage || 10;
     const skipLimit  = page*rowsLimitPerPage - rowsLimitPerPage;
 
-    const categories = await product.find(query)
-    if(!categories.length) throw ({message: "No category found in db."})
-    else {
-      console.log("Categories fetched successfully.")
-      return [true, categories];
-    }
+    const categories = await product.find(query).limit(rowsLimitPerPage).skip(skipLimit)
+    console.log("Categories fetched successfully.")
+    return [true, categories];
   } catch (error) {
     console.error("Error in fetching products names by the string provided.", error);
     return [false, error.message];

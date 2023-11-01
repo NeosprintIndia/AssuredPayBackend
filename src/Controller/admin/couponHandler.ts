@@ -17,11 +17,45 @@ export const findAndInsert = async (couponDetails): Promise<any> => {
   }
 };
 
-export const find = async (page, rowsLimitInPage): Promise<any> => {
+export const find = async (page, rowsLimitInPage, status): Promise<any> => {
   try {
+    let query;
     const [skipLimit, limitRange] = await getSkipAndLimitRange(page, rowsLimitInPage);
-    const result = await coupon.find().limit(limitRange).skip(skipLimit);
+    if(status) query = {status}
+    else query = {}
+    let searchQuery;
+    searchQuery = {
+        "$facet": {
+          "records" : [
+            {"$match" : query},
+            {"$skip": skipLimit}, 
+            {"$limit": limitRange}
+          ],
+          "all": [
+            { "$match" : {}},
+            { "$count": "all" },
+          ],
+          "active": [
+            { "$match" : {"status": "active"}},
+            { "$count": "active" }
+          ],
+          "expired": [
+            { "$match" :{"status": "expired"}},
+            { "$count": "expired" }
+          ]
+        }
+      }
+
+    const couponDetails = await coupon.aggregate([searchQuery])
     console.log("Coupons fetched successfully");
+    let result = {
+      results: couponDetails[0]?.["records"],
+      count : {
+        all: couponDetails[0]?.["all"]?.[0]?.["all"],
+        active: couponDetails[0]?.["active"]?.[0]?.["active"],
+        expired: couponDetails[0]?.["expired"]?.[0]?.["expired"]
+      }
+    }
     return [true, result];
   } catch (error) {
     console.log("Error occured while finding the coupon", error);

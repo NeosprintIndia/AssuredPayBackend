@@ -6,19 +6,20 @@ interface IAffiliate extends Document {
   affiliateId : String,
   businessInvitedMail: String,
   businessInvitedNumber: String,
-  invitedTimes: number //
-  commissionWhileLastInviting: number//
-  date: Date, //
+  invitedTimes: number 
+  commissionWhileLastInviting: number
+  date: Date, 
   businessStatus: String,
-  businessStatusHistory: Object,//
-  commissionStatus: String//
+  businessStatusHistory: Object,
+  commissionStatus: String
   businessSignupStatus: Boolean,
+  businessInvitedThrough: String,
+  //above listed properties we are using
 
   businessOnboardedStatus: Boolean,
   businessEscrowOpenedStatus: Boolean,
   businessConvertedStatus: Boolean,
-  commissionWhileInviting: number // change to commissionWhileLastInviting
-  businessInvitedThrough: String,// dont think its a required field
+  commissionWhileInviting: number // changed to commissionWhileLastInviting
   commissionEarned:number
   commissionSettle:number
  

@@ -37,8 +37,14 @@ export const findAndInsert = async (userId, businessInvitedMail, businessInvited
         affiliateId: affiliateId,
         commissionWhileLastInviting: currentCommission 
       }
-      if(businessInvitedMail) affiliateInviteObject["businessInvitedMail"] = businessInvitedMail;
-      else affiliateInviteObject["businessInvitedNumber"] = businessInvitedNumber;
+      if(businessInvitedMail) {
+        affiliateInviteObject["businessInvitedMail"] = businessInvitedMail;
+        affiliateInviteObject["businessInvitedThrough"] = "mail";
+      } else{
+        affiliateInviteObject["businessInvitedNumber"] = businessInvitedNumber;
+        affiliateInviteObject["businessInvitedThrough"] = "mobileNumber";
+
+      } 
       const result = await affiliateInvite.create(affiliateInviteObject);
       console.log("Affiliate invited the person successfully.");
       return [true, result];
@@ -58,15 +64,61 @@ export const findAndInsert = async (userId, businessInvitedMail, businessInvited
   }
 };
 
-export const get = async (userId, rowsPerPage, page): Promise<any> => {
+export const get = async (userId, rowsPerPage, page, commission): Promise<any> => {
     try {
+      let query; 
+      let searchQuery;
+      let result;
+      let affiliateInviteDetails;
       const [skipLimit, limitRange] = await getSkipAndLimitRange(page, rowsPerPage);
       let affiliateId = await getAffiliateId(userId);
-      const affiliateInviteDetails = await affiliateInvite.find({affiliateId}).limit(limitRange).skip(skipLimit);;
+      if(!affiliateId) throw ({message: "Affiliate does not exist with this user id."})
+      query = {affiliateId}
+      if(commission == "true") {
+        searchQuery  = {
+          "$facet": {
+            "affiliateInviteRecords" : [
+              {"$match" : query},
+              {"$skip": skipLimit}, 
+              {"$limit": limitRange}
+            ],
+            "totalInvitations": [
+              { "$match" : query},
+              { "$count": "totalInvitations" },
+            ],
+            "commissionExpected": [
+              { "$match" : {$and: [query, {commissionStatus: "eligible"}]}},
+              {$group: {
+                _id: null,
+                commissionExpected: { $sum: "$commissionWhileLastInviting" }
+              }}
+            ],
+            "commissionSettled": [
+              { "$match" :{$and: [query, {commissionStatus: "settled"}]}},
+              {$group: {
+                _id: null,
+                commissionSettled: { $sum: "$commissionWhileLastInviting" }
+              }}
+            ]
+          }
+        }
+        affiliateInviteDetails = await affiliateInvite.aggregate([searchQuery]).limit(limitRange).skip(skipLimit);;
+        result = {
+          affiliateInviteRecords: affiliateInviteDetails[0]?.["affiliateInviteRecords"],
+          totalInvitations: affiliateInviteDetails[0]?.["totalInvitations"]?.[0]?.["totalInvitations"],
+          commissionExpected: affiliateInviteDetails[0]?.["commissionExpected"]?.[0]?.["commissionExpected"],
+          commissionSettled: affiliateInviteDetails[0]?.["commissionSettled"]?.[0]?.["commissionSettled"]
+        }
+      } else {
+        affiliateInviteDetails = await affiliateInvite.find(query).limit(limitRange).skip(skipLimit);;
+        result = {
+          affiliateInviteRecords : affiliateInviteDetails
+        }
+      }
       console.log("Affiliate invite details have been fetched successfully.");
-      return [true, affiliateInviteDetails];
+      return [true, result];
     } catch (error) {
-      console.log("Error occured while inserting the affiliateInvite.", error);
+      console.log("Error occured while fetching the affiliateInvite.", error);
       return  [false, error.message];
     }
   };
@@ -76,5 +128,5 @@ export const get = async (userId, rowsPerPage, page): Promise<any> => {
     let affiliateDetails = await affiliate.find({userId}, "_id");
     if(!affiliateDetails.length) throw({message: "Affiliate does not exist with this user id."})
     else  affiliateId = affiliateDetails[0]._id;
-    return affiliateId;
+    return affiliateId.toString();
   }

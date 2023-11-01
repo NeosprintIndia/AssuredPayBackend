@@ -27,7 +27,8 @@ const CouponCodeSchema: Schema<IReferralCode> = new Schema<IReferralCode>({
   },
   status: {
     type: String,
-    default: "active"
+    default: "active", 
+    enum: ["active", "expired"]
   },
   createdOn: {
     type: Date,

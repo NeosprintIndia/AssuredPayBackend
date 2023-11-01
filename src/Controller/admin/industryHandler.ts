@@ -24,11 +24,8 @@ export const find = async (searchBy: any, page, rowsLimitInPage): Promise<[boole
     const rowsLimitPerPage = rowsLimitInPage || 10;
     const skipLimit  = page*rowsLimitPerPage - rowsLimitPerPage;
     const industries = await industry.find(query).limit(rowsLimitPerPage).skip(skipLimit)
-    if(!industries.length) throw ({message: "No industry found in db."})
-    else {
-      console.log("Industries fetched successfully")
-      return [true, industries];
-    }
+    console.log("Industries fetched successfully")
+    return [true, industries];
   } catch (error) {
     console.error("Error in fetching industries names.", error);
     return [false, error.message];

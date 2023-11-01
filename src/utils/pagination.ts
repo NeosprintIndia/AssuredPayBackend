@@ -3,5 +3,5 @@ export const getSkipAndLimitRange = async (pageNumber: number, rowsPerPage: numb
     const page = pageNumber ? pageNumber : 1;
     const rowsLimitPerPage =  rowsPerPage ? rowsPerPage : 10;
     const skipLimit = page * rowsLimitPerPage - rowsLimitPerPage;
-    return [skipLimit, rowsLimitPerPage];
+    return [Number(skipLimit), Number(rowsLimitPerPage)];
 };
