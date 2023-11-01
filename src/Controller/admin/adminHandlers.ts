@@ -14,7 +14,7 @@ export const getAllKYCRecordsInternal = async (
   try {
     const skipCount = (page - 1) * pageSize;
     let query = UserKYC1.find()
-      .select({ Legal_Name_of_Business: 1, GSTIN_of_the_entity: 1, userRequestReference: 1, due: 1, kycrequested: 1 })
+      .select({ Legal_Name_of_Business: 1, GSTIN_of_the_entity: 1, userRequestReference: 1, due: 1, kycrequested: 1 ,user:1})
       .populate('businessUser', 'refferedBy');
       console.log("Query",query)
     if (due !== null) {
