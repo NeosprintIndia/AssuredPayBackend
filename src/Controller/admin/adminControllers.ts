@@ -96,8 +96,6 @@ export const getAllKYCRecords = async (
 ): Promise<void> => {
   try {
     const {due,page,pageSize,search}= (req as any).query 
-
-    
     const [success, result] = await getAllKYCRecordsInternal(page,pageSize,due,search);
     if (success) {
       res.status(200).send({ result, Active: true });

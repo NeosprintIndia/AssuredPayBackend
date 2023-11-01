@@ -101,6 +101,8 @@ export const saveGSTDetailsInternal = async (
 ): Promise<any> => {
   try {
     const filter = { user: userId }; // Filter by userId to find existing document
+    const bUser = await businessUser.findOne({ userId: userId }).select('userId');
+    console.log("BusinessUser",bUser)
     const update = {
       Constitution_of_Business,
       Taxpayer_Type,
@@ -114,13 +116,14 @@ export const saveGSTDetailsInternal = async (
       Nature_of_Place_of_Business,
       Nature_of_Business_Activity,
       user: userId,
+      businessUser:bUser,
       isGSTDetailSave: true,
       isGSTDetailSaveManually
     };
-
     const options = { upsert: true, new: true };
-
     const gstDetails = await UserKYC1.findOneAndUpdate(filter, update, options);
+  const referenceIn= await businessUser.findOneAndUpdate({ userId: userId }, {$set:{kycId:gstDetails._id}})
+  console.log("referenceIn",referenceIn)
     return [true, gstDetails];
   } catch (error) {
     console.error("Error in Saving Details:", error);

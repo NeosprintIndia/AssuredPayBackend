@@ -3,6 +3,7 @@ import mongoose, { Document, Schema, Model, Types } from "mongoose";
 // Define the interface for the document
 interface IUserKYC extends Document {
   user: Types.ObjectId | IUser;
+  businessUser:Types.ObjectId | IUser;
   PAN_number: string;
   aadharFileUrl: string;
   aadharBackUrl: string;
@@ -77,6 +78,10 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>(
     user: {
       type: Schema.Types.ObjectId,
       ref: "RegisterUser",
+    },
+    businessUser: {
+      type: Schema.Types.ObjectId,
+      ref: "BusinessUser",
     },
     GSTFILE: {
       type: String,

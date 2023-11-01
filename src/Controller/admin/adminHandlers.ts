@@ -12,39 +12,27 @@ export const getAllKYCRecordsInternal = async (
   search: string | null = null 
 ): Promise<any[]> => { 
   try {
-   
     const skipCount = (page - 1) * pageSize;
-
-    
     let query = UserKYC1.find()
       .select({ Legal_Name_of_Business: 1, GSTIN_of_the_entity: 1, userRequestReference: 1, due: 1, kycrequested: 1 })
-      .populate('user', 'referredBy');
-
-   
+      .populate('businessUser', 'refferedBy');
+      console.log("Query",query)
     if (due !== null) {
       query = query.where('due').equals(due);
     }
-
-    
     if (search !== null) {
       query.or([
         { userRequestReference: search },
         { GSTIN_of_the_entity: search }
       ]);
     }
-
-   
     const results: any[] = await query.skip(skipCount).limit(pageSize).exec();
-
-   
     const dueCounts = {
       approved: await UserKYC1.countDocuments({ due: 'Approved' }),
       rejected: await UserKYC1.countDocuments({ due: 'Rejected' }),
       new: await UserKYC1.countDocuments({ due: 'New' }),
       total: await UserKYC1.countDocuments(),
     };
-
-   
     return [true, { results, dueCounts }];
   } catch (error) {
    
