@@ -158,12 +158,9 @@ export const setLimitInternal = async (
 export const getAllConfigurationInternal = async (): Promise<any[]> => {
   try {
     
-    const result = await adminGlobalSetting.find();
-   
-    
+    const result = await adminGlobalSetting.find(); 
     return [true, result[0]];
   } catch (error) {
-   
     return error;
   }
 };

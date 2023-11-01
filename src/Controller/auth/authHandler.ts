@@ -21,14 +21,10 @@ export const performRegistration = async (
   refferal_code: string | null,
   role:string
 ): Promise<[boolean, any]> => {
-
-
   let referralCode: string | null = null;
-
   if (refferal_code != null) {
     referralCode = refferal_code;
   }
-
   const isExisting = await findUserByEmailUsername(
     //business_email, 
     username);
@@ -151,10 +147,7 @@ export const findUserByEmailUsername = async (
           { new: true }
         );
       return true 
-    }  
-    }
-    };
-
+    }}};
 const createUser = async (
   business_email: string,
   password: string,
@@ -164,12 +157,7 @@ const createUser = async (
   role:string
 ): Promise<[boolean, any]> => {
   try {
-    const hashedPassword = await CryptoJS.AES.encrypt(
-      password,
-      process.env.PASS_PHRASE
-    ).toString();
-    const otpGeneratedEmail = await generateOTP();
-    const otpGeneratedMobile = await generateOTP();
+    const hashedPassword = await CryptoJS.AES.encrypt(password,process.env.PASS_PHRASE).toString();
     const Refer_code = await generateReferralCode(username, business_mobile);
     let updatedReferral = null;
     var referredBy = "";
@@ -188,8 +176,6 @@ const createUser = async (
         referredBy = (referUserProfile as any).Legal_Name_of_Business;
       }
     }
-   
-
     const newUser = await Registration.create({
       business_email,
       business_mobile,
@@ -198,8 +184,9 @@ const createUser = async (
       oldPasswords: [hashedPassword],
       role:role
     });
-    const { gstLimit, aadharLimit, panLimit, cin } =
-    await globalSetting.findOne({ });
+    const otpGeneratedEmail = await generateOTP();
+    const otpGeneratedMobile = await generateOTP();
+    const { gstLimit, aadharLimit, panLimit, cin } =await globalSetting.findOne({ });
     const newBU = await businessUser.create({
       userId:newUser._id,
       refferedBy: referredBy,
@@ -210,7 +197,6 @@ const createUser = async (
       mobileotp: otpGeneratedMobile,
       emailotp: otpGeneratedEmail,
     });
-
     await Referral.create({
       user: newUser._id,
       refferal_code: Refer_code,
@@ -226,8 +212,6 @@ const createUser = async (
     };
     await sendDynamicMail(reqData);
     await sendSMS(reqData);
-
-    
     return [true, newUser];
   } catch (error) {
     console.error("Error in createUser:", error);
@@ -336,15 +320,12 @@ export const validateUserMFA = async (
 ): Promise<[boolean, string | any]> => {
   try {
     const user = await Registration.findOne({ username });
-
     if (!user) {
       return [false, "User not found"];
     }
-
     if (user.MFA !== otp) {
       return [false, "Invalid OTP"];
     }
-
     let token;
     if (user.role === "Maker" || user.role === "Checker") {
       const userId = user._id;
@@ -808,7 +789,7 @@ export const forgotPassotpInternal = async (
     const otpGenerated = await generateOTP();
     const updatedUser = await Registration.findOneAndUpdate(
       { username: username },
-      { $set: { forgotpasswordotp: otpGenerated } },
+      { $set: {forgotpasswordotp: otpGenerated } },
       { new: true }
     );
     // Send OTP On Mail/Mobile
@@ -823,10 +804,10 @@ export const forgotPassotpInternal = async (
     };
     await sendDynamicMail(reqData);
     await sendSMS(reqData);
-
-    if (updatedUser) return [true, updatedUser];
+    if (updatedUser)
+    return [true, updatedUser];
     else {
-      return [false, updatedUser];
+    return [false, updatedUser];
     }
   } catch (error) {
     console.error("Error in Sending OTP:", error);

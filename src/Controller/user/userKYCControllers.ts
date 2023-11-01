@@ -22,7 +22,6 @@ export const getGSTDetails = async (
     const userId = (req as any).userId as string;
     const gst = req.body.GSTNumber as string;
     const [success, result] = await getGSTDetailsInternal(gst, userId);
-
     const inputString = result.GSTresult.body.data.gstin;
     const data = result.GSTresult.body.data;
     const leftAttempt = result.remainingAttempt;

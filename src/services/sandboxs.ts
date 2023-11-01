@@ -110,7 +110,7 @@ export const GST_KYC_SB = async (dynamicData: { id_number: string,userlog:any })
       .request(config)
       
       .then((response: AxiosResponse) => {
-        console.log(response.data);
+        console.log(response);
         resolve({ body: response.data });
         
       })

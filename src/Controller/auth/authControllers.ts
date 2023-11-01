@@ -39,7 +39,6 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     refferal_code,
     role
   );
-
   // Prepare data for email and SMS notifications
   const reqData = {
     Email_slug: "Business_Succesfully_Registered",
@@ -52,14 +51,14 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
   if (success) {
     // Send email and SMS notifications
-    await sendDynamicMail(reqData);
-    await sendSMS(reqData);
+    // await sendDynamicMail(reqData);
+    // await sendSMS(reqData);
 
     // Respond with success message and user data
     const resultData = {
-      business_email:result.business_email,
-      business_mobile: result.business_mobile,
-      username: result.username,
+      business_email:result[1].business_email,
+      business_mobile: result[1].business_mobile,
+      username: result[1].username,
     };
     res.status(200).send({ result: resultData, Active: true });
   } else {
@@ -314,8 +313,8 @@ export async function forgotPassotp(req: Request, res: Response) {
   const { username } = req.body;
   const [success, result] = await forgotPassotpInternal(username);
   if (success) {
-    res.status(200).send({  Active: true });
+    res.status(200).send({Active: true });
   } else {
-    res.status(500).send({  Active: false });
+    res.status(500).send({ Active: false });
   }
 }
