@@ -30,7 +30,7 @@ export const performRegistration = async (
     username);
 
   if (isExisting) {
-    return [false, "Already existing business or Username"];
+    return [true, "Already existing business or Username"];
   } else {
     const newUser = await createUser(
       business_email,
