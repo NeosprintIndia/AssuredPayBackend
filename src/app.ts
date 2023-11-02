@@ -28,8 +28,7 @@ app.use("/admin", adminRoutes);
 app.use("/template", TemplateRoutes);
 app.use("/userkyc", userKYCRoutes);
 app.use("/uploadRoutes", uploadRoutes);
-app.use("/maker", makerRoutes);
-app.use("/checker",checkerRoutes)
+
 
 // Define the port number for the server
 const port: number = 3010;
