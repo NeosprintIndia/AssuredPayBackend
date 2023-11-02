@@ -49,6 +49,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     VariablesMessage: [username, "Agent"],
   };
 
+console.log("RESULT",result[1])
   if (success) {
     // Send email and SMS notifications
     // await sendDynamicMail(reqData);

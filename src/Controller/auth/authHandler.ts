@@ -29,8 +29,10 @@ export const performRegistration = async (
     //business_email, 
     username);
 
+    console.log("isExisting",isExisting)
+
   if (isExisting) {
-    return [true, "Already existing business or Username"];
+    return [true, isExisting];
   } else {
     const newUser = await createUser(
       business_email,
@@ -130,7 +132,7 @@ export const searchExisting = async (username: string): Promise<[boolean, any]> 
 // };
 export const findUserByEmailUsername = async (
   username: string
-): Promise<boolean> => {
+): Promise<any> => {
   const user = await Registration.findOne({ username });
   if (!user) {
     return false;
@@ -146,7 +148,7 @@ export const findUserByEmailUsername = async (
           { $set: updateField },
           { new: true }
         );
-      return true 
+      return [true,user] 
     }}};
 const createUser = async (
   business_email: string,
