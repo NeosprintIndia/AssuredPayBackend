@@ -72,24 +72,24 @@ router.put("/updateCoupon",VerifyAdmin,updateCoupon)
 router.delete("/deleteCoupon",VerifyAdmin,deleteCoupon)
 
 // industryRoutes
-router.post("/addIndustry",addIndustry)
-router.get("/getIndustry",getIndustry)
-router.put("/updateIndustry",updateIndustry)
+router.post("/addIndustry",VerifyAdmin,addIndustry)
+router.get("/getIndustry",VerifyAdmin,getIndustry)
+router.put("/updateIndustry",VerifyAdmin,updateIndustry)
 
 // categoryRoutes
-router.post("/addCategory",addCategory)
-router.get("/getCategory",getCategory)
-router.put("/updateCategory",updateCategory)
+router.post("/addCategory",VerifyAdmin,addCategory)
+router.get("/getCategory",VerifyAdmin,getCategory)
+router.put("/updateCategory",VerifyAdmin,updateCategory)
 
 // productRoutes
-router.post("/addProduct",addProduct)
-router.get("/getProduct",getProduct)
-router.put("/updateProduct",updateProduct)
+router.post("/addProduct",VerifyAdmin,addProduct)
+router.get("/getProduct",VerifyAdmin,getProduct)
+router.put("/updateProduct",VerifyAdmin,updateProduct)
 
 // affiliateRoutes
-router.get("/invitelogs",inviteLogs)
-router.post("/createAffiliate", createAffiliate)
-router.get("/getAffiliates", getAffiliates)
-router.put("/updateAffiliate", updateAffiliate)
+router.get("/invitelogs",VerifyAdmin,inviteLogs)
+router.post("/createAffiliate",VerifyAdmin,createAffiliate)
+router.get("/getAffiliates",VerifyAdmin,getAffiliates)
+router.put("/updateAffiliate",VerifyAdmin,updateAffiliate)
 
 export default router;

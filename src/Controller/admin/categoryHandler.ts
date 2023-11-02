@@ -38,11 +38,8 @@ export const find = async (searchBy: any, industryId: any, page, rowsLimitInPage
     const skipLimit  = page*rowsLimitPerPage - rowsLimitPerPage;
    
     const categories = await category.find(query).limit(rowsLimitPerPage).skip(skipLimit);
-    if(!categories.length) throw ({message: "No category found in db."})
-    else {
-      console.log("Categories fetched successfully.")
-      return [true, categories];
-    }
+    console.log("Categories fetched successfully.")
+    return [true, categories];
   } catch (error) {
     console.error("Error in fetching categories names by the string provided.", error);
     return [false, error.message];
