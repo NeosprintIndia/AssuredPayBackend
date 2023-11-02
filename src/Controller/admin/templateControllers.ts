@@ -16,7 +16,7 @@ export const addTemplate = async (req: Request, res: Response): Promise<any> => 
             For,
             Template_Name,
             Message,
-            Lenth,
+            Length,
             Status,
             Template_ID,
             VAR_1,
@@ -35,7 +35,7 @@ export const addTemplate = async (req: Request, res: Response): Promise<any> => 
             For,
             Template_Name,
             Message,
-            Lenth,
+            Length,
             Status,
             Template_ID,
             VAR_1,
@@ -46,7 +46,6 @@ export const addTemplate = async (req: Request, res: Response): Promise<any> => 
             Email,
             Reference_message,
         });
-
         res.status(200).json({ status: 200, message: 'Template added successfully', SMSTemplate: newSMSTemplate });
     } catch (error) {
         console.error(error);
@@ -135,7 +134,7 @@ export const downloadTemplateFormatCsv = async (req: Request, res: Response): Pr
             For: 1,
             Template_Name: 1,
             Message: 1,
-            Lenth: 1,
+            Length: 1,
             Status: 1,
             Template_ID: 1,
             VAR_1: 1,
@@ -161,7 +160,7 @@ export const downloadTemplateFormatCsv = async (req: Request, res: Response): Pr
                 'For',
                 'Template_Name',
                 'Message',
-                'Lenth',
+                'Length',
                 'Status',
                 'Template_ID',
                 'VAR_1',

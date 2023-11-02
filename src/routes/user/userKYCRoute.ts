@@ -60,14 +60,14 @@ router.get("/getBusinessNetwork",[VerifyToken],getBusinessesFromBusinessNetwork)
 router.put("/updateBusinessNetwork",[VerifyToken],updateBusinessInBusinessNetwork)
 
 // industryRoutes
-router.get("/getIndustry",[VerifyToken],getIndustry)
+router.get("/getIndustry",getIndustry)
 
 // categoryRoutes
-router.get("/getCategory",[VerifyToken],getCategory)
+router.get("/getCategory",getCategory)
 
 // productRoutes
-router.post("/addProduct",[VerifyToken],addProduct)
-router.get("/getProduct",[VerifyToken],getProduct)
+router.post("/addProduct",addProduct)
+router.get("/getProduct",getProduct)
 
 
 // affiliatePortal
