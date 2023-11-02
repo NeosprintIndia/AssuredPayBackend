@@ -28,13 +28,11 @@ export const performRegistration = async (
   const isExisting = await findUserByEmailUsername(
     //business_email, 
     username);
-
     console.log("isExisting",isExisting)
-
   if (isExisting) {
     return [true, isExisting];
   } else {
-    const newUser = await createUser(
+  const newUser = await createUser(
       business_email,
       password,
       business_mobile,
@@ -42,7 +40,6 @@ export const performRegistration = async (
       referralCode,
       role
     );
-
     if (!newUser[0]) {
       return [false, "Unable to create new user"];
     } else {
