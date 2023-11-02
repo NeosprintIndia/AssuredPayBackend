@@ -31,8 +31,6 @@ export default (req: CustomRequest, res: Response, next: NextFunction): void => 
     else {
       next();
     }
-
-
   } catch (e) {
     res.status(403).json({ message: "Unauthorized", Active: false });
   }
