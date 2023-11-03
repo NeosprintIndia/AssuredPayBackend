@@ -70,9 +70,9 @@ router.post("/addProduct",[VerifyToken],addProduct)
 router.get("/getProduct",[VerifyToken],getProduct)
 
 
-// affiliatePortal
-router.post("/invite",[VerifyToken],addIvite)
-router.get("/getInvite",[VerifyToken],getInvite)
+// // affiliatePortal
+// router.post("/invite",[VerifyToken],addIvite)
+// router.get("/getInvite",[VerifyToken],getInvite)
 
 
 export default router;

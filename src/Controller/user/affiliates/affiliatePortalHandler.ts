@@ -28,8 +28,8 @@ export const findAndInsert = async (userId, businessInvitedMail, businessInvited
     if(isAlreadySignedUp) return [true,  "Invited user has already signed up. Thanks for inviting."]
     if(businessInvitedMail) searchQuery = {$and: [{affiliateId}, {businessInvitedMail}]};
     else  searchQuery = {$and: [{affiliateId}, {businessInvitedNumber}]};
-    // const currentCommission = await globalSettings.find({}) // details are still not there
-    const currentCommission = 600;
+     const refferalCommission = await globalSettings.find({},{ refferalCommission: 1 }) // details are still not there
+    const currentCommission = refferalCommission;
     const doucment = await affiliateInvite.find(searchQuery);
     if(!doucment.length) {
         //invite through mail and sms

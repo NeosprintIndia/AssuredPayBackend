@@ -10,6 +10,7 @@ import authRoutes from "./routes/auth/authRoute";
 import adminRoutes from "./routes/admin/adminRoute";
 import TemplateRoutes from "./routes/admin/templateRoutes";
 import userKYCRoutes from "./routes/user/userKYCRoute";
+import affiliate from "./routes/user/userKYCRoute";
 import uploadRoutes from "./routes/upload/uploadRoute";
 import makerRoutes from "./routes/maker/makerRouters";
 import checkerRoutes from "./routes/checker/checker";
@@ -27,6 +28,7 @@ app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
 app.use("/template", TemplateRoutes);
 app.use("/userkyc", userKYCRoutes);
+app.use("/affiliate", affiliate);
 app.use("/uploadRoutes", uploadRoutes);
 
 

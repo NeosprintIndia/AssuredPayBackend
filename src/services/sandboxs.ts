@@ -108,11 +108,8 @@ export const GST_KYC_SB = async (dynamicData: { id_number: string,userlog:any })
   return new Promise((resolve, reject) => {
     instance
       .request(config)
-      
       .then((response: AxiosResponse) => {
-        console.log(response);
         resolve({ body: response.data });
-        
       })
       .catch(error => {
         reject(error.response.data);

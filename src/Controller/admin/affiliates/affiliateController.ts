@@ -3,7 +3,9 @@ import {
   findAndInsert,
   find,
   findAndUpdate,
-  verifyPANDetails
+  verifyPANDetails,
+  getGSTDetailsInternal
+  
 } from "./affiliateHandler";
 
 function sendResponse(res: Response, success: Boolean, result: any){
@@ -42,5 +44,41 @@ export const verifyPAN = async (req: Request, res: Response): Promise<void> => {
   } catch (error) {
     console.error({ message: "Error in verifyPAN:", error, Active: false });
     res.status(500).json({ error: "An error occurred", Active: false });
+  }
+};
+export const getGSTDetails = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const userId = (req as any).userId as string;
+    const gst = req.body.GSTNumber as string;
+    const [success,result] = await getGSTDetailsInternal(gst, userId);
+    console.log("RESULT",result)
+    const inputString = result.body.data.gstin;
+    const data = result.body.data;
+    const pan = inputString.substring(2, inputString.length - 3);
+    const results = {
+      constituionOfBusiness: data.ctb,
+      taxpayerType: data.dty,
+      legalNameOfBusiness: data.lgnm,
+      businessPanNumber: pan,
+      gstDateOfRegistraion: data.rgdt,
+      state: data.pradr.addr.stcd,
+      tradeName: data.lgnm,
+      placeOfBusiness: `${data.pradr.addr.bno} ${data.pradr.addr.st} ${data.pradr.addr.loc} ${data.pradr.addr.dst} ${data.pradr.addr.pncd}`,
+      natureOfPlaceofBusiness: data.pradr.ntr,
+      natureOFBusinessActivity: data.nba[0],
+       //GSTIN_of_the_entity: data.gstin,
+    };
+
+    if (success) {
+      res.status(200).send({ results, Active: true });
+    } else {
+      res.status(400).send({ message:results, Active: false });
+    }
+  } catch (error) {
+    console.error({ message: "Error in getGSTDetails:", error, Active: false });
+    res.status(500).send({ message: "An error occurred", Active: false });
   }
 };

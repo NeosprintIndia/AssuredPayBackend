@@ -47,7 +47,8 @@ import {
     createAffiliate,
     getAffiliates,
     updateAffiliate,
-    verifyPAN
+    verifyPAN,
+    getGSTDetails
 } from '../../Controller/admin/affiliates/affiliateController';
 
 //onboardingRoutes
@@ -92,5 +93,6 @@ router.post("/createAffiliate",VerifyAdmin,createAffiliate)
 router.get("/getAffiliates",VerifyAdmin,getAffiliates)
 router.put("/updateAffiliate",VerifyAdmin,updateAffiliate)
 router.post('/verifypan',[VerifyAdmin],verifyPAN)
+router.post('/getgstdetail',[VerifyAdmin],getGSTDetails)
 
 export default router;

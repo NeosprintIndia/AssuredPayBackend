@@ -12,6 +12,7 @@ import {isValidObjectId} from "mongoose";
 import * as CryptoJS from "crypto-js";
 import {
   PAN_KYC_SB,
+  GST_KYC_SB
 } from "../../../services/sandboxs";
 
 export const findAndInsert = async (affiliateDetails): Promise<any> => {
@@ -129,5 +130,17 @@ export const verifyPANDetails = async (
     return[true,{firstName,last_name}]
   } catch (error) {
     throw error;
+  }
+};
+
+export const getGSTDetailsInternal = async (
+  gst: string,
+  userId: string
+): Promise<any> => {
+  try {
+    const result = await GST_KYC_SB({ id_number: gst, userlog:userId })
+    return[true,result]
+  } catch (error) {
+    return [false, error];
   }
 };
