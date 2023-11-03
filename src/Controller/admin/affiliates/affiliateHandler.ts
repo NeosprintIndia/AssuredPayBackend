@@ -124,9 +124,9 @@ export const verifyPANDetails = async (
 ): Promise<any | string> => {
   try {
     const result = await PAN_KYC_SB({ id_number: PanNumber,userlog:id });
-    const panFirstName = result.body.data.first_name;
+    const firstName = result.body.data.first_name;
     const last_name = result.body.data.last_name;
-    return[true,{panFirstName,last_name}]
+    return[true,{firstName,last_name}]
   } catch (error) {
     throw error;
   }
