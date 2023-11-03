@@ -9,7 +9,7 @@ export const findAndInsert = async (couponDetails): Promise<any> => {
       console.log("Coupon inserted successfully");
       return [true, result];
     } else {
-      return [true,  "Coupon code already exists" ];
+      return [false,  "Coupon code already exists" ];
     }
   } catch (error) {
     console.log("Error occured while inserting the coupon", error);
