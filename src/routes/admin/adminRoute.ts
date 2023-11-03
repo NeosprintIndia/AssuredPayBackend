@@ -12,11 +12,10 @@ import {
     getbusinessrepresentativedetail,
     finalstatus,
     rejectDocument,
-    allActivities,
-    
-   
-}
+    allActivities,   
+   }
 from '../../Controller/admin/adminControllers';
+
 import{inviteLogs} from "../../Controller/admin/invitelogController"
 
 import {
@@ -47,7 +46,8 @@ import {
 import { 
     createAffiliate,
     getAffiliates,
-    updateAffiliate
+    updateAffiliate,
+    verifyPAN
 } from '../../Controller/admin/affiliates/affiliateController';
 
 //onboardingRoutes
@@ -91,5 +91,6 @@ router.get("/invitelogs",VerifyAdmin,inviteLogs)
 router.post("/createAffiliate",VerifyAdmin,createAffiliate)
 router.get("/getAffiliates",VerifyAdmin,getAffiliates)
 router.put("/updateAffiliate",VerifyAdmin,updateAffiliate)
+router.post('/verifypan',[VerifyAdmin],verifyPAN)
 
 export default router;

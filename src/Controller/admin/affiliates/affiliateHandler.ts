@@ -10,6 +10,9 @@ import {getSkipAndLimitRange} from "../../../utils/pagination"
 import mongoose from 'mongoose';
 import {isValidObjectId} from "mongoose";
 import * as CryptoJS from "crypto-js";
+import {
+  PAN_KYC_SB,
+} from "../../../services/sandboxs";
 
 export const findAndInsert = async (affiliateDetails): Promise<any> => {
   try {
@@ -113,5 +116,18 @@ export const findAndUpdate = async (affiliateId: string, affiliateDetails): Prom
   } catch (error) {
     console.log("Error occured while updating the affiliate", error);
     return  [false, error.message];
+  }
+};
+export const verifyPANDetails = async (
+  PanNumber: string,
+  id: string
+): Promise<any | string> => {
+  try {
+    const result = await PAN_KYC_SB({ id_number: PanNumber,userlog:id });
+    const panFirstName = result.body.data.first_name;
+    const last_name = result.body.data.last_name;
+    return[true,{panFirstName,last_name}]
+  } catch (error) {
+    throw error;
   }
 };

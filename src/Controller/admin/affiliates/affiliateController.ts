@@ -2,7 +2,8 @@ import { Request, Response } from 'express';
 import {
   findAndInsert,
   find,
-  findAndUpdate
+  findAndUpdate,
+  verifyPANDetails
 } from "./affiliateHandler";
 
 function sendResponse(res: Response, success: Boolean, result: any){
@@ -28,4 +29,18 @@ export const updateAffiliate = async (req: Request, res: Response): Promise<void
   const [success,result] = await findAndUpdate(affiliateId, affiliateDetails);
   sendResponse(res,success,result);
 };
-
+export const verifyPAN = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const PanNumber = req.body.PanNumber as string;
+    const id = (req as any).userId as string; // Assuming userId is a string
+    const [success, result] = await verifyPANDetails(PanNumber, id);
+    if (success) {
+      res.status(200).send({ result, Active: true });
+    } else {
+      res.status(400).send({ result, Active: false });
+    }
+  } catch (error) {
+    console.error({ message: "Error in verifyPAN:", error, Active: false });
+    res.status(500).json({ error: "An error occurred", Active: false });
+  }
+};
