@@ -47,19 +47,19 @@ export const findAndInsert = async (affiliateDetails): Promise<any> => {
     } else throw({message: "Error occured registering the user."})
     const newAffiliate = await affiliate.create(affiliateDetails);
     console.log("Affiliate created successfully");
-    // if(newAffiliate._id) {
-    //     const reqData = {
-    //       Email_slug: "Business_Succesfully_Registered",
-    //       email: business_email,
-    //       VariablesEmail: [username, "Agent"],
+    if(newAffiliate._id) {
+        const reqData = {
+          Email_slug: "Affiliate_Created",
+          email: business_email,
+          VariablesEmail: [username,tempPassword,"URL"],
       
-    //       receiverNo: business_mobile,
-    //       Message_slug: "Business_Succesfully_Registered",
-    //       VariablesMessage: [username, "Agent"],
-    //     };
-    //   await sendDynamicMail(reqData);
-    //   await sendSMS(reqData);
-    // }
+          receiverNo: business_mobile,
+          Message_slug: "Affiliate_Created",
+          VariablesMessage: [username,tempPassword,"URL"],
+        };
+      await sendDynamicMail(reqData);
+      await sendSMS(reqData);
+    }
       return [true, newUser];
     }
   } catch (error) {

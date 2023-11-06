@@ -15,11 +15,9 @@ interface IAffiliate extends Document {
   businessSignupStatus: Boolean,
   businessInvitedThrough: String,
   //above listed properties we are using
-
   businessOnboardedStatus: Boolean,
   businessEscrowOpenedStatus: Boolean,
   businessConvertedStatus: Boolean,
-  commissionWhileInviting: number // changed to commissionWhileLastInviting
   commissionEarned:number
   commissionSettle:number
  
@@ -80,9 +78,6 @@ const AffiliateInviteSchema: Schema<IAffiliate> = new Schema<IAffiliate>({
   },
   businessInvitedNumber: {
     type: String
-  },
-  commissionWhileInviting: {
-    type: Number
   },
 
 },

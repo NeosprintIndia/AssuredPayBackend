@@ -7,7 +7,7 @@ interface IRegisterUser extends Document {
   username: string;
   password: string;
   oldPasswords: string[];
-  createdAt: Date;
+  createdAt: Number;
   lastActive?: string;
   active: boolean;
   role: string;
@@ -34,7 +34,7 @@ const RegisterUserSchema: Schema<IRegisterUser> = new Schema({
   },
   password: { type: String, required: true },
   oldPasswords: [{ type: String }],
-  createdAt: { type: Date, default: Date.now },
+  createdAt: { type: Number, default: Date.now },
   lastActive: {
     type: String,
     required: false,

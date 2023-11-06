@@ -16,7 +16,7 @@ import {
    }
 from '../../Controller/admin/adminControllers';
 
-import{inviteLogs} from "../../Controller/admin/invitelogController"
+import{inviteLogs,inviteLogsSpecificAffiliate} from "../../Controller/admin/affiliates/invitelogController"
 
 import {
     addCoupon,
@@ -89,6 +89,7 @@ router.put("/updateProduct",VerifyAdmin,updateProduct)
 
 // affiliateRoutes
 router.get("/invitelogs",VerifyAdmin,inviteLogs)
+router.get("/invitelogsspecificaffiliate",VerifyAdmin,inviteLogsSpecificAffiliate)
 router.post("/createAffiliate",VerifyAdmin,createAffiliate)
 router.get("/getAffiliates",VerifyAdmin,getAffiliates)
 router.put("/updateAffiliate",VerifyAdmin,updateAffiliate)

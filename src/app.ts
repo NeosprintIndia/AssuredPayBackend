@@ -10,7 +10,7 @@ import authRoutes from "./routes/auth/authRoute";
 import adminRoutes from "./routes/admin/adminRoute";
 import TemplateRoutes from "./routes/admin/templateRoutes";
 import userKYCRoutes from "./routes/user/userKYCRoute";
-import affiliate from "./routes/user/userKYCRoute";
+import affiliate from "./routes/affiliate/affiliate";
 import uploadRoutes from "./routes/upload/uploadRoute";
 import makerRoutes from "./routes/maker/makerRouters";
 import checkerRoutes from "./routes/checker/checker";

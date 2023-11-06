@@ -53,13 +53,13 @@ interface IUserKYC extends Document {
   cityInAadhar: string;
   addressInAadhar: string;
   globalStatus: string;
-  createdAt: Date;
-  updatedAt: Date;
-  kycrequested: Date;
+  createdAt: Number;
+  updatedAt: Number;
+  kycrequested: Number;
   activities: {
     ipAddress: string;
     macaddress: string;
-    timestamp: Date;
+    timestamp: Number;
     Admin_AadhaarS1_Verification_Clarification: string;
     Admin_AadhaarS2_Verification_Clarification: string;
     Admin_Pan_Verification_Clarification: string;
@@ -216,7 +216,7 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>(
     Legal_Name_of_Business: { type: String, default: "" },
     Business_PAN: { type: String, default: "" },
     Date_of_Registration: { type: String, default: "" },
-    kycrequested: { Date },
+    kycrequested: { type: Number, default: Date.now },
     State: { type: String, default: "" },
     Trade_Name: { type: String, default: "" },
     Place_of_Business: { type: String },
@@ -227,7 +227,7 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>(
       {
         ipAddress: { type: String, default: "" },
         macaddress: { type: String, default: "" },
-        timestamp: { type: Date, default: Date.now },
+        timestamp: { type: Number, default: Date.now },
         Admin_AadhaarS1_Verification_Clarification: {
           type: String,
           default: "",

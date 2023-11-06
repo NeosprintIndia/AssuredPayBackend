@@ -12,13 +12,13 @@ interface IPaymentRequest extends Document {
   orderTitle: string;
   POPI: string;
   orderAmount: number;
-  proposalCreatedDate: Date;
+  proposalCreatedDate: Number;
   proposalValidity: number;
-  proposalExpireDate: Date;
+  proposalExpireDate: Number;
   paymentIndentifier: "buyer" | "seller";
   paymentDays?: number; // Number of days for full payment
   MilestoneDetails?: Array<{
-    date: Date; // Date when the partial payment should be made
+    date: Number; // Date when the partial payment should be made
     amount: number; // Amount to be paid on that date
     balancedUsed: number; //Bank balance if used
     recievableUsed:number;
@@ -84,16 +84,16 @@ const paymentRequestSchema = new Schema<IPaymentRequest>({
     enum: ["buyer", "seller"],
     required: true,
   },
-  proposalCreatedDate: {
-    type: Date,
- 
-  },
+  proposalCreatedDate:{ 
+    type: Number,
+    default: Date.now },
   proposalValidity: {
     type: Number,
     
   },
   proposalExpireDate: {
-    type: Date,
+    type: Number,
+    default:Date.now
    
   },
   paymentDays: {

@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
 
 interface ILog extends Document {
-  timestamp: Date;
+  timestamp: Number;
   vendorRequestBody: object;
   vendorResponseBody: object;
   user: Types.ObjectId | ILog;
@@ -13,7 +13,7 @@ const logSchema: Schema = new Schema({
     ref: "RegisterUser",
   },
   timestamp: {
-    type: Date,
+    type: Number,
     default: Date.now,
   },
 

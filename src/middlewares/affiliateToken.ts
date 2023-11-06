@@ -19,8 +19,8 @@ export default (req: CustomRequest, res: Response, next: NextFunction): void => 
     if (!userId) {
       throw new Error('Invalid user ID');
     }
-    if (role !== "Admin") {
-      throw new Error('User is not Admin');
+    if (role !== "affiliatePartner") {
+      throw new Error('User is not Affiliate');
 
     }
     else {

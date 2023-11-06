@@ -2,6 +2,8 @@ import affiliateInvite from '../../../models/affiliateInviteModel';
 import affiliate from '../../../models/affiliateModel';
 import {getSkipAndLimitRange} from "../../../utils/pagination"
 import globalSettings from '../../../models/globalAdminSettings';
+import { sendDynamicMail } from "../../../services/sendEmail";
+import { sendSMS } from "../../../services/sendSMS";
  
 const isSignedUp = async( businessInvitedMail, businessInvitedNumber) => {
     let searchQuery 
@@ -21,15 +23,19 @@ export const findAndInsert = async (userId, businessInvitedMail, businessInvited
   try {
     let searchQuery;
     let affiliateId
-    let affiliateDetails = await affiliate.find({userId}, "_id");
+    let affiliateCode
+    let affiliateDetails = await affiliate.find({ userId }, "_id referralCode");
     if(!affiliateDetails.length) throw({message: "Affiliate does not exist with this user id."})
-    else  affiliateId = affiliateDetails[0]._id;
+    else {
+      affiliateId = affiliateDetails[0]._id;
+      affiliateCode = affiliateDetails[0].referralCode;
+  } 
     const isAlreadySignedUp = await isSignedUp( businessInvitedMail, businessInvitedNumber);
     if(isAlreadySignedUp) return [true,  "Invited user has already signed up. Thanks for inviting."]
     if(businessInvitedMail) searchQuery = {$and: [{affiliateId}, {businessInvitedMail}]};
     else  searchQuery = {$and: [{affiliateId}, {businessInvitedNumber}]};
-     const refferalCommission = await globalSettings.find({},{ refferalCommission: 1 }) // details are still not there
-    const currentCommission = refferalCommission;
+    const refferalCommission = await globalSettings.find({},{ refferalCommission: 1 }) // details are still not there
+    let currentCommission = refferalCommission.length > 0 ? refferalCommission[0].refferalCommission : 0;
     const doucment = await affiliateInvite.find(searchQuery);
     if(!doucment.length) {
         //invite through mail and sms
@@ -46,7 +52,17 @@ export const findAndInsert = async (userId, businessInvitedMail, businessInvited
 
       } 
       const result = await affiliateInvite.create(affiliateInviteObject);
-      console.log("Affiliate invited the person successfully.");
+      const reqData = {
+        Email_slug: "Affiliate_Invited_Business",
+        email: businessInvitedMail,
+        VariablesEmail: ["URL",affiliateCode],
+  
+        receiverNo: businessInvitedNumber,
+        Message_slug: "Affiliate_Invited_Business",
+        VariablesMessage: ["URL",affiliateCode],
+      };
+      await sendDynamicMail(reqData);
+      await sendSMS(reqData);
       return [true, result];
     } else {
         const result = await affiliateInvite.findOneAndUpdate(searchQuery, {
@@ -55,9 +71,21 @@ export const findAndInsert = async (userId, businessInvitedMail, businessInvited
         }, {new: true});
         if(result){
             console.log("User invited document has updated successfully.")
+            const reqData = {
+              Email_slug: "Affiliate_Invited_Business",
+              email: businessInvitedMail,
+              VariablesEmail: ["URL",affiliateCode],
+        
+              receiverNo: businessInvitedNumber,
+              Message_slug: "Affiliate_Invited_Business",
+              VariablesMessage: ["URL",affiliateCode],
+            };
+            await sendDynamicMail(reqData);
+            await sendSMS(reqData);
             return [true, result]
         } else throw({message: "Error while updating the invite."})
     }
+    
   } catch (error) {
     console.log("Error occured while inserting the affiliateInvite.", error);
     return  [false, error.message];
