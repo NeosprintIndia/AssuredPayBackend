@@ -9,10 +9,16 @@ interface ISettlement {
   date: Date;
   transactionId: string;
 }
+// Define the interface for the Bank Account details
+interface BankACDetail {
+  bankAccountNumber: string;
+  ifsc: string;
+  bankName: number;
+  benificiaryName: string;
+}
 interface IAffiliate extends Document {
   userId: Types.ObjectId | IUser
   type: String,
-  referralCode: String,
   status: String,
   date: Date
   panNumber: String,
@@ -30,6 +36,7 @@ interface IAffiliate extends Document {
   natureOFBusinessActivity: String,
   natureOfPlaceofBusiness: String ,
   settlement: ISettlement[];
+  AccountDetails: BankACDetail[];
   commissionEarned:number,
   commissionSettle:number
 
@@ -46,10 +53,6 @@ const AffiliateSchema: Schema<IAffiliate> = new Schema<IAffiliate>({
     type: String,
     // required: true, 
     enum: ["individual", "businessFirm"] 
-  },
-  referralCode : {
-    type: String,
-    // required: true
   },
   status: {
     type: String,
@@ -126,6 +129,20 @@ const AffiliateSchema: Schema<IAffiliate> = new Schema<IAffiliate>({
       type: Date
     },
     transactionId: {
+      type: String
+    }
+  }],
+  AccountDetails: [{
+    bankAccountNumber: {
+      type: String
+    },
+    ifsc: {
+      type: String
+    },
+    bankName: {
+      type: Number
+    },
+    benificiaryName: {
       type: String
     }
   }]

@@ -88,6 +88,7 @@ export const inviteLogsSpecificAffiliateInternal = async (userId, rowsPerPage, p
         }
       }
       affiliateInviteDetails = await invitemodel.aggregate([searchQuery]).limit(limitRange).skip(skipLimit);;
+      console.log("affiliateInviteDetails",affiliateInviteDetails)
       result = {
         affiliateInviteRecords: affiliateInviteDetails[0]?.["affiliateInviteRecords"],
         totalInvitations: affiliateInviteDetails[0]?.["totalInvitations"]?.[0]?.["totalInvitations"],

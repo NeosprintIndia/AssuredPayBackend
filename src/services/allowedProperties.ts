@@ -2,7 +2,7 @@ export const allowedRegistrationProperties = ['business_email','username','busin
 
 export const allowedPropertiesForVerify = ["otpVerifyType", "otp","business_email_or_mobile","username"];
 
-export const allowedPropertiesForLoginUser=['username','password']
+export const allowedPropertiesForLoginUser=['username','password','request']
 
 export const allowedPropertiesForsearchexisting=["business_email","business_mobile","username"]
 

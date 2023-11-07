@@ -21,7 +21,6 @@ interface IAffiliate extends Document {
   commissionEarned:number
   commissionSettle:number
  
-
 }
 // Define the schema
 const AffiliateInviteSchema: Schema<IAffiliate> = new Schema<IAffiliate>({

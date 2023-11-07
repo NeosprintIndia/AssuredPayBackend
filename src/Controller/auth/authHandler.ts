@@ -170,10 +170,12 @@ const createUser = async (
         return [false, null];
       }
       const referralUser = updatedReferral.user;
-      const referUserProfile = await UserKYC.findOne({ user: referralUser });
-      if (referUserProfile) {
-        referredBy = (referUserProfile as any).Legal_Name_of_Business;
-      }
+      const refuser=await Registration.findOne({ username: referralUser })
+      referredBy=refuser.username
+      // const referUserProfile = await UserKYC.findOne({ user: referralUser });
+      // if (referUserProfile) {
+      //   referredBy = (referUserProfile as any).Legal_Name_of_Business;
+      // }
     }
     const newUser = await Registration.create({
       business_email,
@@ -270,10 +272,12 @@ export const validateUserSignUp = async (
 
 export const authenticateUser = async (
   username: string,
-  password: string
+  password: string,
+  request:string
 ): Promise<[boolean, string | any]> => {
   try {
     const user = await Registration.findOne({username:username });
+    console.log("USER",user.role)
     if (!user) {
       return [false, "Username not found"]; 
     }
@@ -286,6 +290,17 @@ export const authenticateUser = async (
     if (originalPassword !== password) {
       return [false, "Wrong Password"]; 
     }
+      // Check if the user's role matches the code provided in the request variable
+      const userRole = user.role; // Assuming user role is stored in the 'role' field
+      const roleCodeMap = {
+        Business_User: "Business_User01",
+        Admin: "Admin02",
+        affiliatePartner: "affiliatePartner03",
+      };
+      const expectedCode = roleCodeMap[userRole];
+      if (request !== expectedCode) {
+        return [false, "You are not authorized to login"];
+      }
     const otpGenerated = await generateOTP();
     const updatedUser = await Registration.findOneAndUpdate(
       { username: username },

@@ -2,7 +2,7 @@ import { stat } from 'fs/promises';
 import affiliate from '../../../models/affiliateModel';
 import { generateReferralCode } from "../../../services/referralCodes";
 import userRegisterations from "../../../models/userRegisterations";
-
+import Referral from "../../../models/refferalCodes";
 import {findUserByEmailUsername,generateTemporaryPassword} from "../../../Controller/auth/authHandler"
 import { sendDynamicMail } from "../../../services/sendEmail";
 import { sendSMS } from "../../../services/sendSMS";
@@ -29,7 +29,6 @@ export const findAndInsert = async (affiliateDetails): Promise<any> => {
       process.env.PASS_PHRASE
     ).toString();
     console.log("password and hashedPassword", tempPassword, hashedPassword)
-    affiliateDetails.referralCode = referralCode;
     const newUser = await userRegisterations.create({
       business_email,
       business_mobile,
@@ -47,6 +46,11 @@ export const findAndInsert = async (affiliateDetails): Promise<any> => {
     } else throw({message: "Error occured registering the user."})
     const newAffiliate = await affiliate.create(affiliateDetails);
     console.log("Affiliate created successfully");
+    const referral_result=await Referral.create({
+      user: newUser._id,
+      refferal_code: referralCode,
+    });
+    console.log("Reffereal Created",referral_result)
     if(newAffiliate._id) {
         const reqData = {
           Email_slug: "Affiliate_Created",

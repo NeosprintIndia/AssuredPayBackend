@@ -92,9 +92,8 @@ export const verifyEmailAndMobile = async (req: Request, res: Response): Promise
 
 // Controller function to handle user login
 export const login = async (req: Request, res: Response): Promise<void> => {
-  const { username, password } = req.body;
-  console.log(username)
-  const [success, result] = await authenticateUser(username, password);
+  const { username,password,request} = req.body;
+  const [success, result] = await authenticateUser(username,password,request);
   if (success) {
     res.status(200).send({ result, Active: true });
   } else {

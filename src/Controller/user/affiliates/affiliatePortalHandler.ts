@@ -4,7 +4,7 @@ import {getSkipAndLimitRange} from "../../../utils/pagination"
 import globalSettings from '../../../models/globalAdminSettings';
 import { sendDynamicMail } from "../../../services/sendEmail";
 import { sendSMS } from "../../../services/sendSMS";
- 
+import Referral from "../../../models/refferalCodes";
 const isSignedUp = async( businessInvitedMail, businessInvitedNumber) => {
     let searchQuery 
     if(businessInvitedMail) searchQuery = {businessInvitedMail}
@@ -24,11 +24,12 @@ export const findAndInsert = async (userId, businessInvitedMail, businessInvited
     let searchQuery;
     let affiliateId
     let affiliateCode
+    let referralCode = await Referral.find({ userId }, "referralCode");
     let affiliateDetails = await affiliate.find({ userId }, "_id referralCode");
     if(!affiliateDetails.length) throw({message: "Affiliate does not exist with this user id."})
     else {
       affiliateId = affiliateDetails[0]._id;
-      affiliateCode = affiliateDetails[0].referralCode;
+      affiliateCode = referralCode[0].refferal_code;
   } 
     const isAlreadySignedUp = await isSignedUp( businessInvitedMail, businessInvitedNumber);
     if(isAlreadySignedUp) return [true,  "Invited user has already signed up. Thanks for inviting."]
@@ -131,6 +132,7 @@ export const get = async (userId, rowsPerPage, page, commission): Promise<any> =
           }
         }
         affiliateInviteDetails = await affiliateInvite.aggregate([searchQuery]).limit(limitRange).skip(skipLimit);;
+        console.log(affiliateInviteDetails)
         result = {
           affiliateInviteRecords: affiliateInviteDetails[0]?.["affiliateInviteRecords"],
           totalInvitations: affiliateInviteDetails[0]?.["totalInvitations"]?.[0]?.["totalInvitations"],
