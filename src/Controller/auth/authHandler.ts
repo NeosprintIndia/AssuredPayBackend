@@ -273,57 +273,53 @@ export const validateUserSignUp = async (
 export const authenticateUser = async (
   username: string,
   password: string,
-  request:string
+  request: string
 ): Promise<[boolean, string | any]> => {
   try {
-    const user = await Registration.findOne({username:username });
-    console.log("USER",user.role)
+    const user = await Registration.findOne({ username });
     if (!user) {
-      return [false, "Username not found"]; 
+      throw new Error("Username not found");
     }
-    const hashedPassword = CryptoJS.AES.decrypt(
-      user.password,
-      process.env.PASS_PHRASE
-    );
+    const hashedPassword = CryptoJS.AES.decrypt(user.password, process.env.PASS_PHRASE);
     const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
-
     if (originalPassword !== password) {
-      return [false, "Wrong Password"]; 
+      throw new Error("Wrong Password");
     }
-      // Check if the user's role matches the code provided in the request variable
-      const userRole = user.role; // Assuming user role is stored in the 'role' field
-      const roleCodeMap = {
-        Business_User: "Business_User01",
-        Admin: "Admin02",
-        affiliatePartner: "affiliatePartner03",
-      };
-      const expectedCode = roleCodeMap[userRole];
-      if (request !== expectedCode) {
-        return [false, "You are not authorized to login"];
-      }
+    if (!request) {
+      throw new Error("Request Not Provided");
+    }
+    const userRole = user.role;
+    const roleCodeMap = {
+      Business_User: "Business_User01",
+      Admin: "Admin02",
+      affiliatePartner: "affiliatePartner03",
+    };
+    const expectedCode = roleCodeMap[userRole];
+    if (request !== expectedCode) {
+      throw new Error("You are not authorized to login");
+    }
     const otpGenerated = await generateOTP();
     const updatedUser = await Registration.findOneAndUpdate(
-      { username: username },
+      { username },
       {
         $set: { MFA: otpGenerated },
       },
       { new: true }
     );
-    //Send MFA over email
+    // Send MFA over email and SMS
     const reqData = {
       Email_slug: "User_Login_OTP",
       email: updatedUser.business_email,
       VariablesEmail: [otpGenerated],
-
       receiverNo: updatedUser.business_mobile,
       Message_slug: "User_Login_OTP",
       VariablesMessage: [otpGenerated],
     };
     await sendDynamicMail(reqData);
     await sendSMS(reqData);
-
     return [true, updatedUser];
   } catch (error) {
+    console.error("Error during authentication:", error);
     return [false, error.message];
   }
 };
