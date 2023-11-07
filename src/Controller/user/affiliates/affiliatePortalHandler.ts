@@ -21,10 +21,12 @@ const isSignedUp = async( businessInvitedMail, businessInvitedNumber) => {
 }
 export const findAndInsert = async (userId, businessInvitedMail, businessInvitedNumber): Promise<any> => {
   try {
+    console.log("USER ID",userId)
     let searchQuery;
     let affiliateId
     let affiliateCode
-    let referralCode = await Referral.find({ userId }, "referralCode");
+    let referralCode = await Referral.find({ user:userId }, "referralCode");
+    console.log("referralCode",referralCode)
     let affiliateDetails = await affiliate.find({ userId }, "_id referralCode");
     if(!affiliateDetails.length) throw({message: "Affiliate does not exist with this user id."})
     else {
