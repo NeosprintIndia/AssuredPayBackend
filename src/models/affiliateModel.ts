@@ -11,9 +11,9 @@ interface ISettlement {
 }
 // Define the interface for the Bank Account details
 interface BankACDetail {
-  bankAccountNumber: string;
+  bankAccountNumber: number;
   ifsc: string;
-  bankName: number;
+  bankName: string;
   benificiaryName: string;
 }
 interface IAffiliate extends Document {
@@ -114,7 +114,7 @@ const AffiliateSchema: Schema<IAffiliate> = new Schema<IAffiliate>({
   },
   settlement: [{
     bankAccountNumber: {
-      type: String
+      type: Number
     },
     paymentMode: {
       type: String
@@ -140,7 +140,7 @@ const AffiliateSchema: Schema<IAffiliate> = new Schema<IAffiliate>({
       type: String
     },
     bankName: {
-      type: Number
+      type: String
     },
     benificiaryName: {
       type: String

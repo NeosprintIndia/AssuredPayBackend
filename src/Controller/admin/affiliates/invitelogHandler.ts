@@ -1,4 +1,6 @@
 import invitemodel from "../../../models/affiliateInviteModel"
+import affiliate from '../../../models/affiliateModel';
+import { ObjectId } from 'mongodb';
 import {getSkipAndLimitRange} from "../../../utils/pagination"
 
 
@@ -51,6 +53,7 @@ export const inviteLogsInternal = async (): Promise<any[]> => {
 //     return [false, error];
 //   }
 // };
+
 export const inviteLogsSpecificAffiliateInternal = async (userId, rowsPerPage, page, commission): Promise<any> => {
   try {
     let query; 
@@ -106,5 +109,29 @@ export const inviteLogsSpecificAffiliateInternal = async (userId, rowsPerPage, p
   } catch (error) {
     console.log("Error occured while fetching the affiliateInvite.", error);
     return  [false, error.message];
+  }
+};
+
+
+
+export const specificAffiliateAccountsInternal = async (id): Promise<any[]> => {
+  try {
+    const objectId = new ObjectId(id)
+    const user = await affiliate.findOne({ "_id": objectId });
+    if (user && user.AccountDetails && user.AccountDetails.length > 0) {
+      const modifiedAccountDetails = user.AccountDetails.map(account => {
+        return {
+          bankAccountNumber: account.bankAccountNumber,
+          ifsc: account.ifsc,
+          bankName: account.bankName,
+        };
+      });
+      return [true,modifiedAccountDetails];
+    } else {
+      return [];
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
 };

@@ -18,19 +18,6 @@ export const createAffiliate = async (req: Request, res: Response): Promise<void
   const [success,result] = await findAndInsert(affiliateDetails);
   sendResponse(res,success,result);
 };
-
-export const getAffiliates = async (req: Request, res: Response): Promise<void> => {
-  const {role, searchKey, page, rowsLimitInPage} = (req as any).query ;
-  const [success,result] = await find(role, searchKey, page, rowsLimitInPage);
-  sendResponse(res,success,result);
-};
-
-export const updateAffiliate = async (req: Request, res: Response): Promise<void> => {
-  const {affiliateId} = (req as any).query;
-  const affiliateDetails = req.body;
-  const [success,result] = await findAndUpdate(affiliateId, affiliateDetails);
-  sendResponse(res,success,result);
-};
 export const verifyPAN = async (req: Request, res: Response): Promise<void> => {
   try {
     const PanNumber = req.body.PanNumber as string;
@@ -81,4 +68,15 @@ export const getGSTDetails = async (
     console.error({ message: "Error in getGSTDetails:", error, Active: false });
     res.status(500).send({ message: "An error occurred", Active: false });
   }
+};
+export const getAffiliates = async (req: Request, res: Response): Promise<void> => {
+  const {role, searchKey, page, rowsLimitInPage} = (req as any).query ;
+  const [success,result] = await find(role, searchKey, page, rowsLimitInPage);
+  sendResponse(res,success,result);
+};
+export const updateAffiliate = async (req: Request, res: Response): Promise<void> => {
+  const {affiliateId} = (req as any).query;
+  const affiliateDetails = req.body;
+  const [success,result] = await findAndUpdate(affiliateId, affiliateDetails);
+  sendResponse(res,success,result);
 };

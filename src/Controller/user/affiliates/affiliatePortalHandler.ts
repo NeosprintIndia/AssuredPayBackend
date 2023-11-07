@@ -162,3 +162,42 @@ export const get = async (userId, rowsPerPage, page, commission): Promise<any> =
     else  affiliateId = affiliateDetails[0]._id;
     return affiliateId.toString();
   }
+
+
+  export const addBankAccountInternal = async (
+    userId:string,
+    bankAccountNumber:number,
+    ifsc:string,
+    bankName:string,
+    beneficiaryName:string
+  ): Promise<any> => {
+    try {
+      const affiliateData = await affiliate.findOne({ userId: userId });
+      if (affiliateData && affiliateData.AccountDetails.length > 2) {
+        return [false, "You have reached the maximum limit of 3 bank accounts."];
+      }
+      const result = await affiliate.updateOne(
+        { userId: userId },
+        {
+          $push: {
+            AccountDetails: {
+              bankAccountNumber: bankAccountNumber,
+              ifsc: ifsc,
+              bankName: bankName,
+              beneficiaryName: beneficiaryName,
+            },
+          },
+        }
+      );
+  
+      if (result.modifiedCount === 1) {
+        return [true, "Bank account details added successfully."];
+      } else {
+        return [false, "Failed to add bank account details."];
+      }
+    } catch (error) {
+      console.log("Error occurred while inserting the AccountDetails.", error);
+      return [false, error.message];
+    }
+  };
+  

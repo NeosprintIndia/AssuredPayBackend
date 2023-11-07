@@ -5,7 +5,7 @@ import mongoose, { Schema, Document, Model, Types } from 'mongoose';
 interface IAffiliate extends Document {
   affiliateId : String,
   businessInvitedMail: String,
-  businessInvitedNumber: String,
+  businessInvitedNumber: Number,
   invitedTimes: number 
   commissionWhileLastInviting: number
   date: Date, 
@@ -76,7 +76,7 @@ const AffiliateInviteSchema: Schema<IAffiliate> = new Schema<IAffiliate>({
     type: String
   },
   businessInvitedNumber: {
-    type: String
+    type: Number
   },
 
 },

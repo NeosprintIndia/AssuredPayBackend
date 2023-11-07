@@ -72,45 +72,104 @@ export const findAndInsert = async (affiliateDetails): Promise<any> => {
   }
 };
 
+// export const find = async (role: string, searchKey: string, page: number, rowsLimitInPage: number): Promise<any> => {
+//   try {
+//     let searchQuery;
+//     let regexSearch = {$regex: searchKey, $options: "i"};
+//     const [skipLimit, rowsLimitPerPage] = await getSkipAndLimitRange(page, rowsLimitInPage);
+//     if(!role && !searchKey) searchQuery = {$match: {$or:[{role: "affiliatePartner"}, {role: "affiliateSales"}]}};
+//     else if(role && searchKey) searchQuery = {$match: {$and: [{role}, {$or:[{username: regexSearch}, {business_email: regexSearch}]}]}}
+//     else if(role && !searchKey) searchQuery = {$match: {role}}
+//     else if(!role && searchKey) searchQuery = {$match: {$or:[{username: regexSearch}, {business_email: regexSearch}]}}
+//    const result = await userRegisterations.aggregate([
+//     searchQuery,
+//     {$skip: Number(skipLimit)}, 
+//     {$limit: Number(rowsLimitPerPage)},
+//     {
+//       $project: {
+//         business_email: 1,
+//         business_mobile: 1, 
+//         role: 1, 
+//         username: 1
+//       }
+//     },
+//     {
+//       $lookup:{
+//         from: "affiliates",      
+//         localField: "_id",   
+//         foreignField: "userId", 
+//         as: "affiliates"        
+//       }
+//     },
+//     { $unwind:"$affiliates" },
+//     {
+//       $project: {
+//         business_email: 1,
+//         business_mobile: 1,
+//         role: 1,
+//         username: 1,
+//         "affiliates.userId": 1, 
+//         "affiliates.type": 1,
+//         "affiliates.status": 1, 
+//         "affiliates.type": 1,
+      
+//       }
+//    ])
+//     console.log("Affiliates fetched successfully");
+//     return [true, result];
+//   } catch (error) {
+//     console.log("Error occured while fetching the affiliate on the given search parameters.", error);
+//     return  [false, error.message];
+//   }
+// };
+
 export const find = async (role: string, searchKey: string, page: number, rowsLimitInPage: number): Promise<any> => {
   try {
     let searchQuery;
     let regexSearch = {$regex: searchKey, $options: "i"};
     const [skipLimit, rowsLimitPerPage] = await getSkipAndLimitRange(page, rowsLimitInPage);
-    if(!role && !searchKey) searchQuery = {$match: {$or:[{role: "affiliatePartner"}, {role: "affiliateSales"}]}};
-    else if(role && searchKey) searchQuery = {$match: {$and: [{role}, {$or:[{username: regexSearch}, {business_email: regexSearch}]}]}}
-    else if(role && !searchKey) searchQuery = {$match: {role}}
-    else if(!role && searchKey) searchQuery = {$match: {$or:[{username: regexSearch}, {business_email: regexSearch}]}}
-   const result = await userRegisterations.aggregate([
-    searchQuery,
-    {$skip: Number(skipLimit)}, 
-    {$limit: Number(rowsLimitPerPage)},
-    {
-      $project: {
-        business_email: 1,
-        business_mobile: 1, 
-        role: 1, 
-        username: 1
+    if (!role && !searchKey) searchQuery = {$match: {$or: [{role: "affiliatePartner"}, {role: "affiliateSales"}]}};
+    else if (role && searchKey) searchQuery = {$match: {$and: [{role}, {$or: [{username: regexSearch}, {business_email: regexSearch}]}]}}
+    else if (role && !searchKey) searchQuery = {$match: {role}}
+    else if (!role && searchKey) searchQuery = {$match: {$or: [{username: regexSearch}, {business_email: regexSearch}]}}
+    
+    const result = await userRegisterations.aggregate([
+      searchQuery,
+      {$skip: Number(skipLimit)}, 
+      {$limit: Number(rowsLimitPerPage)},
+      {
+        $lookup: {
+          from: "affiliates",
+          localField: "_id",
+          foreignField: "userId",
+          as: "affiliates"
+        }
+      },
+      {$unwind: "$affiliates"},
+      {
+        $project: {
+          _id: 1,
+          business_email: 1,
+          business_mobile: 1, 
+          role: 1, 
+          username: 1,
+          'affiliates._id': 1,
+          'affiliates.userId': 1,
+          'affiliates.type': 1,
+          'affiliates.referralCode': 1,
+          'affiliates.status': 1,
+          'affiliates.date': 1
+        }
       }
-    },
-    {
-      $lookup:{
-        from: "affiliates",      
-        localField: "_id",   
-        foreignField: "userId", 
-        as: "affiliates"        
-      }
-    },
-    { $unwind:"$affiliates" }
-   ])
+    ]);
+
     console.log("Affiliates fetched successfully");
     return [true, result];
   } catch (error) {
-    console.log("Error occured while fetching the affiliate on the given search parameters.", error);
-    return  [false, error.message];
+    console.log("Error occurred while fetching the affiliate on the given search parameters.", error);
+    return [false, error.message];
   }
 };
-
 export const findAndUpdate = async (affiliateId: string, affiliateDetails): Promise<any> => {
   try {
     if(!isValidObjectId(affiliateId)) throw({message: "Affiliate Id not valid."});
