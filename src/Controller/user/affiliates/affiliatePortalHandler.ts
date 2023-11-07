@@ -5,6 +5,7 @@ import globalSettings from '../../../models/globalAdminSettings';
 import { sendDynamicMail } from "../../../services/sendEmail";
 import { sendSMS } from "../../../services/sendSMS";
 import Referral from "../../../models/refferalCodes";
+import { Bank_Account_Verify } from "../../../services/sandboxs";
 const isSignedUp = async( businessInvitedMail, businessInvitedNumber) => {
     let searchQuery 
     if(businessInvitedMail) searchQuery = {businessInvitedMail}
@@ -162,8 +163,6 @@ export const get = async (userId, rowsPerPage, page, commission): Promise<any> =
     else  affiliateId = affiliateDetails[0]._id;
     return affiliateId.toString();
   }
-
-
   export const addBankAccountInternal = async (
     userId:string,
     bankAccountNumber:number,
@@ -200,4 +199,37 @@ export const get = async (userId, rowsPerPage, page, commission): Promise<any> =
       return [false, error.message];
     }
   };
+  export const getBankAccountsInternal = async (userId): Promise<any[]> => {
+    try {
+      const user = await affiliate.findOne({ "userId": userId });
+      if (user && user.AccountDetails && user.AccountDetails.length > 0) {
+        const modifiedAccountDetails = user.AccountDetails.map(account => {
+          return {
+            bankAccountNumber: account.bankAccountNumber,
+            ifsc: account.ifsc,
+            bankName: account.bankName,
+          };
+        });
+        return [true,modifiedAccountDetails];
+      } else {
+        return [];
+      }
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
   
+  // export const verifyBankAccountInternal = async (
+  //   bankAccountNumber,ifsc,bankName,benificiaryName
+  // ): Promise<any | string> => {
+  //   try {
+  //     console.log("IN TRY")
+  //     const result = await Bank_Account_Verify({ ifsc:ifsc,account_number:bankAccountNumber,mobile:"9555676903",name:"Nitin"});
+  //     console.log("RESULT", result)
+  //     return [true, result];
+  //     } 
+  //    catch (error) {
+  //     throw error;
+  //   }
+  // };
