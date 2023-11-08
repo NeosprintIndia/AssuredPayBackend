@@ -443,11 +443,11 @@ export const userreferencenumberInternal = async (id: string,
     const res = updatedUser.userRequestReference;
     const user = await Registration.findOne({ _id: updatedUser.user });
     const reqData = {
-      Email_slug: "User's Application Submitted",
+      Email_slug: "User's_Application_Submitted",
       email: user.business_email,
       VariablesEmail: [user.username, generatedUUID],
       receiverNo: user.business_mobile,
-      Message_slug: "User's Application Submitted",
+      Message_slug: "User's_Application_Submitted",
       VariablesMessage: [user.username, generatedUUID],
     };
 
