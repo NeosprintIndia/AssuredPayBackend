@@ -171,7 +171,7 @@ export const get = async (userId, rowsPerPage, page, commission): Promise<any> =
     try {
       const affiliateData = await affiliate.findOne({ userId: userId });
   
-      if (affiliateData && affiliateData.AccountDetails.length >= 10) {
+      if (affiliateData && affiliateData.AccountDetails.length >=2) {
         return [false, "You have reached the maximum limit of 3 bank accounts."];
       }
       const result = await Bank_Account_Verify({

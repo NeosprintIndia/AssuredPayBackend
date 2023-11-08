@@ -15,7 +15,6 @@ const  businessProjectionFields = {
     "Ratings" : 1, 
     "_id": 1
 }
-
 const businessNetworkProjectFields = {
   "status": 1,
   "industryId": 1,
@@ -24,7 +23,6 @@ const businessNetworkProjectFields = {
   "favourite": 1, 
   "_id": 1
 }
-
 const getUserId = async (email, mobileNumber = "") => {
   try{
       let query;
@@ -39,7 +37,6 @@ const getUserId = async (email, mobileNumber = "") => {
     throw (error);
   }
 }
-
 export const getBusinessByBusinessDetails = async ( gst: any, businessName: any, rowsPerPage, page): Promise<[boolean, any]> => {
     try {
       let query;
@@ -54,8 +51,7 @@ export const getBusinessByBusinessDetails = async ( gst: any, businessName: any,
       console.error("Error in fetching business details by gst or business name.", error);
       return [false, error.message];
     }
-  };
-  
+}; 
 export const getBusinessByOwnerDetails = async ( email: any, number: any, rowsPerPage, page): Promise<[boolean, any]> => {
 try {
       const [skipLimit, limitRange] = await getSkipAndLimitRange(page, rowsPerPage);
@@ -68,7 +64,6 @@ try {
         return [false, error.message];
     }
 };
-
 export const findAndInsertBusinessInBusinessNetwork = async (userId, businessDetails): Promise<any> => {
     try {
       if(!Object.keys(businessDetails).length) throw({message : "Please pass business details to add in business n/w."})
@@ -96,12 +91,10 @@ export const findAndInsertBusinessInBusinessNetwork = async (userId, businessDet
       return  [false, error.message];
     }
 };
-
 export const sendResponse = (success,response) => {
   if(success) return [true, response];
   else return [false, response]
 }
-
 export const getBusinessNetworkDetails = async (userId, gst, businessName)=> { 
   try {
   let matchQuery;
@@ -328,8 +321,6 @@ export const getBusinessFromBusinessNetwork = async (id, businessQuery): Promise
     return [false, error.message];
   }
 };
-
-
 export const findAndUpdate = async (userId, businessId, businessDetails): Promise<any> => {
     try {
       const result = await businessNetwork.findOneAndUpdate(
@@ -351,7 +342,6 @@ export const findAndUpdate = async (userId, businessId, businessDetails): Promis
       return  [false, error.message];
     }
 };
-
 export const getAllBusinessNames = async ( searchBy: any): Promise<[boolean, any]> => {
   try {
     let query = {Legal_Name_of_Business: {$regex: searchBy, $options: "i"}}

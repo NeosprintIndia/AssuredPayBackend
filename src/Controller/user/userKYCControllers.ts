@@ -13,6 +13,7 @@ import {
   kycRedoRequestedInternal
 } from "./userKYCHandler";
 
+
 // Route handler function for getting GST details
 export const getGSTDetails = async (
   req: Request,
@@ -50,7 +51,6 @@ export const getGSTDetails = async (
     res.status(500).send({ message: "An error occurred", Active: false });
   }
 };
-
 //Route handler function to save GST details
 export const saveGSTDetails = async (
   req: Request,
@@ -96,9 +96,7 @@ export const saveGSTDetails = async (
     });
   }
 };
-
 ////Route handler function to retrieve saved GST details
-
 export const getsavedgstdetail = async (
   req: Request,
   res: Response
@@ -119,7 +117,6 @@ export const getsavedgstdetail = async (
     res.status(500).json({ error: "An error occurred", Active: false });
   }
 };
-
 // Route handler function for verifying Aadhar number
 export const verifyAadharNumber = async (
   req: Request,
@@ -147,7 +144,6 @@ export const verifyAadharNumber = async (
     res.status(500).json({ error: "An error occurred", Active: false });
   }
 };
-
 // Route handler function for verifying Aadhar number OTP
 export const verifyAadharNumberOTP = async (
   req: Request,
@@ -176,7 +172,6 @@ export const verifyAadharNumberOTP = async (
     res.status(500).json({ error: "Wrong Aadhar Number OTP", Active: false });
   }
 };
-
 // Route handler function for verifying PAN
 export const verifyPAN = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -195,7 +190,6 @@ export const verifyPAN = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ error: "An error occurred", Active: false });
   }
 };
-
 export const userreferencenumber = async (
   req: Request,
   res: Response
@@ -218,7 +212,6 @@ export const userreferencenumber = async (
     res.status(500).json({ error: "An error occurred", Active: false });
   }
 };
-
 export const setglobalstatus = async (
   req: Request,
   res: Response
@@ -236,7 +229,6 @@ export const setglobalstatus = async (
     });
   }
 };
-
 export const getglobalstatus = async (
   req: Request,
   res: Response
@@ -253,16 +245,12 @@ export const getglobalstatus = async (
     });
   }
 };
-
-
 export const kycRedoRequested = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { key, id,mac,ip } = req.body;
-
-  const [success, result] = await kycRedoRequestedInternal(id, key,mac,ip);
-
+  const { timestamp,latitude ,longitude,accuracy ,id,key} = req.body;
+  const [success, result] = await kycRedoRequestedInternal(timestamp,latitude,longitude,accuracy,id,key);
   if (success) {
     res.send({ result, Active: true });
   } else {

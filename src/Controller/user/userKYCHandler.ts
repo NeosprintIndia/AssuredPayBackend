@@ -41,49 +41,7 @@ export const getGSTDetailsInternal = async (
     return [false, error];
   }
 };
-
 // Function to save GST Details
-// export const saveGSTDetailsInternal = async (
-//   Constitution_of_Business: string,
-//   Taxpayer_Type: string,
-//   GSTIN_of_the_entity: string,
-//   Legal_Name_of_Business: string,
-//   Business_PAN: string,
-//   Date_of_Registration: string,
-//   State: string,
-//   Trade_Name: string,
-//   Place_of_Business: string,
-//   Nature_of_Place_of_Business: string,
-//   Nature_of_Business_Activity: string,
-//   userId: string,
-//   isGSTDetailSaveManually: string
-// ): Promise<any> => {
-//   try {
-//     const gstDetails = await UserKYC1.create({
-//       Constitution_of_Business: Constitution_of_Business,
-//       Taxpayer_Type: Taxpayer_Type,
-//       GSTIN_of_the_entity: GSTIN_of_the_entity,
-//       Legal_Name_of_Business: Legal_Name_of_Business,
-//       Business_PAN: Business_PAN,
-//       Date_of_Registration: Date_of_Registration,
-//       State: State,
-//       Trade_Name: Trade_Name,
-//       Place_of_Business: Place_of_Business,
-//       Nature_of_Place_of_Business: Nature_of_Place_of_Business,
-//       Nature_of_Business_Activity: Nature_of_Business_Activity,
-//       user: userId,
-//       isGSTDetailSave: true,
-//       isGSTDetailSaveManually: isGSTDetailSaveManually,
-//     },{ upsert: true, new: true });
-//     return [true, gstDetails];
-//   } catch (error) {
-//     console.error("Error in Saving Details:", error);
-//     return [false, error];
-//   }
-// };
-
-
-
 export const saveGSTDetailsInternal = async (
   Constitution_of_Business: string,
   Taxpayer_Type: string,
@@ -130,9 +88,6 @@ export const saveGSTDetailsInternal = async (
     return [false, error];
   }
 };
-
-
-
 // Function to get saved GST Details
 export const getGSTDetailsInternalsaved = async (
   userId: string
@@ -144,7 +99,6 @@ export const getGSTDetailsInternalsaved = async (
     return [false, error];
   }
 };
-
 // Function to verify Aadhar number and update the reference ID
 export const verifyAadharNumberInternal = async (
   userId: string,
@@ -179,7 +133,6 @@ export const verifyAadharNumberInternal = async (
     return [false, error];
   }
 };
-
 // Function to verify Aadhar number OTP and Save details
 export const verifyAadharNumberOTPInternal = async (
   userId: string,
@@ -231,7 +184,6 @@ const resultSendImage = {aadharPhotoLink: s3ObjectUrl, };
     return [false, error];
   }
 };
-
 // Function to upload Aadhar Photo base 64 to S3 after converting it to url and send that url to frontend
 const uploadtos3 = async (refId: string, imageBuffer: any): Promise<any> => {
   const { params, s3 } = await awsinitialise(refId, imageBuffer);
@@ -247,9 +199,7 @@ const uploadtos3 = async (refId: string, imageBuffer: any): Promise<any> => {
     });
   });
 };
-
 // Function to verify PAN details
-
 export const verifyPANDetails = async (
   PanNumber: string,
   id: string
@@ -299,108 +249,6 @@ export const verifyPANDetails = async (
     throw error;
   }
 };
-
-// export const userreferencenumberInternal = async (id: string): Promise<any | string> => {
-//   try {
-//     // Check if user already has a userRequestReference
-//     const existingUser = await UserKYC1.findOne({ user: id, userRequestReference: { $exists: true } });
-
-//     if (existingUser) {
-//       // User already has a userRequestReference
-//       return [false, "User already has a userRequestReference"];
-//     }
-
-//     const generatedUUID = await generateUUID();
-//     const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-//     const currentDate = new Date();
-//     const day = ("0" + currentDate.getDate()).slice(-2);
-//     const monthAbbreviation = months[currentDate.getMonth()];
-//     const year = currentDate.getFullYear().toString().slice(-2);
-//     const formattedDate = `${day} ${monthAbbreviation} ${year}`;
-//     const updatedUser = await UserKYC1.findOneAndUpdate(
-//       { user: id },
-//       {
-//         $set: {
-//           userRequestReference: generatedUUID,
-//           kycrequested: formattedDate,
-//         },
-//       },
-//       { new: true }
-//     );
-
-//     if (!updatedUser) {
-//       // Handle case where the user is not found in the database.
-//       return [false, "User not found"];
-//     }
-
-//     const res = updatedUser.userRequestReference;
-//     const user = await Registration.findOne({ _id: updatedUser.user });
-//     const reqData = {
-//       Email_slug: "Application_Under_Review",
-//       email: user.business_email,
-//       VariablesEmail: [user.username, generatedUUID],
-//       receiverNo: user.business_mobile,
-//       Message_slug: "Application_Under_Review",
-//       VariablesMessage: [user.username, generatedUUID],
-//     };
-
-//     await sendDynamicMail(reqData);
-//     await sendSMS(reqData);
-
-//     return [true, { userRequestReference: res }];
-//   } catch (error) {
-//     return [false, "Something Went Wrong"];
-//   }
-// };
-
-
-// export const userreferencenumberInternal = async (
-//   id: string,
-// ): Promise<any | string> => {
-//   try {
-//     const generatedUUID = await generateUUID();  
-//     const months = [
-//       "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
-//       "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
-//     ];
-//     const currentDate = new Date();
-//     const day = ("0" + currentDate.getDate()).slice(-2); // Add leading zero if day is single digit
-//     const monthAbbreviation = months[currentDate.getMonth()];
-//     const year = currentDate.getFullYear().toString().slice(-2); // Get last two digits of the year
-//     const formattedDate = `${day} ${monthAbbreviation} ${year}`;
-//     const updatedUser = await UserKYC1.findOneAndUpdate(
-//       { user: id },
-//       {
-//         $set: {
-//           userRequestReference: generatedUUID,
-//           kycrequested: formattedDate,
-//         },
-//       },
-//       { new: true }
-//     );
-//     if (!updatedUser) {
-//       // Handle case where the user is not found in the database.
-//       return [false, "User not found"];
-//     }
-//     const res=updatedUser.userRequestReference
-//     const user = await Registration.findOne({ _id: updatedUser.user });
-//     const reqData = {
-//       Email_slug: "Application_Under_Review",
-//       email: user.business_email,
-//       VariablesEmail: [user.username, generatedUUID],
-
-//       receiverNo: user.business_mobile,
-//       Message_slug: "Application_Under_Review",
-//       VariablesMessage: [user.username, generatedUUID],
-//     };
-//     await sendDynamicMail(reqData);
-//     await sendSMS(reqData);
-//     return [true, { userRequestReference: res }];
-//   } catch (error) {
-//     return [false," Something Went Wrong"];
-//   }
-// };
-
 export const userreferencenumberInternal = async (
   timestamp:string,
   latitude:string,
@@ -446,10 +294,10 @@ export const userreferencenumberInternal = async (
     const reqData = {
       Email_slug: "User's_Application_Submitted",
       email: user.business_email,
-      VariablesEmail: [user.username, generatedUUID],
+      VariablesEmail: [generatedUUID],
       receiverNo: user.business_mobile,
       Message_slug: "User's_Application_Submitted",
-      VariablesMessage: [user.username, generatedUUID],
+      VariablesMessage: [generatedUUID],
     };
 
     await sendDynamicMail(reqData);
@@ -476,7 +324,6 @@ export const setGlobalStatusInternal = async (
     return [false, error];
   }
 };
-
 export const getGlobalStatusInternal = async (
   userId: string
 ): Promise<[boolean, any]> => {
@@ -493,35 +340,32 @@ export const getGlobalStatusInternal = async (
     return [false, error];
   }
 };
-
 export const kycRedoRequestedInternal = async (
-  id: string,
-  key: string,
-  mac:string,
-  ip:string
+  timestamp: string,
+  latitude: string,
+  longitude:string,
+  accuracy:string,
+  id:string,
+  key:string
 ): Promise<any> => {
   try {
-
     const user = await UserKYC1.findOne({ user: id })
-
     if (!user) {
       return { success: false, error: "User not found." };
     }
-
     user.Admin_AadhaarS1_Verification_Clarification=""
     user.Admin_AadhaarS2_Verification_Clarification=""
-   user.Admin_Pan_Verification_Clarification=""
-   user.Admin_GST_Verification_Clarification=""
+    user.Admin_Pan_Verification_Clarification=""
+    user.Admin_GST_Verification_Clarification=""
    const update = {
-    "macaddress": mac,
-    "ipAddress": ip
+    "timestamp": timestamp,
+    "latitude": latitude,
+    "longitude": longitude,
+    "accuracy": accuracy,
   };
-  
   (user as any).activities.push(update)
-    user.due=key;
-    const result =await user.save();
-
-   
+  user.due=key;
+  const result =await user.save();
     return ([ true , "result" ]);
   } catch (error) {
     return { success: false, error: "An error occurred during the update." };

@@ -3,7 +3,7 @@ import mongoose, { Document, Schema, Model, Types } from "mongoose";
 // Define the interface for the document
 interface IUserKYC extends Document {
   user: Types.ObjectId | IUser;
-  businessUser:Types.ObjectId | IUser;
+  businessUser: Types.ObjectId | IUser;
   PAN_number: string;
   aadharFileUrl: string;
   aadharBackUrl: string;
@@ -60,7 +60,7 @@ interface IUserKYC extends Document {
     timestamp: string;
     latitude: string;
     longitude: string;
-    accuracy:string;
+    accuracy: string;
     Admin_AadhaarS1_Verification_Clarification: string;
     Admin_AadhaarS2_Verification_Clarification: string;
     Admin_Pan_Verification_Clarification: string;
@@ -229,7 +229,7 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>(
         accuracy: { type: String, default: "" },
         longitude: { type: String, default: "" },
         latitude: { type: String, default: "" },
-        timestamp: { type: String, default:""},
+        timestamp: { type: String, default: "" },
         Admin_AadhaarS1_Verification_Clarification: {
           type: String,
           default: "",
@@ -245,6 +245,7 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>(
     due: {
       type: String,
       default: "New",
+      enum: ["New", "Approved","Rejected","reAsked"] 
     },
   },
   {

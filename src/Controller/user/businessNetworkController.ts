@@ -18,7 +18,6 @@ function sendResponse(res, success, result){
         });
     }
 }
-
 export const getBusinessDetails = async (req: Request, res: Response): Promise<void> => {
     const {gst, businessName, email, mobile} = req.query;
     const {rowsPerPage, page} = req.query;
@@ -34,7 +33,6 @@ export const getBusinessDetails = async (req: Request, res: Response): Promise<v
         // sendResponse(res, false, "Please pass proper query parameters");
     }
 };
-
 export const addBusinessInBusinessNetwork = async (req: Request, res: Response): Promise<void> => {
     const userId = (req as any).userId as string;
     const businessDetails = req.body;
@@ -42,14 +40,12 @@ export const addBusinessInBusinessNetwork = async (req: Request, res: Response):
     sendResponse(res,success,result);
     
 };
-
 export const getBusinessesFromBusinessNetwork = async (req: Request, res: Response): Promise<void> => {
     const userId = (req as any).userId as string;
     const businessQuery = req.query;
     const [success,result] = await getBusinessFromBusinessNetwork(userId, businessQuery);
     sendResponse(res,success,result);
 };
-  
 export const updateBusinessInBusinessNetwork = async (req: Request, res: Response): Promise<void> => {
     const userId = (req as any).userId as string;
     const {businessId} = req.query;
@@ -57,7 +53,6 @@ export const updateBusinessInBusinessNetwork = async (req: Request, res: Respons
     const [success,result] = await findAndUpdate(userId, businessId, businessDetails);
     sendResponse(res,success,result);
 };
-
 export const getAllBusinessNamesByString = async (req: Request, res: Response): Promise<void> => {
     const {searchBy} = req.query;
     if(!searchBy) {
