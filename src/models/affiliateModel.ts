@@ -15,6 +15,7 @@ interface BankACDetail {
   ifsc: string;
   bankName: string;
   benificiaryName: string;
+  name_at_bank:string;
 }
 interface IAffiliate extends Document {
   userId: Types.ObjectId | IUser
@@ -143,6 +144,9 @@ const AffiliateSchema: Schema<IAffiliate> = new Schema<IAffiliate>({
       type: String
     },
     benificiaryName: {
+      type: String
+    },
+    name_at_bank: {
       type: String
     }
   }]

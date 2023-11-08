@@ -3,7 +3,6 @@ import {
   findAndInsert,
   get,
   addBankAccountInternal,
-  //verifyBankAccountInternal,
   getBankAccountsInternal} from './affiliatePortalHandler';
 
 function sendResponse(res: Response, success: Boolean, result: any){
@@ -26,8 +25,8 @@ export const getInvite = async (req: Request, res: Response): Promise<void> => {
   };
 export const addBankAccount=async(req:Request,res:Response): Promise<void>=>{
     const userId=(req as any).userId ;
-    const { bankAccountNumber,ifsc,bankName,benificiaryName }=req.body;
-    const[success,result]=await addBankAccountInternal (userId, bankAccountNumber,ifsc,bankName,benificiaryName);
+    const { bankAccountNumber,ifsc,benificiaryName,bankName}=req.body;
+    const[success,result]=await addBankAccountInternal (bankAccountNumber,ifsc,benificiaryName,bankName,userId,);
     sendResponse(res,success,result);
   }
 
@@ -46,20 +45,4 @@ export const getBankAccounts = async (req: Request, res: Response): Promise<void
     }
   };
 
-  // export const verifyBankAccount = async (req: Request, res: Response): Promise<void> => {
-  //   try { 
-  //     const { bankAccountNumber,ifsc,bankName,benificiaryName }=req.body;
-  //     const id = (req as any).userId as string; // Assuming userId is a string
-  
-  //     const [success, result] = await verifyBankAccountInternal(bankAccountNumber,ifsc,bankName,benificiaryName);
-  
-  //     if (success) {
-  //       res.status(200).send({ result, Active: true });
-  //     } else {
-  //       res.status(400).send({ result, Active: false });
-  //     }
-  //   } catch (error) {
-  //     console.error({ message: "Error in Bank Account Verify:", error, Active: false });
-  //     res.status(500).json({ error: "An error occurred", Active: false });
-  //   }
-  // };
+ 

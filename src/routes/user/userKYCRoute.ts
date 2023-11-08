@@ -39,6 +39,7 @@ import {
 import {
   addIvite, 
   getInvite} from "../../Controller/user/affiliates/affiliatePortalController"
+  
 //onboardingRoutes
 
 router.post('/verifypan',[VerifyToken],verifyPAN)

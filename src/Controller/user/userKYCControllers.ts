@@ -202,8 +202,8 @@ export const userreferencenumber = async (
 ): Promise<void> => {
   try {
     const id = (req as any).userId;
-    const{ip,mac}=req.body
-    const [success, result] = await userreferencenumberInternal( id,mac,ip );
+    const{timestamp,latitude,longitude,accuracy}=req.body
+    const [success, result] = await userreferencenumberInternal(timestamp,latitude,longitude,accuracy,id );
     if (success) {
       res.status(200).send({ result, Active: true });
     } else {

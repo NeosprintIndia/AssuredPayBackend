@@ -19,7 +19,7 @@ const isSignedUp = async( businessInvitedMail, businessInvitedNumber) => {
         }
     }
     return false;
-}
+  };
 export const findAndInsert = async (userId, businessInvitedMail, businessInvitedNumber): Promise<any> => {
   try {
     console.log("USER ID",userId)
@@ -94,8 +94,7 @@ export const findAndInsert = async (userId, businessInvitedMail, businessInvited
     console.log("Error occured while inserting the affiliateInvite.", error);
     return  [false, error.message];
   }
-};
-
+  };
 export const get = async (userId, rowsPerPage, page, commission): Promise<any> => {
     try {
       let query; 
@@ -155,7 +154,6 @@ export const get = async (userId, rowsPerPage, page, commission): Promise<any> =
       return  [false, error.message];
     }
   };
-
   const getAffiliateId = async (userId) => {
     let affiliateId;
     let affiliateDetails = await affiliate.find({userId}, "_id");
@@ -164,18 +162,39 @@ export const get = async (userId, rowsPerPage, page, commission): Promise<any> =
     return affiliateId.toString();
   }
   export const addBankAccountInternal = async (
-    userId:string,
-    bankAccountNumber:number,
-    ifsc:string,
-    bankName:string,
-    beneficiaryName:string
-  ): Promise<any> => {
+    bankAccountNumber: string,
+    ifsc: string,
+    beneficiaryName: string,
+    bankName: string,
+    userId: string
+  ): Promise<[boolean, string]> => {
     try {
       const affiliateData = await affiliate.findOne({ userId: userId });
-      if (affiliateData && affiliateData.AccountDetails.length > 2) {
+  
+      if (affiliateData && affiliateData.AccountDetails.length >= 10) {
         return [false, "You have reached the maximum limit of 3 bank accounts."];
       }
-      const result = await affiliate.updateOne(
+      const result = await Bank_Account_Verify({
+        ifsc: ifsc,
+        account_number: bankAccountNumber,
+        mobile: "9555676903",
+        name: beneficiaryName
+      });
+      const nameAtBank = result.body.data.name_at_bank;
+      console.log("nameAtBank",nameAtBank)
+      let beneName ="";
+      if (affiliateData.type === "individual") {
+        (beneName as any) = affiliateData.panFirstName;
+      } else if (affiliateData.type === "businessFirm") {
+        (beneName as any) = affiliateData.legalNameOfBusiness.toLowerCase();
+      }
+      const normalizedBeneName = beneName.replace(/\s/g, "").toLowerCase();
+      const normalizedNameAtBank = nameAtBank.replace(/\s/g, "").toLowerCase();
+      const checkNameAtBank = normalizedNameAtBank.startsWith(normalizedBeneName);
+      if (!checkNameAtBank) {
+        return [false, "Beneficiary name does not match the provided bank account details."];
+      }
+      const updateResult = await affiliate.updateOne(
         { userId: userId },
         {
           $push: {
@@ -184,18 +203,19 @@ export const get = async (userId, rowsPerPage, page, commission): Promise<any> =
               ifsc: ifsc,
               bankName: bankName,
               beneficiaryName: beneficiaryName,
+              name_at_bank:nameAtBank
             },
           },
         }
       );
   
-      if (result.modifiedCount === 1) {
+      if (updateResult.modifiedCount === 1) {
         return [true, "Bank account details added successfully."];
       } else {
         return [false, "Failed to add bank account details."];
       }
     } catch (error) {
-      console.log("Error occurred while inserting the AccountDetails.", error);
+      console.error("Error occurred while inserting the AccountDetails.", error);
       return [false, error.message];
     }
   };
@@ -208,6 +228,8 @@ export const get = async (userId, rowsPerPage, page, commission): Promise<any> =
             bankAccountNumber: account.bankAccountNumber,
             ifsc: account.ifsc,
             bankName: account.bankName,
+            benificiaryName:account.benificiaryName,
+            name_at_bank:account.name_at_bank
           };
         });
         return [true,modifiedAccountDetails];
@@ -219,17 +241,4 @@ export const get = async (userId, rowsPerPage, page, commission): Promise<any> =
       throw error;
     }
   };
-  
-  // export const verifyBankAccountInternal = async (
-  //   bankAccountNumber,ifsc,bankName,benificiaryName
-  // ): Promise<any | string> => {
-  //   try {
-  //     console.log("IN TRY")
-  //     const result = await Bank_Account_Verify({ifsc,bankAccountNumber,mobile:"9555676903",name:"Nitin"});
-  //     console.log("RESULT", result)
-  //     return [true, result];
-  //     } 
-  //    catch (error) {
-  //     throw error;
-  //   }
-  // };
+

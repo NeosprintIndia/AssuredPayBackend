@@ -3,7 +3,7 @@ import VerifyAdmin from '../../middlewares/adminTokens';
 
 const router: Router = Router();
 
-import {
+import{
     getAllKYCRecords,
     setAllLimits,
     getconfiguration,
@@ -13,10 +13,13 @@ import {
     finalstatus,
     rejectDocument,
     allActivities,
-}
-    from '../../Controller/admin/adminControllers';
+    }
+from '../../Controller/admin/adminControllers';
 
-import { inviteLogs, inviteLogsSpecificAffiliate ,specificAffiliateAccounts} from "../../Controller/admin/affiliates/invitelogController"
+import { inviteLogs,
+         inviteLogsSpecificAffiliate,
+         specificAffiliateAccounts
+       } from "../../Controller/admin/affiliates/invitelogController"
 
 import {
     addCoupon,

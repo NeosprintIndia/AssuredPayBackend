@@ -9,9 +9,7 @@ import log from "../models/vendorAPILogs"
 const adminGetData = async () => {
   try {
     const response = await AUTHENTICATE_SB(); 
-   
     const token = response.body.access_token; 
-
     return { sandbox_token: token };
   } catch (error) {
     console.error("Error fetching admin data:", error);
@@ -24,7 +22,6 @@ const AUTHENTICATE_SB = () => {
   const instance = axios.create({
     baseURL: 'https://api.sandbox.co.in', // Base URL for the API
   });
-
   const config = {
     method: 'POST',
     url: '/authenticate', // API endpoint for authentication
@@ -45,7 +42,6 @@ const AUTHENTICATE_SB = () => {
       throw error.response.data;
     });
 };
-
 // Exported functions for various KYC verification processes
 
 export const PAN_KYC_SB = async (dynamicData: { id_number: string,userlog:any }) => {
@@ -89,7 +85,6 @@ export const PAN_KYC_SB = async (dynamicData: { id_number: string,userlog:any })
     console.log(err);
   }
 };
-
 export const GST_KYC_SB = async (dynamicData: { id_number: string,userlog:any }) => {
   const instance = axios.create({
     baseURL: 'https://api.sandbox.co.in',
@@ -116,7 +111,6 @@ export const GST_KYC_SB = async (dynamicData: { id_number: string,userlog:any })
       });
   });
 };
-
 export const Aadhaar_KYC_S1 = async (dynamicData: { id_number: string }) => {
 
 
@@ -155,7 +149,6 @@ export const Aadhaar_KYC_S1 = async (dynamicData: { id_number: string }) => {
       });
   });
 };
-
 export const Aadhaar_KYC_S2 = async (dynamicData: { otp: string; refId: string }) => {
 
   const adminData = await adminGetData()
@@ -191,11 +184,6 @@ export const Aadhaar_KYC_S2 = async (dynamicData: { otp: string; refId: string }
       });
   });
 };
-
-
-
-
-
 export const IFSC_Verify = async (dynamicData: { ifsc: string }) => {
   const adminData = await adminGetData()
   const token = adminData.sandbox_token
@@ -228,39 +216,62 @@ export const IFSC_Verify = async (dynamicData: { ifsc: string }) => {
       });
   });
 };
+// export const Bank_Account_Verify = async (dynamicData: { ifsc: string; account_number: string; mobile: string; name: string }) => {
+//   const adminData = await adminGetData()
+//   const token = adminData.sandbox_token
+//   const instance = axios.create({
+//     baseURL: 'https://api.sandbox.co.in',
+//   });
+//   const config: AxiosRequestConfig = {
+//     method: 'GET',
+//     url: `	/bank/${dynamicData.ifsc}/accounts/${dynamicData.account_number}/verify`,
+//     headers: {
+//       Authorization: token,
+//       'x-api-key': API_Key,
+//       'x-api-version': '1.0',
+//     },
+//     params: {
+//       name: dynamicData.name,
+//       mobile: dynamicData.mobile,
+//     },
+//   };
+//   return new Promise((resolve, reject) => {
+//     instance
+//       .request(config)
+//       .then((response: AxiosResponse) => {
+       
+//         resolve({ body: response.data });
+//       })
+//       .catch(error => {
+//         reject(error.response.data);
+//       });
+//   });
+// };
 
 export const Bank_Account_Verify = async (dynamicData: { ifsc: string; account_number: string; mobile: string; name: string }) => {
-  const adminData = await adminGetData()
-  const token = adminData.sandbox_token
-  const instance = axios.create({
-    baseURL: 'https://api.sandbox.co.in',
-  });
-  const config: AxiosRequestConfig = {
-    method: 'POST',
-    url: `	/bank/${dynamicData.ifsc}/accounts/${dynamicData.account_number}/verify`,
-    headers: {
-      Authorization: token,
-      'x-api-key': API_Key,
-      'x-api-version': '1.0',
-    },
-    params: {
-      name: dynamicData.name,
-      mobile: dynamicData.mobile,
-    },
-  };
-  return new Promise((resolve, reject) => {
-    instance
-      .request(config)
-      .then((response: AxiosResponse) => {
-       
-        resolve({ body: response.data });
-      })
-      .catch(error => {
-        reject(error.response.data);
-      });
-  });
-};
+  try {
+    const adminData = await adminGetData();
+    const token = adminData.sandbox_token;
+    console.log(token);
+    console.log(dynamicData);
 
+    const response = await axios.get(`https://api.sandbox.co.in/bank/${dynamicData.ifsc}/accounts/${dynamicData.account_number}/verify`, {
+      params: {
+        name: dynamicData.name,
+        mobile: dynamicData.mobile,
+      },
+      headers: {
+        Authorization: token,
+        'x-api-key': API_Key,
+        'x-api-version': '1.0',
+      },
+    });
+    console.log(response)
+    return { body: response.data };
+  } catch (error) {
+    throw error.response.data;
+  }
+}
 export const UPI_Verify = async (dynamicData: { VPA: string }) => {
   const adminData = await adminGetData()
   const token = adminData.sandbox_token

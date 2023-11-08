@@ -57,9 +57,10 @@ interface IUserKYC extends Document {
   updatedAt: Number;
   kycrequested: Number;
   activities: {
-    ipAddress: string;
-    macaddress: string;
-    timestamp: Number;
+    timestamp: string;
+    latitude: string;
+    longitude: string;
+    accuracy:string;
     Admin_AadhaarS1_Verification_Clarification: string;
     Admin_AadhaarS2_Verification_Clarification: string;
     Admin_Pan_Verification_Clarification: string;
@@ -225,9 +226,10 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>(
 
     activities: [
       {
-        ipAddress: { type: String, default: "" },
-        macaddress: { type: String, default: "" },
-        timestamp: { type: Number, default: Date.now },
+        accuracy: { type: String, default: "" },
+        longitude: { type: String, default: "" },
+        latitude: { type: String, default: "" },
+        timestamp: { type: String, default:""},
         Admin_AadhaarS1_Verification_Clarification: {
           type: String,
           default: "",

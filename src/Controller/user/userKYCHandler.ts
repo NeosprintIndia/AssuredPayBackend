@@ -401,20 +401,23 @@ export const verifyPANDetails = async (
 //   }
 // };
 
-export const userreferencenumberInternal = async (id: string,
-  mac:string,
-  ip:string
+export const userreferencenumberInternal = async (
+  timestamp:string,
+  latitude:string,
+  longitude:string,
+  accuracy:string,
+  id:string
   ): Promise<any | string> => {
   try {
-  
     const existingUser = await UserKYC1.findOne({ user: id, userRequestReference: { $exists: true } });
-  
     if (existingUser.userRequestReference) {
       return [false, "User already has a userRequestReference"];
     }
     const update = {
-      "macaddress": mac,
-      "ipAddress": ip
+      timestamp,
+      latitude,
+      longitude,
+      accuracy
     };
     (existingUser as any).activities.push(update)
     const result =await existingUser.save();
@@ -424,7 +427,7 @@ export const userreferencenumberInternal = async (id: string,
     // const day = ("0" + currentDate.getDate()).slice(-2);
     // const monthAbbreviation = months[currentDate.getMonth()];
     // const year = currentDate.getFullYear().toString().slice(-2);
-     const formattedDate = Date.now();
+    const formattedDate = Date.now();
     const updatedUser = await UserKYC1.findOneAndUpdate(
       { user: id },
       {
@@ -435,11 +438,9 @@ export const userreferencenumberInternal = async (id: string,
       },
       { new: true }
     );
-    console.log("UPDATED USER",updatedUser)
     if (!updatedUser) {
       return [false, "User not found"];
     }
-
     const res = updatedUser.userRequestReference;
     const user = await Registration.findOne({ _id: updatedUser.user });
     const reqData = {
@@ -469,7 +470,6 @@ export const setGlobalStatusInternal = async (
       { $set: { globalStatus: globalStatus } },
       { new: true }
     );
-
     return [true, getGlobalStatus];
   } catch (error) {
     console.error("Error in Saving Status:", error);

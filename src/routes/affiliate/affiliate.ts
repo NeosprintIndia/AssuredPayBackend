@@ -8,7 +8,7 @@ import {
   getInvite,
   addBankAccount,
   getBankAccounts,
- //verifyBankAccount
+ 
 } from "../../Controller/user/affiliates/affiliatePortalController"
 
 
@@ -17,6 +17,6 @@ router.post("/invite",[VerifyToken],addIvite)
 router.get("/getInvite",[VerifyToken],getInvite)
 router.post("/addbankaccount",[VerifyToken],addBankAccount)
 router.get("/getbankaccounts",[VerifyToken],getBankAccounts)
-//router.post("/verifybankaccount",[VerifyToken],verifyBankAccount)
+
 
 export default router;
