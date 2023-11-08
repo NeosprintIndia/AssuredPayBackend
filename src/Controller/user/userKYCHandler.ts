@@ -406,11 +406,10 @@ export const userreferencenumberInternal = async (id: string,
   ip:string
   ): Promise<any | string> => {
   try {
-    
+  
     const existingUser = await UserKYC1.findOne({ user: id, userRequestReference: { $exists: true } });
   
     if (existingUser.userRequestReference) {
-     
       return [false, "User already has a userRequestReference"];
     }
     const update = {
@@ -419,15 +418,13 @@ export const userreferencenumberInternal = async (id: string,
     };
     (existingUser as any).activities.push(update)
     const result =await existingUser.save();
- 
     const generatedUUID = await generateUUID();
-    const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-    const currentDate = new Date();
-    const day = ("0" + currentDate.getDate()).slice(-2);
-    const monthAbbreviation = months[currentDate.getMonth()];
-    const year = currentDate.getFullYear().toString().slice(-2);
-    const formattedDate = `${day} ${monthAbbreviation} ${year}`;
-
+    // const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+    // const currentDate = new Date();
+    // const day = ("0" + currentDate.getDate()).slice(-2);
+    // const monthAbbreviation = months[currentDate.getMonth()];
+    // const year = currentDate.getFullYear().toString().slice(-2);
+     const formattedDate = Date.now();
     const updatedUser = await UserKYC1.findOneAndUpdate(
       { user: id },
       {
@@ -438,7 +435,7 @@ export const userreferencenumberInternal = async (id: string,
       },
       { new: true }
     );
-
+    console.log("UPDATED USER",updatedUser)
     if (!updatedUser) {
       return [false, "User not found"];
     }

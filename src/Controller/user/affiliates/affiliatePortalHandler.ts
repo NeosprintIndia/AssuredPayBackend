@@ -225,7 +225,7 @@ export const get = async (userId, rowsPerPage, page, commission): Promise<any> =
   // ): Promise<any | string> => {
   //   try {
   //     console.log("IN TRY")
-  //     const result = await Bank_Account_Verify({ ifsc:ifsc,account_number:bankAccountNumber,mobile:"9555676903",name:"Nitin"});
+  //     const result = await Bank_Account_Verify({ifsc,bankAccountNumber,mobile:"9555676903",name:"Nitin"});
   //     console.log("RESULT", result)
   //     return [true, result];
   //     } 

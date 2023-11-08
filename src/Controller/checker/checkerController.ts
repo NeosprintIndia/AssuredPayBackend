@@ -58,8 +58,6 @@ export async function getmakerrequest(req: Request, res: Response) {
       res.status(500).send({ message: "Internal Server Error" });
     }
   }
-  
-
   export async function viewparticularrequest(req: Request, res: Response) {
     try {
       const userid=(req as any).userId

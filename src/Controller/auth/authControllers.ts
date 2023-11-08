@@ -89,7 +89,6 @@ export const verifyEmailAndMobile = async (req: Request, res: Response): Promise
   }
 };
 
-
 // Controller function to handle user login
 export const login = async (req: Request, res: Response): Promise<void> => {
   const { username,password,request} = req.body;
