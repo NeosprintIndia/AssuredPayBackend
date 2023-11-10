@@ -2,7 +2,7 @@ import UserKYC1 from "../../models/userKYCs";
 import Registration from "../../models/userRegisterations";
 import businessUser from "../../models/businessUser";
 import { awsinitialise } from "../../services/awsInitialise";
-import { generateUUID } from "../../services/generateUUID";
+import { generateCustomUUID } from "../../services/generateUUID";
 import {
   PAN_KYC_SB,
   GST_KYC_SB,
@@ -258,9 +258,9 @@ export const userreferencenumberInternal = async (
   ): Promise<any | string> => {
   try {
     const existingUser = await UserKYC1.findOne({ user: id, userRequestReference: { $exists: true } });
-    if (existingUser.userRequestReference) {
-      return [false, "User already has a userRequestReference"];
-    }
+    // if (existingUser.userRequestReference) {
+    //   return [false, "User already has a userRequestReference"];
+    // }
     const update = {
       timestamp,
       latitude,
@@ -269,7 +269,7 @@ export const userreferencenumberInternal = async (
     };
     (existingUser as any).activities.push(update)
     const result =await existingUser.save();
-    const generatedUUID = await generateUUID();
+    const generatedUUID = await generateCustomUUID();
     // const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
     // const currentDate = new Date();
     // const day = ("0" + currentDate.getDate()).slice(-2);
@@ -371,6 +371,37 @@ export const kycRedoRequestedInternal = async (
     return { success: false, error: "An error occurred during the update." };
   }
 };
-
-
+export const getRejectedDocumentsInternal = async (id: string): Promise<any> => {
+  try {
+    const result = await UserKYC1.findOne({ user: id });
+    if (result) {
+      const rejectedDocuments = {};
+      const addRejectedDocument = (
+        key: string,
+        clarificationKey: string,
+        fileKey: string,
+        statusKey: string
+      )=>{
+        if (result[statusKey] === 'Rejected') {
+          rejectedDocuments[key] = {
+            clarification: result[clarificationKey],
+            fileUrl: result[fileKey],
+            status: result[statusKey],
+          };
+        }
+      };
+      addRejectedDocument('AdminAadhaarS1Verified', 'Admin_AadhaarS1_Verification_Clarification', 'aadharFileUrl', 'AdminAadhaarS1Verified');
+      addRejectedDocument('AdminAadhaarS2Verified', 'Admin_AadhaarS2_Verification_Clarification', 'aadharBackUrl', 'AdminAadhaarS2Verified');
+      addRejectedDocument('AdminGSTVerified', 'Admin_GST_Verification_Clarification', 'GSTFILE', 'AdminGSTVerified');
+      addRejectedDocument('AdminPanVerified', 'Admin_Pan_Verification_Clarification', 'PANFile', 'AdminPanVerified');
+      const hasRejectedDocuments = Object.keys(rejectedDocuments).length > 0;
+      return [hasRejectedDocuments, rejectedDocuments];
+    } else {
+      return [false, {}];
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
 

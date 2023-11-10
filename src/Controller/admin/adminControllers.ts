@@ -197,7 +197,7 @@ export const finalstatus = async (
 ): Promise<void> => {
   const { key, id } = req.body;
 
-  const [success, result] = await finalstatusInternal(id, key);
+  const [success, result] = await finalstatusInternal(id,key);
 
   if (success) {
     res.status(200).send({Active:true});

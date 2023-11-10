@@ -10,7 +10,8 @@ import {
   verifyAadharNumberInternal,
   verifyAadharNumberOTPInternal,
   userreferencenumberInternal,
-  kycRedoRequestedInternal
+  kycRedoRequestedInternal,
+  getRejectedDocumentsInternal
 } from "./userKYCHandler";
 
 
@@ -251,6 +252,22 @@ export const kycRedoRequested = async (
 ): Promise<void> => {
   const { timestamp,latitude ,longitude,accuracy ,id,key} = req.body;
   const [success, result] = await kycRedoRequestedInternal(timestamp,latitude,longitude,accuracy,id,key);
+  if (success) {
+    res.send({ result, Active: true });
+  } else {
+    res.status(500).send({
+      message: result,
+      Active: false,
+    });
+  }
+};
+
+export const getRejectedDocuments = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const id = (req as any).userId;
+  const [success, result] = await getRejectedDocumentsInternal(id);
   if (success) {
     res.send({ result, Active: true });
   } else {

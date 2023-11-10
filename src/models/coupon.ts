@@ -23,7 +23,6 @@ const CouponCodeSchema: Schema<IReferralCode> = new Schema<IReferralCode>({
   description: {
     type: String,
     default: '',
-    required: true
   },
   status: {
     type: String,

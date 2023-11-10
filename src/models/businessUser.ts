@@ -15,13 +15,10 @@ interface IBusinessUser extends Document {
   ismobileotpverified:boolean
   // Additional business user-specific fields
 }
-
 // Define the reference interface for the user field
 interface IUser extends Document {
   _id: Types.ObjectId;
 }
-
-
 // Create the schema for the BusinessUser
 const BusinessUserSchema: Schema<IBusinessUser> = new Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'RegisterUsers' },

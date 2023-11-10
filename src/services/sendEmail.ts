@@ -3,25 +3,18 @@ import { SESConfig } from "../services/awsInitialise";
 import { findAlertsTemplate } from "../services/findTemplate";
 import { replaceVarsInSequence } from "../services/replaceVariableInTemplate";
 
-
 const sendDynamicMail = async (data: any) => {
     try {
-        
         const templateDoc = await findAlertsTemplate(data.Email_slug);
-
         const emailContent: string = replaceVarsInSequence(
             templateDoc.data.Email,
             data.VariablesEmail
         );
-
         const subject = templateDoc.data.Subject;
-
         AWS.config.update(SESConfig);
-
-       
         const params: AWS.SES.SendEmailRequest = {
             Destination: {
-                CcAddresses: [data.email],
+                CcAddresses: [],
                 ToAddresses: [data.email],
             },
             Message: {
@@ -43,18 +36,12 @@ const sendDynamicMail = async (data: any) => {
             Source: "developer@neosprint.in",
             ReplyToAddresses: ["developer@neosprint.in"],
         };
-
-      
         const sendPromise = new AWS.SES({ apiVersion: "2010-12-01" })
             .sendEmail(params)
             .promise();
-
-       
-        const response = await sendPromise;
-       
+             const response = await sendPromise;   
     } catch (error) {
         console.error(error, error.stack);
     }
 };
-
 export { sendDynamicMail };

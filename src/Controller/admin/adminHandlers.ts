@@ -14,9 +14,10 @@ export const getAllKYCRecordsInternal = async (
   try {
     const skipCount = (page - 1) * pageSize;
     let query = UserKYC1.find()
-      .select({ Legal_Name_of_Business: 1, GSTIN_of_the_entity: 1, userRequestReference: 1, due: 1, kycrequested: 1 ,user:1})
-      .populate('businessUser', 'refferedBy');
-      console.log("Query",query)
+      .select({ Legal_Name_of_Business: 1, GSTIN_of_the_entity: 1, userRequestReference: 1, due: 1, kycrequested: 1 ,user:1,currentStatus:1})
+      .populate('businessUser', 'refferedBy')
+      .sort({ updatedAt: -1 });
+      query = query.where('userRequestReference').ne('');
     if (due !== null) {
       query = query.where('due').equals(due);
     }
@@ -41,7 +42,6 @@ export const getAllKYCRecordsInternal = async (
 };
 
 // Function to update various limits and settings in the global admin configuration
-
 export const setLimitInternal = async (
   gstLimit: number, 
   aadharLimit: number, 
@@ -253,18 +253,15 @@ export const getbusinessrepresentativedetailInternal = async (id): Promise<any[]
     return [false, error];
   }
 };
-
 export const finalstatusInternal = async (
   id: string,
   key: string
 ): Promise<any> => { 
   try {
-
     const user  = await UserKYC1.findOne({ user: id })
     if (!user) {
       return { success: false, error: "User not found." };
     }
-
     if ((key === "Approved" &&
     (user.AdminAadhaarS1Verified !== "Approved" ||
      user.AdminAadhaarS2Verified !== "Approved" ||
@@ -278,7 +275,6 @@ export const finalstatusInternal = async (
 ) {
     return [false, key === "Approved" ? "Please make sure all documents are approved before final approval" : "Cannot reject when all  documents are approved"];
 }
-    
     const lastElement = user.activities[user.activities.length-1];
     user.due=key;
     lastElement.Admin_AadhaarS1_Verification_Clarification=user.Admin_AadhaarS1_Verification_Clarification
@@ -286,38 +282,36 @@ export const finalstatusInternal = async (
     lastElement.Admin_Pan_Verification_Clarification=user.Admin_Pan_Verification_Clarification
     lastElement.Admin_GST_Verification_Clarification=user.Admin_GST_Verification_Clarification
     await user.save();
-
     return ([ true , "Operation Completed Successfully" ]);
   } catch (error) {
     return { success: false, error: "An error occurred during the update." };
   }
 };
-
 // Function to update document approval status in the UserKYC1 collection based on provided parameters
-
 export const approveDocumentInternal = async (
-  _flag: any, 
-  status: string, 
-  id: string, 
+  _flag: any,
+  status: string,
+  id: string
 ): Promise<any | null> => {
   try {
-   
+    const existingDocument = await UserKYC1.findOne({ user: id });
+    if (existingDocument && existingDocument[_flag] === status) {
+      return [true, "Document already approved"];
+    }
+
+    // Update the document status
     const updateData = { [_flag]: status };
-    
-   
     const result = await UserKYC1.findOneAndUpdate(
-      { user: id }, 
-      updateData, 
-      { new: true } 
+      { user: id },
+      updateData,
+      { new: true }
     );
-   
+
     return [true, result];
   } catch (error) {
-   
     return [false, error];
   }
 };
-
 // Function to reject a document in the UserKYC1 collection based on provided parameters
 export const rejectDocumentInternal = async (
   filename: string, 
@@ -343,7 +337,6 @@ export const rejectDocumentInternal = async (
     return [false, error];
   }
 };
-
 // export const filenameToDocNameKeyMap: { [key: string]: string } = {
 //   'AdminAadhaarS1Verified': 'Admin_AadhaarS1_Verification_Clarification',
 //   'AdminAadhaarS2Verified': 'Admin_AadhaarS2_Verification_Clarification',
@@ -389,7 +382,6 @@ export const rejectDocumentInternal = async (
 //     return [false, error.message || 'Unknown error occurred'];
 //   }
 // };
-
 
 export const getAllActivitiesInternal = async (id): Promise<any[]> => {
   try {
