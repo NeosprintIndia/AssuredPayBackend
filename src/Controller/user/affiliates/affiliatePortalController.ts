@@ -3,7 +3,9 @@ import {
   findAndInsert,
   get,
   addBankAccountInternal,
-  getBankAccountsInternal} from './affiliatePortalHandler';
+  getBankAccountsInternal,
+  addBankNamesInternal,
+  BankNamesInternal} from './affiliatePortalHandler';
 
 function sendResponse(res: Response, success: Boolean, result: any){
   if(success)  res.send({result, Active:true});
@@ -42,4 +44,32 @@ export const getBankAccounts = async (req: Request, res: Response): Promise<void
     }
   };
 
- 
+export const addBankNames = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const {bankName}=req.body ;
+      const [success, result] = await addBankNamesInternal(bankName);
+      if (success) {
+        res.status(200).send({ result, Active: true });
+      } else {
+        res.status(400).send({ message: result, Active: false });
+      }
+    } catch (error) {
+      console.error("Error in inviteLogsSpecificAffiliate:", error);
+      res.status(500).json({ error: "An error occurred", Active: false });
+    }
+  };
+
+  export const BankNames = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const {bankName}=(req as any).query ;
+      const [success, result] = await BankNamesInternal(bankName);
+      if (success) {
+        res.status(200).send({ result, Active: true });
+      } else {
+        res.status(400).send({ message: result, Active: false });
+      }
+    } catch (error) {
+      console.error("Error in Searching Bank Name:", error);
+      res.status(500).json({ error: "An error occurred", Active: false });
+    }
+  };

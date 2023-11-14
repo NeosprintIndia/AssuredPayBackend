@@ -1,5 +1,6 @@
 import affiliateInvite from '../../../models/affiliateInviteModel';
 import affiliate from '../../../models/affiliateModel';
+import bank from '../../../models/bankAP';
 import {getSkipAndLimitRange} from "../../../utils/pagination"
 import globalSettings from '../../../models/globalAdminSettings';
 import { sendDynamicMail } from "../../../services/sendEmail";
@@ -241,4 +242,46 @@ export const get = async (userId, rowsPerPage, page, commission): Promise<any> =
       throw error;
     }
   };
-
+  export const addBankNamesInternal = async (
+    bankName: string,
+  ): Promise<[boolean, string]> => {
+    try {
+      const existingBank = await bank.findOne({ bankName });
+      if (existingBank) {
+        return [false, 'Bank account with this name already exists'];
+      }
+      const newBank = await bank.create({
+        bankName,
+      });
+      if (newBank) {
+        return [true, 'Bank account added successfully'];
+      } else {
+        return [false, 'Failed to add bank account'];
+      }
+    } catch (error) {
+   
+      console.error('Error adding bank account:', error.message);
+      return [false, 'An error occurred while adding the bank account'];
+    }
+  };
+  export const BankNamesInternal = async (
+    bankName: string,
+  ): Promise<[any, any]> => {
+    try {
+      // Perform a case-insensitive partial search using a regular expression
+      const regex = new RegExp(bankName, 'i');
+      const matchingBanks = await bank.find({ bankName: regex });
+  
+      if (matchingBanks.length > 0) {
+        // Extract the names of matching banks into an array of objects
+        const matchingBankNames = matchingBanks.map((bank) => (  bank.bankName ));
+        return [true, matchingBankNames];
+      } else {
+        return [false, []];
+      }
+    } catch (error) {
+      console.error('Error in BankNamesInternal:', error);
+      throw error;
+    }
+  };
+  
