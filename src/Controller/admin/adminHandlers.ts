@@ -170,6 +170,7 @@ export const getuserbusinessdetailInternal = async (id): Promise<any[]> => {
       Nature_of_Business_Activity: 1, 
       isGSTDetailSaveManually:1, 
       GSTFILE: 1,
+      AdminGSTVerified:1
     });
 
     if (!result) {
@@ -177,6 +178,10 @@ export const getuserbusinessdetailInternal = async (id): Promise<any[]> => {
     }
     const resultFiles = {
       GSTFILE: result?.GSTFILE || null,
+      AdminGSTVerified:result?.AdminGSTVerified || null,
+    };
+    const status = {
+      AdminGSTVerified:result?.AdminGSTVerified || null,
     };
     const restResult = {
       Constitution_of_Business: result?.Constitution_of_Business || null,
@@ -191,7 +196,7 @@ export const getuserbusinessdetailInternal = async (id): Promise<any[]> => {
       Nature_of_Business_Activity: result?.Nature_of_Business_Activity || null,
     };
     const fetchType={ isGSTDetailSaveManually: result?.isGSTDetailSaveManually || null,} 
-    return [true, {resultFiles,restResult,fetchType}];
+    return [true, {resultFiles,restResult,fetchType,status}];
   } catch (error) {
   
     return [false, error];
@@ -221,6 +226,10 @@ export const getbusinessrepresentativedetailInternal = async (id): Promise<any[]
       PANFile: 1,
       aadharPhotoLink: 1,
       aadharNumber: 1,
+      AdminPanVerified:1,
+      AdminAadhaarS1Verified:1,
+      AdminAadhaarS2Verified:1
+
     });
     if (!result || !leftCount) {
       return [false, "User KYC data or left count not found"];
@@ -247,8 +256,13 @@ export const getbusinessrepresentativedetailInternal = async (id): Promise<any[]
       aadharPhotoLink: result?.aadharPhotoLink || null,
       aadharNumber: result?.aadharNumber || null
     };
+    const status={
+      AdminPanVerified: result?.AdminPanVerified || null,
+      AdminAadhaarS1Verified: result?.AdminAadhaarS1Verified || null,
+      AdminAadhaarS2Verified: result?.AdminAadhaarS2Verified || null
+    }
 
-    return [true, { restResult, resultFiles, resultAadharPhoto, leftCount }];
+    return [true, { restResult, resultFiles, resultAadharPhoto, leftCount,status }];
   } catch (error) {
     return [false, error];
   }
