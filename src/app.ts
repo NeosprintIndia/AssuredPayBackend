@@ -30,6 +30,8 @@ app.use("/template", TemplateRoutes);
 app.use("/userkyc", userKYCRoutes);
 app.use("/affiliate", affiliate);
 app.use("/uploadRoutes", uploadRoutes);
+app.use("/makerRoutes", makerRoutes);
+app.use("/checkerRoutes", checkerRoutes);
 
 
 // Define the port number for the server

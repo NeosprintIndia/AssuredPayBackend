@@ -290,7 +290,9 @@ export const authenticateUser = async (
     }
     const userRole = user.role;
     const roleCodeMap = {
-      Business_User: "Business_User01",
+      Maker:"Business_User01",
+      Checker:"Business_User01",
+      Business_User:"Business_User01",
       Admin: "Admin02",
       affiliatePartner: "affiliatePartner03",
     };
@@ -394,6 +396,7 @@ export const searchexistingrefercodeInternal = async (
 ): Promise<boolean | any> => {
   try {
     const result = await Referral.find({ refferal_code: refercode });
+    console.log("result",result)
     if (result.length > 0) {
       const finalresult = {
         found: true,

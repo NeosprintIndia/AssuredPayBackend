@@ -77,5 +77,12 @@ router.get("/getProduct",[VerifyToken],getProduct)
 // router.post("/invite",[VerifyToken],addIvite)
 // router.get("/getInvite",[VerifyToken],getInvite)
 
+//Payment Request Related Routes
+
+//get all payment request
+
+// Accept Payment request
+
+// Reject Payment request
 
 export default router;

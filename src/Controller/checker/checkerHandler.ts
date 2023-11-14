@@ -1,8 +1,9 @@
 import PaymentRequestModel from "../../models/paymentRequest";
 import userRegisterations from "../../models/userRegisterations";
 import userKYCs from "../../models/userKYCs"
+import { generateOrderID } from "../../services/generateOrderID";
 import subUsers from "../../models/subUsers";
-import mongoose, { Schema, Document, Model, Types } from 'mongoose';
+import mongoose, { Schema, ObjectId,Document, Model, Types } from 'mongoose';
 import { getBusinessNetworkDetails} from "../../Controller/user/businessNetworkHandler"
 
 import * as CryptoJS from "crypto-js";
@@ -43,8 +44,9 @@ export const getMakerRequestInternal = async (userid: string): Promise<boolean |
 export const getBusinessDetails = async (userId, businessName, createdby,docId) => {
   try {
     // Fetch the 'addedby' details
+   
     const addedby = await userRegisterations.findOne({ _id: createdby });
-
+console.log("businessName",businessName)
     // Continue with the existing aggregation pipeline
     const result = await userKYCs.aggregate([
       {
@@ -122,15 +124,23 @@ export const getBusinessDetails = async (userId, businessName, createdby,docId) 
       }
     ]);
 
-    // Combine the 'addedby' details with the aggregation results
-    result[0].AddedBydetails = addedby.business_email;
-    result[0].docId = docId;
-    return result;
+    if (result && result[0]) {
+      // Combine the 'addedby' details with the aggregation results
+      result[0].AddedBydetails = addedby.business_email;
+      result[0].docId = docId;
+      return result;
+    } else {
+      // Handle the case where result[0] is undefined
+      return "No business details found";
+    }
+    // // Combine the 'addedby' details with the aggregation results
+    // result[0].AddedBydetails = addedby.business_email;
+    // result[0].docId = docId;
+    // return result;
   } catch (error) {
     return error.message;
   }
 }
-
 export const getpaymentrequestInternal = async (userid: string): Promise<boolean | any> => {
   try {
 
@@ -140,18 +150,16 @@ export const getpaymentrequestInternal = async (userid: string): Promise<boolean
     })
     let modelResults = []; // Initialize an empty array to store the results
 console.log("paymentRequests",paymentRequests)
-    for (const result of paymentRequests) {
-      const requester = result.requester;
-      const docId=result._id;
+    // for (const result of paymentRequests) {
+      const requester = (paymentRequests as any).requester;
+      const docId=(paymentRequests as any)._id;
       const modelResult = await getRequestDetails(userid, requester);
       // Push the modelResult into the array
       modelResults.push(modelResult);
       // Do something with the modelResult
-      console.log(modelResult);
-    }
+    // }
 
     // At this point, modelResults contains an array of all the results
-    console.log(modelResults);
 
     return [true, modelResults]
   } catch (err) {
@@ -162,13 +170,67 @@ console.log("paymentRequests",paymentRequests)
 export const getRequestDetails = async (userId, requester) => {
   try {
     // Continue with the existing aggregation pipeline
+    
+    const fuserid=new mongoose.Types.ObjectId(userId)
+    console.log(fuserid)
+    console.log(requester)
+
+    // const result = await PaymentRequestModel.aggregate([
+    //   {
+    //     $match: { "recipient": fuserid }
+    //   },
+    //   {
+    //     $lookup: {
+    //       from: "userkycs",
+    //       localField: "requester",
+    //       foreignField: "user",
+    //       as: "businessNetworkDetails"
+    //     }
+    //   },
+    //   {
+    //     $unwind: "$businessNetworkDetails"
+    //   },
+    //   {
+    //     $match: { "businessNetworkDetails.user": "$recipient.requester" }
+    //   },
+    //   {
+    //     $project: {
+
+    //       "requester":1,
+    //       "recipient":1,
+    //       "paymentType":1,
+    //      "recipientStatus":1,
+    //       "orderTitle":1,
+    //        "orderAmount": 1,
+    //       "paymentIndentifier":1,  
+    //       businessNetworkDetails: {
+    //         Legal_Name_of_Business: 1,
+    //         GSTIN_of_the_entity: 1,
+    //       }
+    //     }
+    //   },
+    //   {
+    //     $project: {
+    //       "Legal_Name_of_Business": "$Legal_Name_of_Business",
+    //       "GSTIN_of_the_entity":"$GSTIN_of_the_entity",
+    //       "recipient":"$recipient",
+    //       "requester": "$requester",
+    //       "paymentType": "$paymentType",
+    //       "recipientStatus": "$recipientStatus",
+    //       "orderTitle": "$orderTitle",
+    //       "orderAmount": "$orderAmount",
+    //       "paymentIndentifier": "$paymentIndentifier",
+    //     }
+    //   }
+    // ]);
+
     const result = await PaymentRequestModel.aggregate([
       {
-        $match: { "recipient": userId }
+        $match: { "recipient": fuserid }
       },
       {
         $lookup: {
-          from: "userkyc",
+          from: "userkycs",
           localField: "requester",
           foreignField: "user",
           as: "businessNetworkDetails"
@@ -178,39 +240,21 @@ export const getRequestDetails = async (userId, requester) => {
         $unwind: "$businessNetworkDetails"
       },
       {
-        $match: { "businessNetworkDetails.user": requester }
-      },
-      {
         $project: {
-
-          "requester":1,
-          "recipient":1,
-          "paymentType":1,
-         "recipientStatus":1,
-          "orderTitle":1,
-           "orderAmount": 1,
-          "paymentIndentifier":1,  
-          businessNetworkDetails: {
-            Legal_Name_of_Business: 1,
-            GSTIN_of_the_entity: 1,
-           
-          }
-        }
-      },
-      {
-        $project: {
-          "Legal_Name_of_Business": "$Legal_Name_of_Business",
-          "GSTIN_of_the_entity":"$GSTIN_of_the_entity",
-          "recipient":"$recipient",
-          "requester": "$requester",
-          "paymentType": "$paymentType",
-          "recipientStatus": "$recipientStatus",
-          "orderTitle": "$orderTitle",
-          "orderAmount": "$orderAmount",
-          "paymentIndentifier": "$paymentIndentifier",
+          "Legal_Name_of_Business": "$businessNetworkDetails.Legal_Name_of_Business",
+          "GSTIN_of_the_entity": "$businessNetworkDetails.GSTIN_of_the_entity",
+          "recipient": 1,
+          "requester": 1,
+          "paymentType": 1,
+          "recipientStatus": 1,
+          "orderTitle": 1,
+          "orderAmount": 1,
+          "paymentIndentifier": 1
         }
       }
+
     ]);
+    
   
    return result;
   } catch (error) {
@@ -222,13 +266,14 @@ export const checkeractionInternal = async (
   action:string,
   remark:string): Promise<boolean | any> => {
   try {
-    
+    const orderId= await generateOrderID();
     const actionResult=await PaymentRequestModel.findOneAndUpdate({_id:docId},
     {
       $set:
       {
       checkerStatus:action,
-       remark:remark
+       remark:remark,
+       orderID:orderId
     }
   },
   {new:true})
@@ -237,7 +282,6 @@ export const checkeractionInternal = async (
     console.error(err);
   }
 };
-
 export const viewparticularrequestInternal = async (
   docId: string,
   gst:string,
@@ -251,5 +295,88 @@ export const viewparticularrequestInternal = async (
       return [true,{actionResult,recipientDetail}]
   } catch (err) {
     console.error(err);
+  }
+};
+export const actionPaymentRequestInternal = async (
+  docId: string,
+  action:string,
+  remark:string): Promise<boolean | any> => {
+  try {
+    const actionResult=await PaymentRequestModel.findOneAndUpdate({_id:docId},
+      {
+        $set:
+        {
+         checkerStatus:action,
+         remark:remark
+      }
+    },
+    {new:true})
+    if(action!=="Approve"){
+      return[true,actionResult]
+    }
+    const paymentRequest = await PaymentRequestModel.findOne({_id:docId});
+
+    if (paymentRequest) {
+        // Update the date in each milestoneDetails object
+        (paymentRequest as any).milestoneDetails.forEach(item => {
+            item.date = updateDate( item.days);
+        });
+
+        // Save the updated document
+      const finalactionResult = await paymentRequest.save();
+        return [true,finalactionResult]
+    } else {
+      return [false,'Payment request not found']
+    
+    }
+
+   
+     
+  } catch (err) {
+    return [false,err]
+  }
+};
+const updateDate = (days) => {
+  const currentDate = new Date();
+  currentDate.setDate(currentDate.getDate() + days);
+  return currentDate.toLocaleDateString('en-GB'); // Assuming date format is 'dd/MM/yyyy'
+};
+export const businessActionOnPaymentRequestInternal = async (
+  docId: string,
+  action:string,
+  remark:string): Promise<boolean | any> => {
+  try {
+    const actionResult=await PaymentRequestModel.findOneAndUpdate({_id:docId},
+      {
+        $set:
+        {
+          recipientStatus:action,
+          remark:remark
+      } 
+    },
+    {new:true})
+    if(action!=="Approve"){
+      return[true,actionResult]
+    }
+    const paymentRequest = await PaymentRequestModel.findOne({_id:docId});
+
+    if (paymentRequest) {
+        // Update the date in each milestoneDetails object
+        (paymentRequest as any).milestoneDetails.forEach(item => {
+            item.date = updateDate( item.days);
+        });
+
+        // Save the updated document
+      const finalactionResult = await paymentRequest.save();
+        return [true,finalactionResult]
+    } else {
+      return [false,'Payment request not found']
+    
+    }
+
+   
+     
+  } catch (err) {
+    return [false,err]
   }
 };

@@ -3,7 +3,9 @@ import {
  getMakerRequestInternal ,
  checkeractionInternal,
  viewparticularrequestInternal,
- getpaymentrequestInternal
+ getpaymentrequestInternal,
+ actionPaymentRequestInternal,
+ businessActionOnPaymentRequestInternal
 } from "./checkerHandler";
 
 import { sendDynamicMail } from "../../services/sendEmail";
@@ -65,6 +67,42 @@ export async function getmakerrequest(req: Request, res: Response) {
       console.log("docId",docId)
 
       const [success, result] = await viewparticularrequestInternal(docId,gst,userid,businessName);
+  
+      if (success) {
+        res.status(200).send({ result });
+      } else {
+        res.status(404).send({ error: result });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: "Internal Server Error" });
+    }
+  }
+  export async function actionPaymentRequest(req: Request, res: Response) {
+    try {
+      const {action,docId ,remark}=req.body
+      console.log("action",action)
+      console.log("docId",docId)
+
+      const [success, result] = await actionPaymentRequestInternal(docId,action,remark);
+  
+      if (success) {
+        res.status(200).send({ result });
+      } else {
+        res.status(404).send({ error: result });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: "Internal Server Error" });
+    }
+  }
+  export async function businessActionOnPaymentRequest(req: Request, res: Response) {
+    try {
+      const {action,docId ,remark}=req.body
+      console.log("action",action)
+      console.log("docId",docId)
+
+      const [success, result] = await businessActionOnPaymentRequestInternal(docId,action,remark);
   
       if (success) {
         res.status(200).send({ result });

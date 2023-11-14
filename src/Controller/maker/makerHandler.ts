@@ -20,11 +20,12 @@ export const createPaymentRequestHandler = async (
   userId: string,
 ): Promise<boolean | any> => {
   try {
-    console.log("MilestoneDetails")
-   console.log(MilestoneDetails)
     const requester = await subUsers.findOne({"userId":userId})
     //.select('belongsTo');  bad mai sahi krna hai projection se belong to lena hai
-    console.log(requester.belongsTo)
+  
+    const paidto = (paymentIndentifier === "buyer") ? business_id :  requester.belongsTo;
+    const paidby = (paymentIndentifier === "buyer") ?  requester.belongsTo : business_id;
+
     const paymentRequestData = {
       paymentType: paymentType,
       POPI: POPI,
@@ -37,7 +38,9 @@ export const createPaymentRequestHandler = async (
       checkerStatus:"pending",
       recipientStatus:"pending",
       recipient: business_id,
-      orderTitle:orderTitle
+      orderTitle:orderTitle,
+      paidTo:paidto,
+      paidBy:paidby
     }; // Assuming the request body contains the data for the payment request
 
     const newPaymentRequest = new PaymentRequestModel(paymentRequestData);
@@ -110,6 +113,7 @@ const createUser = async (
       belongsTo:userid
      
     });
+    console.log("TEMP PASSWORD",tempPassword)
 // change the email format for temporary password for subuser
     const reqData = {
       Email_slug: "Verification_OTP",

@@ -3,6 +3,8 @@ import { Schema, Document, Model, model, Types } from "mongoose";
 interface IPaymentRequest extends Document {
   createdby: Types.ObjectId | IUser;
   requester: Types.ObjectId | IUser; // Reference to the user making the request
+  paidTo:Types.ObjectId | IUser;
+  paidBy:Types.ObjectId | IUser;
   recipient: Types.ObjectId | IUser; // Reference to the user receiving the payment
   orderID: string; // Reference to the order associated with the payment
   paymentType: "full" | "partial";
@@ -19,9 +21,13 @@ interface IPaymentRequest extends Document {
   paymentDays?: number; // Number of days for full payment
   MilestoneDetails?: Array<{
     date: Number; // Date when the partial payment should be made
+    days:Number
+    isFDAllowed:string
+    ApproxInterest:number
     amount: number; // Amount to be paid on that date
     balancedUsed: number; //Bank balance if used
     recievableUsed:number;
+    ApFees:number;
   }>;
 }
 
@@ -37,6 +43,16 @@ const paymentRequestSchema = new Schema<IPaymentRequest>({
     required: true,
   },
   requester: {
+    type: Types.ObjectId,
+    ref: "RegisterUsers",
+    required: true,
+  },
+  paidTo: {
+    type: Types.ObjectId,
+    ref: "RegisterUsers", // Assuming your User model is named 'User'
+    required: true,
+  },
+  paidBy: {
     type: Types.ObjectId,
     ref: "RegisterUsers",
     required: true,
@@ -103,6 +119,9 @@ const paymentRequestSchema = new Schema<IPaymentRequest>({
     {
       date: {
         type: Date,
+      },
+      days: {
+        type: Number,
         required: true,
       },
       amount: {
@@ -111,11 +130,23 @@ const paymentRequestSchema = new Schema<IPaymentRequest>({
       },
       balancedUsed: {
         type: Number,
-        required: true,
+      
       },
       recievableUsed: {
         type: Number,
-        required: true,
+      
+      },
+      isFDAllowed: {
+        type: String,
+      
+      },
+      ApproxInterest: {
+        type: Number,
+     
+      },
+      ApFees: {
+        type: Number,
+       
       },
     },
   ],

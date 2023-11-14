@@ -96,6 +96,7 @@ export const sendResponse = (success,response) => {
   else return [false, response]
 }
 export const getBusinessNetworkDetails = async (userId, gst, businessName)=> { 
+  console.log(userId)
   try {
   let matchQuery;
   if(gst) matchQuery = {$match:  {"GSTIN_of_the_entity": gst}}
@@ -105,7 +106,7 @@ export const getBusinessNetworkDetails = async (userId, gst, businessName)=> {
     {
       $lookup:{
         from: "business_networks",      
-        localField: "_id",   
+        localField: "user",   
         foreignField: "businessId", 
         as: "businessNetworkDetails"        
       }
@@ -119,7 +120,7 @@ export const getBusinessNetworkDetails = async (userId, gst, businessName)=> {
       "aadharPhotoLink": 1,
       "nameInAadhaar" : 1,
       "createdAt": 1,
-      "Ratings" : 1, 
+      // "Ratings" : 1, 
       "_id": 1,
       businessNetworkDetails :businessNetworkProjectFields}},
       {
@@ -232,10 +233,11 @@ export const getBusinessFromBusinessNetwork = async (id, businessQuery): Promise
     let userId = new mongoose.Types.ObjectId(id);
     if (businessQuery.gst || businessQuery.businessName) {
       const [isSuccess, res] = await getBusinessNetworkDetails(userId, businessQuery.gst, businessQuery.businessName)
+     console.log("res",res)
       return sendResponse(isSuccess, res);
     } else {
       const page = businessQuery.page || 1;
-      const rowsLimitPerPage = businessQuery.rowsLimitInPage || 10;
+      const rowsLimitPerPage = Number(businessQuery.rowsLimitInPage || 10);
       const skipLimit = page * rowsLimitPerPage - rowsLimitPerPage;
       let matchQuery;
       if (businessQuery.status) matchQuery = { userId: userId, status: businessQuery.status };
