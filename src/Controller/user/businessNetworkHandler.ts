@@ -171,136 +171,89 @@ export const  getBusinessFromBusinessNetwork = async (id, businessQuery): Promis
         let matchQuery;
         if(businessQuery.status) matchQuery = {$match: {$and:[{userId: userId}, {status: businessQuery.status}]}}
         else matchQuery = {$match: {userId: userId}}
-        // const result = await businessNetwork.aggregate([ 
-        //   matchQuery,
-        //   {$skip: Number(skipLimit)}, 
-        //   {$limit: Number(rowsLimitPerPage)},
-        //   {
-        //     $lookup:{
-        //       from: "userkycs",      
-        //       localField: "businessId",   
-        //       foreignField: "_id", 
-        //       as: "businessDetails"        
-        //     }
-        //   }, 
-        //   { $unwind:"$businessDetails" },
-        //   { $project: {
-        //     "status": 1,
-        //     "industryId": 1,
-        //     "categoryId": 1,
-        //     "productIds": 1,
-        //     "favourite": 1, 
-        //     "_id": 1,
-        //     businessDetails :businessProjectionFields}},
-        //   {
-        //     $lookup:{
-        //       from: "industries",
-        //       localField: "industryId",
-        //       foreignField: "_id",
-        //       as: "industryDetails",
-        //     }
-        //   }, 
-        //   { $unwind:"$industryDetails" },
-        //   {
-        //     $lookup:{
-        //       from: "categories",
-        //       localField: "categoryId",
-        //       foreignField: "_id",
-        //       as: "categoryDetails",
-        //     }
-        //   }, 
-        //   { $unwind:"$categoryDetails" },
-        //   {
-        //     $lookup:{
-        //       from: "products",
-        //       localField: "productIds",
-        //       foreignField: "_id",
-        //       as: "productDetails",
-        //     }
-        //   }
-        // ])
         const result = await businessNetwork.aggregate([
           matchQuery,
-          { $skip: Number(skipLimit) },
-          { $limit: Number(rowsLimitPerPage) },
           {
-            $lookup: {
-              from: "userkycs",
-              localField: "businessId",
-              foreignField: "_id",
-              as: "businessDetails"
-            }
+            $facet: {
+              totalCount: [{ $count: "total" }],
+              data: [
+                { $skip: Number(skipLimit) },
+                { $limit: Number(rowsLimitPerPage) },
+                {
+                  $lookup: {
+                    from: "userkycs",
+                    localField: "businessId",
+                    foreignField: "_id",
+                    as: "businessDetails",
+                  },
+                },
+                { $unwind: "$businessDetails" },
+                {
+                  $project: {
+                    "status": 1,
+                    "industryId": 1,
+                    "categoryId": 1,
+                    "productIds": 1,
+                    "favourite": 1,
+                    "_id": 1,
+                    businessDetails: businessProjectionFields,
+                  },
+                },
+                {
+                  $lookup: {
+                    from: "industries",
+                    localField: "industryId",
+                    foreignField: "_id",
+                    as: "industryDetails",
+                  },
+                },
+                { $unwind: "$industryDetails" },
+                {
+                  $lookup: {
+                    from: "categories",
+                    localField: "categoryId",
+                    foreignField: "_id",
+                    as: "categoryDetails",
+                  },
+                },
+                { $unwind: "$categoryDetails" },
+                {
+                  $lookup: {
+                    from: "products",
+                    localField: "productIds",
+                    foreignField: "_id",
+                    as: "productDetails",
+                  },
+                },
+              ],
+            },
           },
-          { $unwind: "$businessDetails" },
           {
-            $project: {
-              "status": 1,
-              "industryId": 1,
-              "categoryId": 1,
-              "productIds": 1,
-              "favourite": 1,
-              "_id": 1,
-              businessDetails: "$businessProjectionFields"
-            }
+            $unwind: "$data",
           },
           {
-            $lookup: {
-              from: "industries",
-              localField: "industryId",
-              foreignField: "_id",
-              as: "industryDetails"
-            }
+            $replaceRoot: { newRoot: "$data" },
           },
-          { $unwind: "$industryDetails" },
-          {
-            $lookup: {
-              from: "categories",
-              localField: "categoryId",
-              foreignField: "_id",
-              as: "categoryDetails"
-            }
-          },
-          { $unwind: "$categoryDetails" },
-          {
-            $lookup: {
-              from: "products",
-              localField: "productIds",
-              foreignField: "_id",
-              as: "productDetails"
-            }
-          },
-          // Grouping stage to calculate the count for each status
           {
             $group: {
-              _id: "$status",
-              count: { $sum: 1 },
-              
-            }
+              _id: null,
+              inactiveStatusCount: { $sum: { $cond: [{ $eq: ["$status", "inactive"] }, 1, 0] } },
+              activeStatusCount: { $sum: { $cond: [{ $eq: ["$status", "active"] }, 1, 0] } },
+              data: { $push: "$$ROOT" },
+            },
           },
-          // Project stage to shape the output with separate status counts and additional fields
           {
             $project: {
-              _id: 1,
-              activeCount: { $cond: [{ $eq: ["$_id", "active"] }, "$count", 0] },
-              disabledCount: { $cond: [{ $eq: ["$_id", "disabled"] }, "$count", 0] },
-              inactiveCount: { $cond: [{ $eq: ["$_id", "inactive"] }, "$count", 0] },
-              "status": 1,
-              "industryId": 1,
-              "categoryId": 1,
-              "productIds": 1,
-              "favourite": 1,
-              businessDetails: "$businessProjectionFields"
-            }
-          }
-        ]);
-        
-        // Return the result
-        console.log("Businesses fetched successfully.");
-        return [true, result];
-        
-        
-        
-       
+              _id: 0,
+              totalCount: { $size: "$data" },
+              inactiveStatusCount: 1,
+              activeStatusCount: 1,
+              data: 1,
+            },
+          },
+        ]);  
+        const finalResult = result;
+        return [true, finalResult];  
       }
     } catch (error) {
       console.log("Error occured while finding the business from business n/w.", error);

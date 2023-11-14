@@ -178,7 +178,6 @@ export const getuserbusinessdetailInternal = async (id): Promise<any[]> => {
     }
     const resultFiles = {
       GSTFILE: result?.GSTFILE || null,
-      AdminGSTVerified:result?.AdminGSTVerified || null,
     };
     const status = {
       AdminGSTVerified:result?.AdminGSTVerified || null,
