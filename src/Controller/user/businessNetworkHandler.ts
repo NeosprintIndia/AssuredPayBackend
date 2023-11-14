@@ -158,108 +158,108 @@ export const getBusinessNetworkDetails = async (userId, gst, businessName)=> {
   }
   
 }
-export const  getBusinessFromBusinessNetwork = async (id, businessQuery): Promise<any> => {
-    try {
-      let userId = new mongoose.Types.ObjectId(id);
-      if(businessQuery.gst ||  businessQuery.businessName){
-        const [isSuccess, res] = await getBusinessNetworkDetails(userId, businessQuery.gst, businessQuery.businessName)
-        return sendResponse(isSuccess,res);
-      } else {
-        const page = businessQuery.page || 1;
-        const rowsLimitPerPage =  businessQuery.rowsLimitInPage || 10;
-        const skipLimit  = page*rowsLimitPerPage - rowsLimitPerPage;
-        let matchQuery;
-        if(businessQuery.status) matchQuery = {$match: {$and:[{userId: userId}, {status: businessQuery.status}]}}
-        else matchQuery = {$match: {userId: userId}}
-        const result = await businessNetwork.aggregate([
-          matchQuery,
-          {
-            $facet: {
-              totalCount: [{ $count: "total" }],
-              data: [
-                { $skip: Number(skipLimit) },
-                { $limit: Number(rowsLimitPerPage) },
-                {
-                  $lookup: {
-                    from: "userkycs",
-                    localField: "businessId",
-                    foreignField: "_id",
-                    as: "businessDetails",
-                  },
-                },
-                { $unwind: "$businessDetails" },
-                {
-                  $project: {
-                    "status": 1,
-                    "industryId": 1,
-                    "categoryId": 1,
-                    "productIds": 1,
-                    "favourite": 1,
-                    "_id": 1,
-                    businessDetails: businessProjectionFields,
-                  },
-                },
-                {
-                  $lookup: {
-                    from: "industries",
-                    localField: "industryId",
-                    foreignField: "_id",
-                    as: "industryDetails",
-                  },
-                },
-                { $unwind: "$industryDetails" },
-                {
-                  $lookup: {
-                    from: "categories",
-                    localField: "categoryId",
-                    foreignField: "_id",
-                    as: "categoryDetails",
-                  },
-                },
-                { $unwind: "$categoryDetails" },
-                {
-                  $lookup: {
-                    from: "products",
-                    localField: "productIds",
-                    foreignField: "_id",
-                    as: "productDetails",
-                  },
-                },
-              ],
-            },
-          },
-          {
-            $unwind: "$data",
-          },
-          {
-            $replaceRoot: { newRoot: "$data" },
-          },
-          {
-            $group: {
-              _id: null,
-              inactiveStatusCount: { $sum: { $cond: [{ $eq: ["$status", "inactive"] }, 1, 0] } },
-              activeStatusCount: { $sum: { $cond: [{ $eq: ["$status", "active"] }, 1, 0] } },
-              data: { $push: "$$ROOT" },
-            },
-          },
-          {
-            $project: {
-              _id: 0,
-              totalCount: { $size: "$data" },
-              inactiveStatusCount: 1,
-              activeStatusCount: 1,
-              data: 1,
-            },
-          },
-        ]);  
-        const finalResult = result;
-        return [true, finalResult];  
-      }
-    } catch (error) {
-      console.log("Error occured while finding the business from business n/w.", error);
-      return  [false, error.message];
-    }
-};
+// export const  getBusinessFromBusinessNetwork = async (id, businessQuery): Promise<any> => {
+//     try {
+//       let userId = new mongoose.Types.ObjectId(id);
+//       if(businessQuery.gst ||  businessQuery.businessName){
+//         const [isSuccess, res] = await getBusinessNetworkDetails(userId, businessQuery.gst, businessQuery.businessName)
+//         return sendResponse(isSuccess,res);
+//       } else {
+//         const page = businessQuery.page || 1;
+//         const rowsLimitPerPage =  businessQuery.rowsLimitInPage || 10;
+//         const skipLimit  = page*rowsLimitPerPage - rowsLimitPerPage;
+//         let matchQuery;
+//         if(businessQuery.status) matchQuery = {$match: {$and:[{userId: userId}, {status: businessQuery.status}]}}
+//         else matchQuery = {$match: {userId: userId}}
+//         const result = await businessNetwork.aggregate([
+//           matchQuery,
+//           {
+//             $facet: {
+//               totalCount: [{ $count: "total" }],
+//               data: [
+//                 { $skip: Number(skipLimit) },
+//                 { $limit: Number(rowsLimitPerPage) },
+//                 {
+//                   $lookup: {
+//                     from: "userkycs",
+//                     localField: "businessId",
+//                     foreignField: "_id",
+//                     as: "businessDetails",
+//                   },
+//                 },
+//                 { $unwind: "$businessDetails" },
+//                 {
+//                   $project: {
+//                     "status": 1,
+//                     "industryId": 1,
+//                     "categoryId": 1,
+//                     "productIds": 1,
+//                     "favourite": 1,
+//                     "_id": 1,
+//                     businessDetails: businessProjectionFields,
+//                   },
+//                 },
+//                 {
+//                   $lookup: {
+//                     from: "industries",
+//                     localField: "industryId",
+//                     foreignField: "_id",
+//                     as: "industryDetails",
+//                   },
+//                 },
+//                 { $unwind: "$industryDetails" },
+//                 {
+//                   $lookup: {
+//                     from: "categories",
+//                     localField: "categoryId",
+//                     foreignField: "_id",
+//                     as: "categoryDetails",
+//                   },
+//                 },
+//                 { $unwind: "$categoryDetails" },
+//                 {
+//                   $lookup: {
+//                     from: "products",
+//                     localField: "productIds",
+//                     foreignField: "_id",
+//                     as: "productDetails",
+//                   },
+//                 },
+//               ],
+//             },
+//           },
+//           {
+//             $unwind: "$data",
+//           },
+//           {
+//             $replaceRoot: { newRoot: "$data" },
+//           },
+//           {
+//             $group: {
+//               _id: null,
+//               inactiveStatusCount: { $sum: { $cond: [{ $eq: ["$status", "inactive"] }, 1, 0] } },
+//               activeStatusCount: { $sum: { $cond: [{ $eq: ["$status", "active"] }, 1, 0] } },
+//               data: { $push: "$$ROOT" },
+//             },
+//           },
+//           {
+//             $project: {
+//               _id: 0,
+//               totalCount: { $size: "$data" },
+//               inactiveStatusCount: 1,
+//               activeStatusCount: 1,
+//               data: 1,
+//             },
+//           },
+//         ]);  
+//         const finalResult = result;
+//         return [true, finalResult];  
+//       }
+//     } catch (error) {
+//       console.log("Error occured while finding the business from business n/w.", error);
+//       return  [false, error.message];
+//     }
+// };
 
 // export const getBusinessFromBusinessNetwork = async (id, businessQuery): Promise<any> => {
 //   try {
@@ -356,6 +356,114 @@ export const  getBusinessFromBusinessNetwork = async (id, businessQuery): Promis
 //     return [false, error.message];
 //   }
 // };
+
+export const getBusinessFromBusinessNetwork = async (id, businessQuery): Promise<any> => {
+  try {
+    let userId = new mongoose.Types.ObjectId(id);
+    if (businessQuery.gst || businessQuery.businessName) {
+      const [isSuccess, res] = await getBusinessNetworkDetails(userId, businessQuery.gst, businessQuery.businessName);
+      return sendResponse(isSuccess, res);
+    } else {
+      const page = businessQuery.page || 1;
+      const rowsLimitPerPage = businessQuery.rowsLimitInPage || 10;
+      const skipLimit = page * rowsLimitPerPage - rowsLimitPerPage;
+
+      // Query for total count
+      const totalCountQuery = await businessNetwork.aggregate([
+        { $match: { userId: userId } },
+        { $count: "total" },
+      ]);
+
+      const totalCount = totalCountQuery.length > 0 ? totalCountQuery[0].total : 0;
+
+      // Query for status counts
+      const statusCountsQuery = await businessNetwork.aggregate([
+        { $match: { userId: userId } },
+        {
+          $group: {
+            _id: "$status",
+            count: { $sum: 1 },
+          },
+        },
+      ]);
+
+      const statusCounts = statusCountsQuery.reduce((acc, { _id, count }) => {
+        acc[_id] = count;
+        return acc;
+      }, {});
+
+      // Query for data
+      const dataQuery = await businessNetwork.aggregate([
+        { $match: { userId: userId, ...(businessQuery.status ? { status: businessQuery.status } : {}) } },
+        { $skip: Number(skipLimit) },
+        { $limit: Number(rowsLimitPerPage) },
+        {
+          $lookup: {
+            from: "userkycs",
+            localField: "businessId",
+            foreignField: "_id",
+            as: "businessDetails",
+          },
+        },
+        { $unwind: "$businessDetails" },
+        {
+          $project: {
+            "status": 1,
+            "industryId": 1,
+            "categoryId": 1,
+            "productIds": 1,
+            "favourite": 1,
+            "_id": 1,
+            businessDetails: businessProjectionFields,
+          },
+        },
+        {
+          $lookup: {
+            from: "industries",
+            localField: "industryId",
+            foreignField: "_id",
+            as: "industryDetails",
+          },
+        },
+        { $unwind: "$industryDetails" },
+        {
+          $lookup: {
+            from: "categories",
+            localField: "categoryId",
+            foreignField: "_id",
+            as: "categoryDetails",
+          },
+        },
+        { $unwind: "$categoryDetails" },
+        {
+          $lookup: {
+            from: "products",
+            localField: "productIds",
+            foreignField: "_id",
+            as: "productDetails",
+          },
+        },
+      ]);
+
+      const finalResult = {
+        totalCount: totalCount,
+        inactiveStatusCount: statusCounts["inActive"] || 0,
+        activeStatusCount: statusCounts["active"] || 0,
+        data: dataQuery,
+      };
+
+      return [true, finalResult];
+    }
+  } catch (error) {
+    console.log("Error occurred while finding the business from business n/w.", error);
+    return [false, error.message];
+  }
+};
+
+
+
+
+
 
 export const findAndUpdate = async (userId, businessId, businessDetails): Promise<any> => {
     try {
