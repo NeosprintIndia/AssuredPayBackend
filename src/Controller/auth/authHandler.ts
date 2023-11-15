@@ -1,6 +1,8 @@
 import Registration from "../../models/userRegisterations";
 import businessUser from "../../models/businessUser";
 import UserKYC from "../../models/userKYCs";
+import affiliateInvite from '../../models/affiliateInviteModel';
+import affiliate from '../../models/affiliateModel';
 import subUsers from "../../models/subUsers";
 import Referral from "../../models/refferalCodes";
 import globalSetting from "../../models/globalAdminSettings";
@@ -40,6 +42,7 @@ export const performRegistration = async (
       referralCode,
       role
     );
+    console.log("newUser",newUser)
     if (!newUser[0]) {
       return [false, "Unable to create new user"];
     } else {
@@ -147,6 +150,7 @@ export const findUserByEmailUsername = async (
         );
       return [true,user] 
     }}};
+
 const createUser = async (
   business_email: string,
   password: string,
@@ -156,10 +160,21 @@ const createUser = async (
   role:string
 ): Promise<[boolean, any]> => {
   try {
+  
     const hashedPassword = await CryptoJS.AES.encrypt(password,process.env.PASS_PHRASE).toString();
     const Refer_code = await generateReferralCode(username, business_mobile);
     let updatedReferral = null;
     var referredBy = "";
+
+    const newUser = await Registration.create({
+      business_email,
+      business_mobile,
+      password: hashedPassword,
+      username:username,
+      oldPasswords: [hashedPassword],
+      role:role
+    });
+    console.log(newUser)
     if (refferal_code !== null) {
       updatedReferral = await Referral.findOneAndUpdate(
         { refferal_code },
@@ -169,22 +184,39 @@ const createUser = async (
       if (!updatedReferral) {
         return [false, null];
       }
+      console.log(updatedReferral)
       const referralUser = updatedReferral.user;
-      const refuser=await Registration.findOne({ username: referralUser })
+      const refuser=await Registration.findOne({ _id: referralUser })
+      console.log("refuser",refuser)
       referredBy=refuser.username
+     
+const updateStatus = await affiliateInvite.findOneAndUpdate(
+  {
+    $and: [
+      { affiliateId: { $in: updatedReferral.user } },
+      {
+        $or: [
+          { businessInvitedMail: { $in: business_email } },
+          { businessInvitedNumber: { $in: business_mobile } }
+        ]
+      }
+    ]
+  },
+  { $set: { businessStatus: 'Signed Up', businessSignupStatus: true,  InviteeId:newUser._id, } },
+  { new: true }
+);
+console.log("afterusername",username)
+console.log(updateStatus)
+
+     
+    
       // const referUserProfile = await UserKYC.findOne({ user: referralUser });
       // if (referUserProfile) {
       //   referredBy = (referUserProfile as any).Legal_Name_of_Business;
       // }
     }
-    const newUser = await Registration.create({
-      business_email,
-      business_mobile,
-      password: hashedPassword,
-      username,
-      oldPasswords: [hashedPassword],
-      role:role
-    });
+  
+  
     const otpGeneratedEmail = await generateOTP();
     const otpGeneratedMobile = await generateOTP();
     const { gstLimit, aadharLimit, panLimit, cin } =await globalSetting.findOne({ });

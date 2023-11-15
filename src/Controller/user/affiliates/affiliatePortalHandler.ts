@@ -29,10 +29,10 @@ export const findAndInsert = async (userId, businessInvitedMail, businessInvited
     let affiliateCode
     let referralCode = await Referral.find({ user:userId }, "referralCode");
     console.log("referralCode",referralCode)
-    let affiliateDetails = await affiliate.find({ userId }, "_id referralCode");
+    let affiliateDetails = await affiliate.find({ userId }, "_id userId referralCode");
     if(!affiliateDetails.length) throw({message: "Affiliate does not exist with this user id."})
     else {
-      affiliateId = affiliateDetails[0]._id;
+      affiliateId = affiliateDetails[0].userId;
       affiliateCode = referralCode[0].refferal_code;
   } 
     const isAlreadySignedUp = await isSignedUp( businessInvitedMail, businessInvitedNumber);
@@ -265,16 +265,23 @@ export const get = async (userId, rowsPerPage, page, commission): Promise<any> =
     }
   };
   export const BankNamesInternal = async (
-    bankName: string,
-  ): Promise<[any, any]> => {
+    bankName?: string, // Make bankName optional
+  ): Promise<[boolean, any]> => {
     try {
+      if (!bankName) {
+        // If bankName is not provided, return the full bank list
+        const allBanks = await bank.find({});
+        const allBankNames = allBanks.map((bank) => bank.bankName);
+        return [true, allBankNames];
+      }
+  
       // Perform a case-insensitive partial search using a regular expression
       const regex = new RegExp(bankName, 'i');
       const matchingBanks = await bank.find({ bankName: regex });
   
       if (matchingBanks.length > 0) {
         // Extract the names of matching banks into an array of objects
-        const matchingBankNames = matchingBanks.map((bank) => (  bank.bankName ));
+        const matchingBankNames = matchingBanks.map((bank) => bank.bankName);
         return [true, matchingBankNames];
       } else {
         return [false, []];
@@ -284,4 +291,5 @@ export const get = async (userId, rowsPerPage, page, commission): Promise<any> =
       throw error;
     }
   };
+  
   
