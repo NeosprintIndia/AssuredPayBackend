@@ -5,41 +5,91 @@ import adminGlobalSetting from "../../models/globalAdminSettings";
 
 // Function to retrieve all KYC records based on sorting
 
+// export const getAllKYCRecordsInternal = async (
+//   page: number = 1, 
+//   pageSize: number = 10, 
+//   due: string | null = null, 
+//   search: string | null = null 
+// ): Promise<any[]> => { 
+//   try {
+//     const skipCount = (page - 1) * pageSize;
+//     let query = UserKYC1.find()
+//       .select({ Legal_Name_of_Business: 1, GSTIN_of_the_entity: 1, userRequestReference: 1, due: 1, kycrequested: 1 ,user:1,currentStatus:1})
+//       .populate('businessUser', 'refferedBy')
+//       .sort({ updatedAt: -1 });
+//       query = query.where('userRequestReference').ne('');
+//     if (due !== null) {
+//       query = query.where('due').equals(due);
+//     }
+//     if (search !== null) {
+//       query.or([
+//         { userRequestReference: search },
+//         { GSTIN_of_the_entity: search }
+//       ]);
+//     }
+//     const results: any[] = await query.skip(skipCount).limit(pageSize).exec();
+//     const dueCounts = {
+//       approved: await UserKYC1.countDocuments({ due: 'Approved' }),
+//       rejected: await UserKYC1.countDocuments({ due: 'Rejected' }),
+//       new: await UserKYC1.countDocuments({ due: 'New' }),
+//       total: await UserKYC1.countDocuments(),
+//     };
+//     return [true, { results, dueCounts }];
+//   } catch (error) {
+   
+//     return [false, error];
+//   }
+// };
 export const getAllKYCRecordsInternal = async (
-  page: number = 1, 
-  pageSize: number = 10, 
-  due: string | null = null, 
-  search: string | null = null 
-): Promise<any[]> => { 
+  page: number = 1,
+  pageSize: number = 10,
+  due: string | null = null,
+  search: string | null = null
+): Promise<any[]> => {
   try {
     const skipCount = (page - 1) * pageSize;
     let query = UserKYC1.find()
-      .select({ Legal_Name_of_Business: 1, GSTIN_of_the_entity: 1, userRequestReference: 1, due: 1, kycrequested: 1 ,user:1,currentStatus:1})
+      .select({
+        Legal_Name_of_Business: 1,
+        GSTIN_of_the_entity: 1,
+        userRequestReference: 1,
+        due: 1,
+        kycrequested: 1,
+        user: 1,
+        currentStatus: 1,
+      })
       .populate('businessUser', 'refferedBy')
       .sort({ updatedAt: -1 });
-      query = query.where('userRequestReference').ne('');
+    query = query.where('userRequestReference').ne('');
+
     if (due !== null) {
       query = query.where('due').equals(due);
     }
     if (search !== null) {
       query.or([
         { userRequestReference: search },
-        { GSTIN_of_the_entity: search }
+        { GSTIN_of_the_entity: search },
       ]);
     }
-    const results: any[] = await query.skip(skipCount).limit(pageSize).exec();
+    const countAfterCondition = await query.countDocuments();
+
     const dueCounts = {
-      approved: await UserKYC1.countDocuments({ due: 'Approved' }),
-      rejected: await UserKYC1.countDocuments({ due: 'Rejected' }),
-      new: await UserKYC1.countDocuments({ due: 'New' }),
+      approved: await query.where('due').equals('Approved').countDocuments(),
+      rejected: await query.where('due').equals('Rejected').countDocuments(),
+      new: await query.where('due').equals('New').countDocuments(),
       total: await UserKYC1.countDocuments(),
+      countAfterCondition: countAfterCondition,
     };
+
+    // Continue with pagination
+    const results: any[] = await query.skip(skipCount).limit(pageSize).exec();
+
     return [true, { results, dueCounts }];
   } catch (error) {
-   
     return [false, error];
   }
 };
+
 
 // Function to update various limits and settings in the global admin configuration
 export const setLimitInternal = async (
