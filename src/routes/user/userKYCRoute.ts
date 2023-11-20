@@ -14,7 +14,8 @@ import {
     userreferencenumber,
     kycRedoRequested,
     setglobalstatus,
-    getRejectedDocuments
+    getRejectedDocuments,
+    getUUID
  } from '../../Controller/user/userKYCControllers';
 
  import {
@@ -45,6 +46,7 @@ import {
 
 router.post('/verifypan',[VerifyToken],verifyPAN)
 router.post('/generateuuid',VerifyToken,userreferencenumber)
+router.get('/getuuid',VerifyToken,getUUID)
 router.post('/getgstdetail',[VerifyToken],getGSTDetails)
 router.get('/getsavedgstdetail',[VerifyToken],getsavedgstdetail)
 router.post('/savegstdetail',[VerifyToken],saveGSTDetails)

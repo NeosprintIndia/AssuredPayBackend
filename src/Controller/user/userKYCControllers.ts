@@ -11,7 +11,8 @@ import {
   verifyAadharNumberOTPInternal,
   userreferencenumberInternal,
   kycRedoRequestedInternal,
-  getRejectedDocumentsInternal
+  getRejectedDocumentsInternal,
+  getUUIDInternal
 } from "./userKYCHandler";
 
 
@@ -275,5 +276,23 @@ export const getRejectedDocuments = async (
       message: result,
       Active: false,
     });
+  }
+};
+export const getUUID = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    // Assuming userId is a string
+    const userId = (req as any).userId as string;
+    const [success, result] = await getUUIDInternal(userId);
+    if (success) {
+      res.status(200).send({ result, Active: true });
+    } else {
+      res.status(400).send({ message: result, Active: false });
+    }
+  } catch (error) {
+    console.error("Error in Get UUID:", error);
+    res.status(500).json({ error: "An error occurred", Active: false });
   }
 };

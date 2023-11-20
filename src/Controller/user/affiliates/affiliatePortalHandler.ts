@@ -27,7 +27,8 @@ export const findAndInsert = async (userId, businessInvitedMail, businessInvited
     let searchQuery;
     let affiliateId
     let affiliateCode
-    let referralCode = await Referral.find({ user:userId }, "referralCode");
+    // let referralCode = await Referral.find({ user:userId }, "referralCode");
+    let referralCode = await Referral.find({ user:userId }).select("refferal_code");
     console.log("referralCode",referralCode)
     let affiliateDetails = await affiliate.find({ userId }, "_id userId referralCode");
     if(!affiliateDetails.length) throw({message: "Affiliate does not exist with this user id."})
@@ -35,6 +36,7 @@ export const findAndInsert = async (userId, businessInvitedMail, businessInvited
       affiliateId = affiliateDetails[0].userId;
       affiliateCode = referralCode[0].refferal_code;
   } 
+  console.log("affiliateCode",affiliateCode)
     const isAlreadySignedUp = await isSignedUp( businessInvitedMail, businessInvitedNumber);
     if(isAlreadySignedUp) return [true,  "Invited user has already signed up. Thanks for inviting."]
     if(businessInvitedMail) searchQuery = {$and: [{affiliateId}, {businessInvitedMail}]};
@@ -60,11 +62,11 @@ export const findAndInsert = async (userId, businessInvitedMail, businessInvited
       const reqData = {
         Email_slug: "Affiliate_Invited_Business",
         email: businessInvitedMail,
-        VariablesEmail: ["URL",affiliateCode],
+        VariablesEmail: ["app.assuredpay.in",affiliateCode],
   
         receiverNo: businessInvitedNumber,
         Message_slug: "Affiliate_Invited_Business",
-        VariablesMessage: ["URL",affiliateCode],
+        VariablesMessage: ["app.assuredpay.in",affiliateCode],
       };
       await sendDynamicMail(reqData);
       await sendSMS(reqData);
@@ -79,11 +81,11 @@ export const findAndInsert = async (userId, businessInvitedMail, businessInvited
             const reqData = {
               Email_slug: "Affiliate_Invited_Business",
               email: businessInvitedMail,
-              VariablesEmail: ["URL",affiliateCode],
+              VariablesEmail: ["app.assuredpay.in",affiliateCode],
         
               receiverNo: businessInvitedNumber,
               Message_slug: "Affiliate_Invited_Business",
-              VariablesMessage: ["URL",affiliateCode],
+              VariablesMessage: ["app.assuredpay.in",affiliateCode],
             };
             await sendDynamicMail(reqData);
             await sendSMS(reqData);

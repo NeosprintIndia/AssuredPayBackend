@@ -405,3 +405,13 @@ export const getRejectedDocumentsInternal = async (id: string): Promise<any> => 
   }
 };
 
+export const getUUIDInternal = async (
+  userId: string
+): Promise<any> => {
+  try {
+    const result = await UserKYC1.findOne({ user: userId }).select('userRequestReference');
+    return [true, result?.userRequestReference];
+  } catch (error) {
+    return [false, error];
+  }
+};

@@ -196,7 +196,6 @@ export const verifyPANDetails = async (
     throw error;
   }
 };
-
 export const getGSTDetailsInternal = async (
   gst: string,
   userId: string
@@ -208,9 +207,6 @@ export const getGSTDetailsInternal = async (
     return [false, error];
   }
 };
-
-
-
 export const createSettlement = async (
   Paidto: string,
   Paidfor:string,
