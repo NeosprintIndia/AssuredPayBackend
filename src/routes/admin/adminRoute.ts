@@ -13,6 +13,7 @@ import{
     finalstatus,
     rejectDocument,
     allActivities,
+    updateBusinessStatus
     }
 from '../../Controller/admin/adminControllers';
 
@@ -65,6 +66,7 @@ router.post("/approvedocument", VerifyAdmin, approveDocument)
 router.post("/rejectDocument", VerifyAdmin, rejectDocument)
 router.post("/finalstatus", VerifyAdmin, finalstatus)
 router.get("/allactivities", VerifyAdmin, allActivities)
+router.put("/updatebusinessstatus", VerifyAdmin, updateBusinessStatus)
 
 ///////////////////////////////////////////////////////////////////////////////-------------------
 

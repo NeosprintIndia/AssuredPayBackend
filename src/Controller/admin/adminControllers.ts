@@ -8,7 +8,8 @@ import {
   getbusinessrepresentativedetailInternal,
   approveDocumentInternal,
   rejectDocumentInternal,
-  getAllActivitiesInternal
+  getAllActivitiesInternal,
+  updateBusinessStatusInternal
   
 
 } from "./adminHandlers";
@@ -64,7 +65,6 @@ export const setAllLimits = async (
   }
 };
 
-
 // Route handler Function to retrieve all configuration settings from the global admin configuration
 
 export const getconfiguration = async (
@@ -109,7 +109,6 @@ export const getAllKYCRecords = async (
 };
 
 //Route handler Function to retrieve business details for a specific user from the UserKYC1 collection in the database
-
 export const getuserbusinessdetail = async (
   req: Request,
   res: Response
@@ -129,7 +128,6 @@ export const getuserbusinessdetail = async (
     res.status(500).json({ error: "An error occurred", Active: false });
   }
 };
-
 // Route handler Function to retrieve business representative details for a specific user from the UserKYC1 collection in the database
 export const getbusinessrepresentativedetail = async (
   req: Request,
@@ -137,8 +135,6 @@ export const getbusinessrepresentativedetail = async (
 ): Promise<void> => {
   try {
     const { id } = req.query;
-
-
     const [success, result] = await getbusinessrepresentativedetailInternal(id);
     if (success) {
       res.status(200).send({ result, Active: true });
@@ -150,9 +146,7 @@ export const getbusinessrepresentativedetail = async (
     res.status(500).json({ error: "An error occurred", Active: false });
   }
 };
-
 //Route handler Function to update document approval status in the UserKYC1 collection based on provided parameters
-
 export const approveDocument = async (req: Request, res: Response): Promise<void> => {
   try {
     const {_flag,status,id } = req.body;
@@ -171,7 +165,6 @@ export const approveDocument = async (req: Request, res: Response): Promise<void
   }
 };
 //Route handler Function to reject a document in the UserKYC1 collection based on provided parameters
-
 export const rejectDocument = async (req: Request, res: Response): Promise<void> => {
   try {
     const {filename,status,id,docNameKey,clarification } = req.body;
@@ -190,7 +183,6 @@ export const rejectDocument = async (req: Request, res: Response): Promise<void>
   }
 };
 //Route handler Function to update the due status of a specific user in the UserKYC1 collection in the database
-
 export const finalstatus = async (
   req: Request,
   res: Response
@@ -208,8 +200,6 @@ export const finalstatus = async (
     });
   }
 };
-
-
 export const allActivities = async (
   req: Request,
   res: Response
@@ -229,4 +219,14 @@ export const allActivities = async (
     res.status(500).json({ error: "An error occurred", Active: false });
   }
 };
-
+export const updateBusinessStatus = async (req: Request, res: Response): Promise<void> => {
+  const { user,status } = req.body;
+    const [success,result] = await updateBusinessStatusInternal(user,status);
+    if (success) {
+      res.send({result,Active:true});
+    } else {
+      res.status(500).send({
+        message: result,Active:false
+      });
+    }
+};

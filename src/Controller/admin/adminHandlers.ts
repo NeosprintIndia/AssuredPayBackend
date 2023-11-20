@@ -1,5 +1,6 @@
 import UserKYC1 from '../../models/userKYCs'; 
 import Registration from "../../models/userRegisterations"
+import businessUser from "../../models/businessUser"
 import adminGlobalSetting from "../../models/globalAdminSettings";
 
 
@@ -408,5 +409,21 @@ export const getAllActivitiesInternal = async (id): Promise<any[]> => {
     return [false, error];
   }
 };
-
+export const updateBusinessStatusInternal = async (user:any,status:string): Promise<any> => {
+  try {
+    if (!user || !status) {
+      throw new Error("Invalid input parameters");
+    }
+    const result = await businessUser.findOneAndUpdate(
+      { userId: user },
+      { $set: { currentStatus: status } },
+      { new: true }
+    );
+    console.log("Business updated successfully");
+    return [true, result];
+  } catch (error) {
+    console.log("Error occured while updating the Business", error);
+    return  [false, error.message];
+  }
+};
 
