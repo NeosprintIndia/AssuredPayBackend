@@ -19,6 +19,7 @@ export const addIvite = async (req: Request, res: Response): Promise<void> => {
   };
 export const getInvite = async (req: Request, res: Response): Promise<void> => {
     const userId = (req as any).userId as string;
+    console.log("userId",userId)
     const {rowsPerPage, page, commission} = req.query;
     const [success,result] = await get(userId, rowsPerPage, page,commission);
     sendResponse(res,success,result);

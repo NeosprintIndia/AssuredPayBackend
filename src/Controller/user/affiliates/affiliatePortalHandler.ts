@@ -103,7 +103,9 @@ export const get = async (userId, rowsPerPage, page, commission): Promise<any> =
       let result;
       let affiliateInviteDetails;
       const [skipLimit, limitRange] = await getSkipAndLimitRange(page, rowsPerPage);
-      let affiliateId = await getAffiliateId(userId);
+       let affiliateId = await getAffiliateId(userId);
+      
+      console.log("affiliateId",affiliateId)
       if(!affiliateId) throw ({message: "Affiliate does not exist with this user id."})
       query = {affiliateId}
       if(commission == "true") {
@@ -134,8 +136,9 @@ export const get = async (userId, rowsPerPage, page, commission): Promise<any> =
             ]
           }
         }
+        console.log("searchQuery",searchQuery)
         affiliateInviteDetails = await affiliateInvite.aggregate([searchQuery]).limit(limitRange).skip(skipLimit);;
-        console.log(affiliateInviteDetails)
+        console.log("affiliateInviteDetails",)
         result = {
           affiliateInviteRecords: affiliateInviteDetails[0]?.["affiliateInviteRecords"],
           totalInvitations: affiliateInviteDetails[0]?.["totalInvitations"]?.[0]?.["totalInvitations"],
@@ -157,10 +160,10 @@ export const get = async (userId, rowsPerPage, page, commission): Promise<any> =
   };
   const getAffiliateId = async (userId) => {
     let affiliateId;
-    let affiliateDetails = await affiliate.find({userId}, "_id");
+    let affiliateDetails = await affiliate.find({userId}, "userId");
     if(!affiliateDetails.length) throw({message: "Affiliate does not exist with this user id."})
-    else  affiliateId = affiliateDetails[0]._id;
-    return affiliateId.toString();
+    else  affiliateId = affiliateDetails[0].userId;
+    return affiliateId;
   }
   export const addBankAccountInternal = async (
     bankAccountNumber: string,

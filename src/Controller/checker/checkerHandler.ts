@@ -14,7 +14,6 @@ import { sendSMS } from "../../services/sendSMS";
 
 export const getMakerRequestInternal = async (userid: string): Promise<boolean | any> => {
   try {
-
     const paymentRequests = await PaymentRequestModel.find({
       requester: userid,
       checkerStatus: 'pending'
@@ -150,8 +149,8 @@ export const getpaymentrequestInternal = async (userid: string): Promise<boolean
       recipientStatus: 'pending'
     })
     let modelResults = []; // Initialize an empty array to store the results
-console.log("paymentRequests",paymentRequests)
-    // for (const result of paymentRequests) {
+    console.log("paymentRequests",paymentRequests)
+      // for (const result of paymentRequests) {
       const requester = (paymentRequests as any).requester;
       const docId=(paymentRequests as any)._id;
       const modelResult = await getRequestDetails(userid, requester);

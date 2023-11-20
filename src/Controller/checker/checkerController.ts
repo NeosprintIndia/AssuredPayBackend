@@ -26,7 +26,6 @@ export async function getmakerrequest(req: Request, res: Response) {
       res.status(500).send({ message: "Internal Server Error" });
     }
   }
-  
   export async function getpaymentrequest(req: Request, res: Response) {
     try {
       const userid=(req as any).userId
@@ -45,11 +44,7 @@ export async function getmakerrequest(req: Request, res: Response) {
  export async function checkeraction(req: Request, res: Response) {
     try {
       const {action,docId ,remark}=req.body
-      console.log("action",action)
-      console.log("docId",docId)
-
       const [success, result] = await checkeractionInternal(docId,action,remark);
-  
       if (success) {
         res.status(200).send({ result });
       } else {
@@ -64,10 +59,7 @@ export async function getmakerrequest(req: Request, res: Response) {
     try {
       const userid=(req as any).userId
       const { docId,gst,businessName } = (req as any).query;
-      console.log("docId",docId)
-
       const [success, result] = await viewparticularrequestInternal(docId,gst,userid,businessName);
-  
       if (success) {
         res.status(200).send({ result });
       } else {
@@ -81,11 +73,7 @@ export async function getmakerrequest(req: Request, res: Response) {
   export async function actionPaymentRequest(req: Request, res: Response) {
     try {
       const {action,docId ,remark}=req.body
-      console.log("action",action)
-      console.log("docId",docId)
-
       const [success, result] = await actionPaymentRequestInternal(docId,action,remark);
-  
       if (success) {
         res.status(200).send({ result });
       } else {
@@ -99,9 +87,6 @@ export async function getmakerrequest(req: Request, res: Response) {
   export async function businessActionOnPaymentRequest(req: Request, res: Response) {
     try {
       const {action,docId ,remark}=req.body
-      console.log("action",action)
-      console.log("docId",docId)
-
       const [success, result] = await businessActionOnPaymentRequestInternal(docId,action,remark);
   
       if (success) {
