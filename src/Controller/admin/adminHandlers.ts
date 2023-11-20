@@ -2,6 +2,8 @@ import UserKYC1 from '../../models/userKYCs';
 import Registration from "../../models/userRegisterations"
 import businessUser from "../../models/businessUser"
 import adminGlobalSetting from "../../models/globalAdminSettings";
+import { sendDynamicMail } from "../../services/sendEmail";
+import { sendSMS } from "../../services/sendSMS";
 
 
 // Function to retrieve all KYC records based on sorting
@@ -15,7 +17,7 @@ export const getAllKYCRecordsInternal = async (
   try {
     const skipCount = (page - 1) * pageSize;
     let query = UserKYC1.find()
-      .select({ Legal_Name_of_Business: 1, GSTIN_of_the_entity: 1, userRequestReference: 1, due: 1, kycrequested: 1 ,user:1,})
+      .select({ Legal_Name_of_Business: 1, GSTIN_of_the_entity: 1, userRequestReference: 1, due: 1, kycrequested: 1 ,user:1,PAN_number:1})
       .populate('businessUser', 'refferedBy currentStatus')
       .sort({ updatedAt: -1 });
       query = query.where('userRequestReference').ne('');
@@ -296,6 +298,23 @@ export const finalstatusInternal = async (
     lastElement.Admin_Pan_Verification_Clarification=user.Admin_Pan_Verification_Clarification
     lastElement.Admin_GST_Verification_Clarification=user.Admin_GST_Verification_Clarification
     await user.save();
+    if (key === "Rejected") {
+      const sendUpdate = await Registration.findOne({ _id: id }).select('business_email business_mobile username');
+      console.log("sendUpdate",sendUpdate)
+
+      const reqData = {
+        Email_slug: "Admin_Rejected_Application",
+        email: sendUpdate.business_email,
+        VariablesEmail: [sendUpdate.username,"Documents Mismatch","app.assuredpay.in"],
+        receiverNo: sendUpdate.business_mobile,
+        Message_slug: "Admin_Rejected_Application",
+        VariablesMessage: [sendUpdate.username,"Documents Mismatch","app.assuredpay.in"],
+      };
+
+      // Send email and SMS notifications
+      await sendDynamicMail(reqData);
+      await sendSMS(reqData);
+    }
     return ([ true , "Operation Completed Successfully" ]);
   } catch (error) {
     return { success: false, error: "An error occurred during the update." };
@@ -335,16 +354,12 @@ export const rejectDocumentInternal = async (
   clarification: string 
 ): Promise<any | null> => {
   try {
-    
     const updateData = { [filename]: status, [docNameKey]: clarification };
-
-    
     const result = await UserKYC1.findOneAndUpdate(
       { user: id }, 
       updateData, 
       { new: true } 
     );
-
     return [true, result];
   } catch (error) {
   
