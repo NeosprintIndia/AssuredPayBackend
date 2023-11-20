@@ -28,11 +28,17 @@ export const getAllKYCRecordsInternal = async (
       ]);
     }
     const results: any[] = await query.skip(skipCount).limit(pageSize).exec();
+    // const dueCounts = {
+    //   approved: await UserKYC1.countDocuments({ due: 'Approved' }),
+    //   rejected: await UserKYC1.countDocuments({ due: 'Rejected' }),
+    //   new: await UserKYC1.countDocuments({ due: 'New' }),
+    //   total: await UserKYC1.countDocuments(),
+    // };
     const dueCounts = {
-      approved: await UserKYC1.countDocuments({ due: 'Approved' }),
-      rejected: await UserKYC1.countDocuments({ due: 'Rejected' }),
-      new: await UserKYC1.countDocuments({ due: 'New' }),
-      total: await UserKYC1.countDocuments(),
+      approved: await UserKYC1.countDocuments({ due: 'Approved', userRequestReference: { $ne: '' } }),
+      rejected: await UserKYC1.countDocuments({ due: 'Rejected', userRequestReference: { $ne: '' } }),
+      new: await UserKYC1.countDocuments({ due: 'New', userRequestReference: { $ne: '' } }),
+      total: await UserKYC1.countDocuments({ userRequestReference: { $ne: '' } }),
     };
     return [true, { results, dueCounts }];
   } catch (error) {
