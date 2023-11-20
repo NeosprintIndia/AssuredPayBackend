@@ -14,8 +14,8 @@ export const getAllKYCRecordsInternal = async (
   try {
     const skipCount = (page - 1) * pageSize;
     let query = UserKYC1.find()
-      .select({ Legal_Name_of_Business: 1, GSTIN_of_the_entity: 1, userRequestReference: 1, due: 1, kycrequested: 1 ,user:1,currentStatus:1})
-      .populate('businessUser', 'refferedBy')
+      .select({ Legal_Name_of_Business: 1, GSTIN_of_the_entity: 1, userRequestReference: 1, due: 1, kycrequested: 1 ,user:1,})
+      .populate('businessUser', 'refferedBy currentStatus')
       .sort({ updatedAt: -1 });
       query = query.where('userRequestReference').ne('');
     if (due !== null) {
@@ -28,12 +28,6 @@ export const getAllKYCRecordsInternal = async (
       ]);
     }
     const results: any[] = await query.skip(skipCount).limit(pageSize).exec();
-    // const dueCounts = {
-    //   approved: await UserKYC1.countDocuments({ due: 'Approved' }),
-    //   rejected: await UserKYC1.countDocuments({ due: 'Rejected' }),
-    //   new: await UserKYC1.countDocuments({ due: 'New' }),
-    //   total: await UserKYC1.countDocuments(),
-    // };
     const dueCounts = {
       approved: await UserKYC1.countDocuments({ due: 'Approved', userRequestReference: { $ne: '' } }),
       rejected: await UserKYC1.countDocuments({ due: 'Rejected', userRequestReference: { $ne: '' } }),

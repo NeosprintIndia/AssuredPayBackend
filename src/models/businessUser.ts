@@ -13,6 +13,7 @@ interface IBusinessUser extends Document {
   emailotp: string;
   isemailotpverified:boolean;
   ismobileotpverified:boolean;
+  currentStatus:string;
   updated_at:Date;
   // Additional business user-specific fields
 }
@@ -38,6 +39,11 @@ const BusinessUserSchema: Schema<IBusinessUser> = new Schema({
   isemailotpverified: {
     type: Boolean,
     default: false,
+  },
+  currentStatus: {
+    type: String,
+    default: "active",
+    enum: ["active", "inActive"]
   },
   ismobileotpverified: {
     type: Boolean,

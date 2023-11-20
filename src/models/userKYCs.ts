@@ -4,7 +4,6 @@ import mongoose, { Document, Schema, Model, Types } from "mongoose";
 interface IUserKYC extends Document {
   user: Types.ObjectId | IUser;
   businessUser: Types.ObjectId | IUser;
-  currentStatus:string;
   PAN_number: string;
   aadharFileUrl: string;
   aadharBackUrl: string;
@@ -224,11 +223,7 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>(
     Place_of_Business: { type: String },
     Nature_of_Place_of_Business: { type: String, default: "" },
     Nature_of_Business_Activity: { type: String, default: "" },
-    currentStatus: {
-      type: String,
-      default:"active",
-      enum: ["active", "inActive"]
-    },
+
 
     activities: [
       {
