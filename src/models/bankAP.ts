@@ -3,6 +3,7 @@ import mongoose, { Schema, Document, Model, Types } from 'mongoose';
 // Define the interface for the document
 interface BankSeed extends Document {
   bankName: String;
+  updated_at:Date;
 }
 
 // Define the schema
@@ -10,6 +11,7 @@ const BankDetailSeed: Schema<BankSeed> = new Schema<BankSeed>({
     bankName: {
     type: String,
   },
+  updated_at: { type: Date, default: Date.now },
 },
 );
 

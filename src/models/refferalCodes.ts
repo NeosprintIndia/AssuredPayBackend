@@ -5,6 +5,7 @@ interface IReferralCode extends Document {
   user: Types.ObjectId | IUser;
   refferal_code: string;
   count: number;
+  updated_at: Date;
 }
 
 // Define the reference interface for the user field
@@ -26,6 +27,7 @@ const ReferralCodeSchema: Schema<IReferralCode> = new Schema<IReferralCode>({
     type: Number,
     default: 0,
   },
+  updated_at: { type: Date, default: Date.now },
 });
 
 // Define the model

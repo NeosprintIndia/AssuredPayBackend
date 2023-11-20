@@ -4,6 +4,7 @@ import mongoose, { Schema, Document, Model, Types } from 'mongoose';
 interface IReferralCode extends Document {
   industryName: String;
   industryStatus: String;
+  updated_at: Date;
 }
 
 // Define the schema
@@ -12,6 +13,7 @@ const IndustrySchema: Schema<IReferralCode> = new Schema<IReferralCode>({
     type: String,
     required: true
   },
+  updated_at: { type: Date, default: Date.now },
   industryStatus: {
     type: String,
     default: "active",

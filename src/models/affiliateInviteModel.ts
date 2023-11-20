@@ -16,6 +16,7 @@ interface IAffiliate extends Document {
   commissionStatus: String
   businessSignupStatus: Boolean,
   businessInvitedThrough: String,
+  updated_at:Date,
   //above listed properties we are using
   businessOnboardedStatus: Boolean,
   businessEscrowOpenedStatus: Boolean,
@@ -87,6 +88,7 @@ const AffiliateInviteSchema: Schema<IAffiliate> = new Schema<IAffiliate>({
   businessInvitedNumber: {
     type: Number
   },
+  updated_at: { type: Date, default: Date.now }
 
 },
   {

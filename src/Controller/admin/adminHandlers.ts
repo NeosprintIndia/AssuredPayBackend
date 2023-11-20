@@ -313,7 +313,7 @@ export const approveDocumentInternal = async (
     }
 
     // Update the document status
-    const updateData = { [_flag]: status };
+    const updateData = { [_flag]: status,updated_at:new Date()};
     const result = await UserKYC1.findOneAndUpdate(
       { user: id },
       updateData,

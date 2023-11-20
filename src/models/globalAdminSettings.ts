@@ -16,6 +16,7 @@ interface IReferralCode extends Document {
     sellerpaymentRequestDuration: number;
     refferalCommission:number;
     commissionEligibility:number;
+    updated_at:Date;
 
 }
 
@@ -24,6 +25,7 @@ interface IUser extends Document { _id: Types.ObjectId; }
 
 // Define the schema
 const globalSettingSchema: Schema<IReferralCode> = new Schema<IReferralCode>({
+    updated_at: { type: Date, default: Date.now },
 
     gstLimit: {
         type: Number,

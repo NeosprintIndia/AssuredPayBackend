@@ -36,6 +36,7 @@ interface IAffiliate extends Document {
   tradeName: String, 
   natureOFBusinessActivity: String,
   natureOfPlaceofBusiness: String ,
+  updated_at:Date,
   settlement: ISettlement[];
   AccountDetails: BankACDetail[];
   commissionEarned:number,
@@ -113,6 +114,7 @@ const AffiliateSchema: Schema<IAffiliate> = new Schema<IAffiliate>({
   commissionSettle: {
     type: Number
   },
+  updated_at: { type: Date, default: Date.now },
   settlement: [{
     bankAccountNumber: {
       type: Number

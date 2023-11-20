@@ -52,7 +52,7 @@ import {
     updateAffiliate,
     verifyPAN,
     getGSTDetails,
-    
+    settlesaainvitee
 } from '../../Controller/admin/affiliates/affiliateController';
 
 //onboardingRoutes
@@ -100,5 +100,6 @@ router.put("/updateAffiliate", VerifyAdmin, updateAffiliate)
 router.get("/invitelogs", VerifyAdmin, inviteLogs)
 router.get("/invitelogsspecificaffiliate", VerifyAdmin, inviteLogsSpecificAffiliate)
 router.get("/specificaffiliateaccounts", VerifyAdmin, specificAffiliateAccounts)
+router.post("/settlesaainvitee", VerifyAdmin, settlesaainvitee)
 
 export default router;

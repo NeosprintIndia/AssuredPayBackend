@@ -5,6 +5,7 @@ interface IReferralCode extends Document {
   productName: String;
   categoryIds: String[];
   productStatus: String;
+  updated_at: Date;
 }
 
 // Define the schema
@@ -13,6 +14,7 @@ const ProductSchema: Schema<IReferralCode> = new Schema<IReferralCode>({
     type: String,
     required: true
   },
+  updated_at: { type: Date, default: Date.now },
   categoryIds: {
     type: [String],
     default: [],

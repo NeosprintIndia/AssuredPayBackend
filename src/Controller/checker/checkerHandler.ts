@@ -1,5 +1,6 @@
 import PaymentRequestModel from "../../models/paymentRequest";
 import userRegisterations from "../../models/userRegisterations";
+import globalAdminSettings from "../../models/globalAdminSettings";
 import userKYCs from "../../models/userKYCs"
 import { generateOrderID } from "../../services/generateOrderID";
 import subUsers from "../../models/subUsers";
@@ -267,13 +268,23 @@ export const checkeractionInternal = async (
   remark:string): Promise<boolean | any> => {
   try {
     const orderId= await generateOrderID();
+    const expireDate=await globalAdminSettings.findOne({}).select("buyerpaymentRequestDuration")
+    console.log("expireDate",(expireDate as any).buyerpaymentRequestDuration)
+    const expdays=(expireDate as any).buyerpaymentRequestDuration
+    var currentDate = new Date();
+    console.log(currentDate)
+    var newDate = new Date(currentDate.getTime() + expdays * 24 * 60 * 60 * 1000)
+    console.log(newDate)
+    const timestamp = new Date(newDate).getTime();
+    console.log(timestamp)
     const actionResult=await PaymentRequestModel.findOneAndUpdate({_id:docId},
     {
       $set:
       {
       checkerStatus:action,
        remark:remark,
-       orderID:orderId
+       orderID:orderId,
+       proposalExpireDate:timestamp
     }
   },
   {new:true})

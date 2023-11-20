@@ -27,4 +27,8 @@ export const SESConfig={
   region: "ap-south-1"
 };
 
+// initialised SNS
+
+export const sns = new AWS.SNS();
+
 

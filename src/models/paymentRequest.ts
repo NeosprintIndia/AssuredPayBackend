@@ -15,6 +15,8 @@ interface IPaymentRequest extends Document {
   POPI: string;
   orderAmount: number;
   proposalCreatedDate: Number;
+  updated_at: Date;
+  proposalStatus:string,
   proposalValidity: number;
   proposalExpireDate: Number;
   paymentIndentifier: "buyer" | "seller";
@@ -62,9 +64,16 @@ const paymentRequestSchema = new Schema<IPaymentRequest>({
     ref: "RegisterUsers",
     required: true,
   },
+  updated_at: { type: Date, default: Date.now },
   orderID: {
     type: String,
   },
+  proposalStatus: {
+    type: String,
+    enum: ["active", "expired"],
+    default:"active"
+  },
+  
   paymentType: {
     type: String,
     enum: ["full", "partial"],

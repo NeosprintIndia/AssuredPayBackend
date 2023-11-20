@@ -20,7 +20,12 @@ import {
 
 import { sendDynamicMail } from "../../services/sendEmail";
 import { sendSMS } from "../../services/sendSMS";
+import { Server, Socket } from 'socket.io';
 
+// Extend the Request type to include the io property
+interface CustomRequest extends Request {
+  io: Server;
+}
 // Controller function to handle the registration request
 export const register = async (req: Request, res: Response): Promise<void> => {
   const {
@@ -31,13 +36,16 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     refferal_code,
     role,
   } = req.body;
+  // Access io from the request object
+  const io = (req as any).io;
   const [success, result] = await performRegistration(
     business_email,
     username,
     business_mobile,
     password,
     refferal_code,
-    role
+    role,
+    io
   );
   // Prepare data for email and SMS notifications
   const reqData = {

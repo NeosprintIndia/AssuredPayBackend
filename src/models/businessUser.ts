@@ -12,7 +12,8 @@ interface IBusinessUser extends Document {
   mobileotp:string;
   emailotp: string;
   isemailotpverified:boolean;
-  ismobileotpverified:boolean
+  ismobileotpverified:boolean;
+  updated_at:Date;
   // Additional business user-specific fields
 }
 // Define the reference interface for the user field
@@ -42,6 +43,7 @@ const BusinessUserSchema: Schema<IBusinessUser> = new Schema({
     type: Boolean,
     default: false,
   },
+  updated_at: { type: Date, default: Date.now },
   // Additional business user-specific fields
 });
 

@@ -4,8 +4,8 @@ import {
   find,
   findAndUpdate,
   verifyPANDetails,
-  getGSTDetailsInternal
-  
+  getGSTDetailsInternal,
+  createSettlement
 } from "./affiliateHandler";
 
 function sendResponse(res: Response, success: Boolean, result: any){
@@ -78,5 +78,13 @@ export const updateAffiliate = async (req: Request, res: Response): Promise<void
   const {affiliateId} = (req as any).query;
   const affiliateDetails = req.body;
   const [success,result] = await findAndUpdate(affiliateId, affiliateDetails);
+  sendResponse(res,success,result);
+};
+
+export const settlesaainvitee = async (req: Request, res: Response): Promise<void> => {
+
+  const {bankAccountNumber,paymentMode,amount,Paidto,Paidfor,utrRef,remark,transactionId} = req.body;
+  const userId = (req as any).userId 
+  const [success,result] = await createSettlement(Paidto,Paidfor,bankAccountNumber,paymentMode,amount,utrRef,transactionId,remark,userId);
   sendResponse(res,success,result);
 };

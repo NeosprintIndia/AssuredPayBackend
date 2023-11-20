@@ -8,7 +8,8 @@ interface IReferralCode extends Document {
   categoryId: Types.ObjectId | IUser,
   productIds: [String],
   status: String,
-  favourite: Boolean
+  favourite: Boolean,
+  updated_at:Date;
 }
 interface IUser extends Document {_id: Types.ObjectId }
 // Define the schema
@@ -33,6 +34,7 @@ const BusinessNetworkSchema: Schema<IReferralCode> = new Schema<IReferralCode>({
     type: [{ type : Schema.Types.ObjectId}],
     required: true
   },
+  updated_at: { type: Date, default: Date.now },
   status: {
     type: String,
     required: true,
@@ -43,6 +45,8 @@ const BusinessNetworkSchema: Schema<IReferralCode> = new Schema<IReferralCode>({
     default: false
   }
 },
+
+
   {
   versionKey : false
   }

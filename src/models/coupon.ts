@@ -11,7 +11,8 @@ interface IReferralCode extends Document {
   discount : {prop:String},
   validFor: String,
   usage: Number,
-  usedBy: String[]
+  usedBy: String[],
+  updated_at:Date;
 }
 
 // Define the schema
@@ -20,6 +21,7 @@ const CouponCodeSchema: Schema<IReferralCode> = new Schema<IReferralCode>({
     type: String,
     required: true
   },
+  updated_at: { type: Date, default: Date.now },
   description: {
     type: String,
     default: '',

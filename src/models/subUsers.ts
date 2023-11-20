@@ -4,6 +4,7 @@ import mongoose, { Document, Schema, Model, Types } from "mongoose";
 interface ISubUser extends Document {
   userId: Types.ObjectId | IUser;
   belongsTo: Types.ObjectId | IUser;
+  updated_at: Date;
 }
 // Define the reference interface for the user field
 interface IUser extends Document {
@@ -15,7 +16,8 @@ const SubUserSchema: Schema<ISubUser> = new Schema({
         type: Schema.Types.ObjectId,
         ref: "RegisterUser",
       },
-      userId: { type: mongoose.Schema.Types.ObjectId, ref: 'RegisterUser' }
+      userId: { type: mongoose.Schema.Types.ObjectId, ref: 'RegisterUser' },
+      updated_at: { type: Date, default: Date.now },
 });
 // Define the model
 const Subuser: Model<ISubUser> = mongoose.model<ISubUser>(

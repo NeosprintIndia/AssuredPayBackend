@@ -13,7 +13,9 @@ import { generateOTP } from "../../services/otpGenrators";
 import { generateReferralCode } from "../../services/referralCodes";
 import { sendDynamicMail } from "../../services/sendEmail";
 import { sendSMS } from "../../services/sendSMS";
-
+import  sendNotification from "../../services/sendNotifications"
+import  {postGlobalNotification,postUserNotification} from "../../services/notificationsUtils"
+import { Socket } from 'socket.io';
 // ****************************Function to handle registration logic****************************
 export const performRegistration = async (
   business_email: string,
@@ -21,8 +23,10 @@ export const performRegistration = async (
   business_mobile: string,
   password: string,
   refferal_code: string | null,
-  role:string
+  role:string,
+  io: Socket
 ): Promise<[boolean, any]> => {
+ 
   let referralCode: string | null = null;
   if (refferal_code != null) {
     referralCode = refferal_code;
@@ -40,7 +44,8 @@ export const performRegistration = async (
       business_mobile,
       username,
       referralCode,
-      role
+      role,
+      io
     );
     console.log("newUser",newUser)
     if (!newUser[0]) {
@@ -157,7 +162,8 @@ const createUser = async (
   business_mobile: string,
   username: string,
   refferal_code: string | null,
-  role:string
+  role:string,
+  io: Socket
 ): Promise<[boolean, any]> => {
   try {
   
@@ -245,6 +251,14 @@ console.log(updateStatus)
     };
     await sendDynamicMail(reqData);
     await sendSMS(reqData);
+    await postUserNotification({ userId: newUser._id, message: "Your message here" }, io);
+    // sendNotification(newUser._id, "hurray you are registered", (err, data) => {
+    //   if (err) {
+    //     console.log(data,'Failed to send notification');
+    //   } else {
+    //     console.log(data,'send notification');
+    //   }
+    // });
     return [true, newUser];
   } catch (error) {
     console.error("Error in createUser:", error);

@@ -13,6 +13,7 @@ interface IRegisterUser extends Document {
   role: string;
   forgotpasswordotp:string;
   MFA: string;
+  updated_at: Date;
 }
 
 // Define the schema
@@ -56,7 +57,8 @@ const RegisterUserSchema: Schema<IRegisterUser> = new Schema({
   MFA: {
     type: String,
     default:""
-  }
+  },
+  updated_at: { type: Date, default: Date.now }
 });
 
 // Define the model

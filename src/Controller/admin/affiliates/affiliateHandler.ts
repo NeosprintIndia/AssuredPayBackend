@@ -1,5 +1,6 @@
 import { stat } from 'fs/promises';
 import affiliate from '../../../models/affiliateModel';
+import affiliateSettlement from '../../../models/affiliateSettlement';
 import { generateReferralCode } from "../../../services/referralCodes";
 import userRegisterations from "../../../models/userRegisterations";
 import Referral from "../../../models/refferalCodes";
@@ -207,3 +208,50 @@ export const getGSTDetailsInternal = async (
     return [false, error];
   }
 };
+
+
+
+export const createSettlement = async (
+  Paidto: string,
+  Paidfor:string,
+  bankAccountNumber: string,
+  paymentMode: string,
+  amount: number,
+  utrRef: string,
+  transactionId: string,
+  remark: string,
+  userId:string
+): Promise<any> => {
+  try {
+      // Check if utrRef is unique
+      const existingUtrRef = await affiliateSettlement.findOne({ utrRef });
+      if (existingUtrRef) {
+        throw new Error('Duplicate UTR Reference');
+      }
+  
+      // Check if transactionId is unique
+      const existingTransactionId = await affiliateSettlement.findOne({ transactionId });
+      if (existingTransactionId) {
+        throw new Error('Duplicate Transaction ID');
+      }
+  
+      // Prepare the data to be inserted
+      const settlementData = {
+        "paidby":userId,
+        Paidto,
+        Paidfor,
+        bankAccountNumber,
+        paymentMode,
+        amount,
+        utrRef,
+        transactionId,
+        remark,
+      };
+  
+      // Insert the data into the 'affiliatesettlements' collection
+      const result = await affiliateSettlement.create(settlementData);
+    return[true,result]
+  } catch (error) {
+    return [false, error];
+  }
+}

@@ -4,6 +4,7 @@ import mongoose, { Schema, Document, Model, Types } from 'mongoose';
 interface IAffiliate extends Document {
   Paidby: Types.ObjectId | IUser,
   Paidto: Types.ObjectId | IUser,
+  Paidfor:Types.ObjectId | IUser,
   bankAccountNumber: string;
   paymentMode: string;
   amount: number;
@@ -11,6 +12,7 @@ interface IAffiliate extends Document {
   date: Date;
   transactionId: string;
   remark: string;
+  updated_at:Date
 }
 
 // Define the reference interface for the user field
@@ -25,6 +27,9 @@ const AffiliateSettlementSchema: Schema<IAffiliate> = new Schema<IAffiliate>({
     Paidto: { type: Types.ObjectId,
         ref: "RegisterUser",
     },
+    Paidfor: { type: Types.ObjectId,
+      ref: "RegisterUser",
+  },
     bankAccountNumber: {
       type: String
     },
@@ -37,6 +42,7 @@ const AffiliateSettlementSchema: Schema<IAffiliate> = new Schema<IAffiliate>({
     utrRef: {
       type: String
     },
+    updated_at: { type: Date, default: Date.now },
     date: {
       type: Date
     },
