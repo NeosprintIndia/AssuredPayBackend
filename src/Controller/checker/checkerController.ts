@@ -8,7 +8,7 @@ import {
  businessActionOnPaymentRequestInternal,
  getAllMyMakerInternal,
  manageMyMakerInternal,
-//  createPaymentRequestHandler
+createPaymentRequestHandler
 } from "./checkerHandler";
 
 import { sendDynamicMail } from "../../services/sendEmail";
@@ -128,21 +128,21 @@ export async function getmakerrequest(req: Request, res: Response) {
         });
       }
   };
-  // export async function createPaymentChecker(req: Request, res: Response) {
-  //   try {
-  //     const { business_id, paymentType, POPI,orderAmount,paymentIndentifier,paymentDays,MilestoneDetails,orderTitle} = req.body;
-  //     const userid=(req as any).userId
-  //     const [success, result] = await createPaymentRequestHandler(
-  //       orderTitle,  business_id, paymentType, POPI,orderAmount,paymentIndentifier,paymentDays,MilestoneDetails,userid
-  //     );
+  export async function createPaymentChecker(req: Request, res: Response) {
+    try {
+      const { business_id, paymentType, POPI,orderAmount,paymentIndentifier,paymentDays,MilestoneDetails,orderTitle,remark} = req.body;
+      const userid=(req as any).userId
+      const [success, result] = await createPaymentRequestHandler(
+        orderTitle,  business_id, paymentType, POPI,orderAmount,paymentIndentifier,paymentDays,MilestoneDetails,userid,remark
+      );
   
-  //     if (success) {
-  //       res.status(200).send({ result });
-  //     } else {
-  //       res.status(404).send({ error: result });
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //     res.status(500).send({ message: "Internal Server Error" });
-  //   }
-  // }
+      if (success) {
+        res.status(200).send({ result });
+      } else {
+        res.status(404).send({ error: result });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: "Internal Server Error" });
+    }
+  }

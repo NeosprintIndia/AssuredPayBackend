@@ -279,8 +279,8 @@ export const checkeractionInternal = async (
        proposalExpireDate:timestamp
     }
   },
-  {new:true})
-      return [true,actionResult]
+    {new:true})
+    return [true,actionResult]
   } catch (err) {
     console.error(err);
   }
@@ -461,6 +461,7 @@ export const manageMyMakerInternal = async (user:any,status:string): Promise<any
 //   paymentDays: number,
 //   MilestoneDetails: object,
 //   userId: string,
+//   remark:string
 // ): Promise<boolean | any> => {
 //   try {
 //     if (!orderTitle || !business_id || !paymentType || !POPI || !orderAmount || !paymentIndentifier || !paymentDays || !MilestoneDetails || !userId) {
@@ -476,7 +477,7 @@ export const manageMyMakerInternal = async (user:any,status:string): Promise<any
 //       paymentDays: paymentDays,
 //       MilestoneDetails: MilestoneDetails,
 //       createdby: userId,
-//       requester: userId,  // Change after
+//       requester: userId, 
 //       checkerStatus:"approved",
 //       recipientStatus:"pending",
 //       recipient: business_id,
@@ -486,9 +487,93 @@ export const manageMyMakerInternal = async (user:any,status:string): Promise<any
 //     }; 
 //     const newPaymentRequest = new PaymentRequestModel(paymentRequestData);
 //     const finalresult = await newPaymentRequest.save();
-//     return [true, finalresult];
+//     const orderId= await generateOrderID();
+//     const expireDate=await globalAdminSettings.findOne({}).select("buyerpaymentRequestDuration")
+//     console.log("expireDate",(expireDate as any).buyerpaymentRequestDuration)
+//     const expdays=(expireDate as any).buyerpaymentRequestDuration
+//     var currentDate = new Date();
+//     console.log(currentDate)
+//     var newDate = new Date(currentDate.getTime() + expdays * 24 * 60 * 60 * 1000)
+//     console.log(newDate)
+//     const timestamp = new Date(newDate).getTime();
+//     console.log(timestamp)
+//     const actionResult=await PaymentRequestModel.findOneAndUpdate({_id:finalresult._id},
+//     {
+//       $set:
+//       {
+//        remark:remark,
+//        orderID:orderId,
+//        proposalExpireDate:timestamp
+//     }
+//   },
+//     {new:true})
+//     return [true,actionResult]
 //   } catch (error) {
 //     console.error("Error in createPaymentRequestHandler:", error);
 //     return [false, "Error creating payment request. Please try again."];
 //   }
 // };
+
+export const createPaymentRequestHandler = async (
+  orderTitle: string,
+  business_id: string,
+  paymentType: string,
+  POPI: string,
+  orderAmount: number,
+  paymentIndentifier: string,
+  paymentDays: number,
+  MilestoneDetails: object,
+  userId: string,
+  remark: string
+): Promise<[boolean, any]> => {
+  try {
+    const requiredInputs = [orderTitle, business_id, paymentType, POPI, orderAmount, paymentIndentifier, paymentDays, MilestoneDetails, userId];
+
+    if (requiredInputs.some(input => !input)) {
+      throw new Error("Missing required input parameters.");
+    }
+
+    const isBuyerPayment = paymentIndentifier === "buyer";
+    const paidto = isBuyerPayment ? business_id : userId;
+    const paidby = isBuyerPayment ? userId : business_id;
+
+    const paymentRequestData = {
+      paymentType,
+      POPI,
+      orderAmount,
+      paymentIndentifier,
+      paymentDays,
+      MilestoneDetails,
+      createdby: userId,
+      requester: userId,
+      checkerStatus: "approved",
+      recipientStatus: "pending",
+      recipient: business_id,
+      orderTitle,
+      paidTo: paidto,
+      paidBy: paidby,
+    };
+    const newPaymentRequest = new PaymentRequestModel(paymentRequestData);
+    const finalresult = await newPaymentRequest.save();
+    const orderId = await generateOrderID();
+    const expireDate = (await globalAdminSettings.findOne({})).buyerpaymentRequestDuration;
+    const expdays = expireDate;
+    const timestamp = Date.now() + expdays * 24 * 60 * 60 * 1000;
+
+    const actionResult = await PaymentRequestModel.findOneAndUpdate(
+      { _id: finalresult._id },
+      {
+        $set: {
+          remark,
+          orderID: orderId,
+          proposalExpireDate: timestamp,
+        },
+      },
+      { new: true }
+    );
+    return [true, actionResult];
+  } catch (error) {
+    console.error("Error in createPaymentRequestHandler:", error);
+    return [false, "Error creating payment request. Please try again."];
+  }
+};

@@ -13,7 +13,8 @@ const  businessProjectionFields = {
     "nameInAadhaar" : 1,
     "createdAt": 1,
     "Ratings" : 1, 
-    "_id": 1
+    "_id": 1,
+    "user":1
 }
 const businessNetworkProjectFields = {
   "status": 1,
