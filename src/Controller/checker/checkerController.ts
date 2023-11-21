@@ -5,7 +5,9 @@ import {
  viewparticularrequestInternal,
  getpaymentrequestInternal,
  actionPaymentRequestInternal,
- businessActionOnPaymentRequestInternal
+ businessActionOnPaymentRequestInternal,
+ getAllMyMakerInternal,
+ manageMyMakerInternal
 } from "./checkerHandler";
 
 import { sendDynamicMail } from "../../services/sendEmail";
@@ -99,3 +101,29 @@ export async function getmakerrequest(req: Request, res: Response) {
       res.status(500).send({ message: "Internal Server Error" });
     }
   }
+  export async function getAllMyMaker(req: Request, res: Response) {
+    try {
+      const userid = (req as any).userId;
+      const {page, rowsLimitInPage} = req.query;
+      const [success, result] = await getAllMyMakerInternal(userid,page,rowsLimitInPage);
+      if (success) {
+        res.status(200).send({ result });
+      } else {
+        res.status(500).send({ error: "Error fetching data" });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ error: "Internal Server Error" });
+    }
+  }
+  export const manageMyMaker = async (req: Request, res: Response): Promise<void> => {
+    const { user,status } = req.body;
+      const [success,result] = await manageMyMakerInternal(user,status);
+      if (success) {
+        res.send({result,Active:true});
+      } else {
+        res.status(500).send({
+          message: result,Active:false
+        });
+      }
+  };

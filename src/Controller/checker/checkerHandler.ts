@@ -4,8 +4,9 @@ import globalAdminSettings from "../../models/globalAdminSettings";
 import userKYCs from "../../models/userKYCs"
 import { generateOrderID } from "../../services/generateOrderID";
 import subUsers from "../../models/subUsers";
-import mongoose, { Schema, ObjectId,Document, Model, Types } from 'mongoose';
+import mongoose, { Schema, ObjectId,Document, Model, Types, } from 'mongoose';
 import { getBusinessNetworkDetails} from "../../Controller/user/businessNetworkHandler"
+import {getSkipAndLimitRange} from "../../utils/pagination"
 
 import * as CryptoJS from "crypto-js";
 import "dotenv/config";
@@ -388,5 +389,73 @@ export const businessActionOnPaymentRequestInternal = async (
      
   } catch (err) {
     return [false,err]
+  }
+};
+export const getAllMyMakerInternal = async (
+  userid: any,
+  page: any,
+  rowsLimitInPage: any
+): Promise<[boolean, any] | undefined> => {
+  try {
+    const userIdObject = new mongoose.Types.ObjectId(userid);
+    const [skipLimit, limitRange] = await getSkipAndLimitRange(page, rowsLimitInPage);
+    const result = await subUsers.aggregate([
+      {
+        $facet: {
+          totalCount: [
+            { $match: { belongsTo: userIdObject } },
+            { $count: 'value' }
+          ],
+          subusers: [
+            { $match: { belongsTo: userIdObject } },
+            { $skip: skipLimit },
+            { $limit: limitRange },
+            {
+              $lookup: {
+                from: 'registerusers',
+                localField: 'userId',
+                foreignField: '_id',
+                as: 'userDetails'
+              }
+            },
+            { $unwind: '$userDetails' },
+            {
+              $project: {
+                _id: 0,
+                currentStatus: '$currentStatus',
+                userId: '$userId',
+                business_email: '$userDetails.business_email',
+                username: '$userDetails.username',
+                business_mobile: '$userDetails.business_mobile'
+                // Add other fields from RegisterUser as needed
+              }
+            }
+          ]
+        }
+      }
+    ]);
+    const totalCount = result[0].totalCount.length > 0 ? result[0].totalCount[0].value : 0;
+    const subusers = result[0].subusers; 
+    return [true, { totalCount, subusers }];
+  } catch (err) {
+    console.error(err);
+    return [false, err];
+  }
+};
+export const manageMyMakerInternal = async (user:any,status:string): Promise<any> => {
+  try {
+    if (!user || !status) {
+      throw new Error("Invalid input parameters");
+    }
+    const result = await subUsers.findOneAndUpdate(
+      { userId: user },
+      { $set: { currentStatus: status } },
+      { new: true }
+    );
+    console.log("Maker updated successfully");
+    return [true, result];
+  } catch (error) {
+    console.log("Error occured while updating the Maker", error);
+    return  [false, error.message];
   }
 };

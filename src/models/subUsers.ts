@@ -5,6 +5,7 @@ interface ISubUser extends Document {
   userId: Types.ObjectId | IUser;
   belongsTo: Types.ObjectId | IUser;
   updated_at: Date;
+  currentStatus:String;
 }
 // Define the reference interface for the user field
 interface IUser extends Document {
@@ -18,6 +19,11 @@ const SubUserSchema: Schema<ISubUser> = new Schema({
       },
       userId: { type: mongoose.Schema.Types.ObjectId, ref: 'RegisterUser' },
       updated_at: { type: Date, default: Date.now },
+      currentStatus: {
+        type: String,
+        default: "active",
+        enum: ["active", "inActive"]
+      },
 });
 // Define the model
 const Subuser: Model<ISubUser> = mongoose.model<ISubUser>(

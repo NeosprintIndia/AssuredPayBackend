@@ -27,7 +27,6 @@ export async function createPaymentRequest(req: Request, res: Response) {
       res.status(500).send({ message: "Internal Server Error" });
     }
   }
-
   export const createsubuser = async (req: Request, res: Response): Promise<void> => {
     const { business_email, username, business_mobile,role,} =
       req.body;
