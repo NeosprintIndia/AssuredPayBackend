@@ -766,25 +766,17 @@ export function generateTemporaryPassword(): string {
   const lowercaseLetters = 'abcdefghijklmnopqrstuvwxyz';
   const digits = '0123456789';
   const specialCharacters = '!@#$%^&*()-_+=<>?';
-
   let password = '';
-
- 
   password += uppercaseLetters[Math.floor(Math.random() * uppercaseLetters.length)];
-
   password += lowercaseLetters[Math.floor(Math.random() * lowercaseLetters.length)];
-  
   password += digits[Math.floor(Math.random() * digits.length)];
- 
   password += specialCharacters[Math.floor(Math.random() * specialCharacters.length)];
-
   // Generate the remaining characters randomly
   const remainingLength = 8 - password.length;
   const allCharacters = uppercaseLetters + lowercaseLetters + digits + specialCharacters;
   for (let i = 0; i < remainingLength; i++) {
     password += allCharacters[Math.floor(Math.random() * allCharacters.length)];
   }
-
   // Shuffle the password characters to make it random
   password = password.split('').sort(() => Math.random() - 0.5).join('');
 
@@ -826,7 +818,6 @@ export const handleForgotPassword = async (
       };
       await sendDynamicMail(reqData);
       await sendSMS(reqData);
-
     return null;
   } catch (error) {
     console.error(error);

@@ -56,11 +56,11 @@ export const findAndInsert = async (affiliateDetails): Promise<any> => {
         const reqData = {
           Email_slug: "Affiliate_Created",
           email: business_email,
-          VariablesEmail: [username,tempPassword,"URL"],
+          VariablesEmail: [username,tempPassword,"affiliate.assuredpay.in"],
       
           receiverNo: business_mobile,
           Message_slug: "Affiliate_Created",
-          VariablesMessage: [username,tempPassword,"URL"],
+          VariablesMessage: [username,tempPassword,"affiliate.assuredpay.in"],
         };
       await sendDynamicMail(reqData);
       await sendSMS(reqData);
