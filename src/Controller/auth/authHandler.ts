@@ -798,36 +798,30 @@ export const handleForgotPassword = async (
 ): Promise<string | null> => {
   try {
     const user = await Registration.findOne({ username: username });
-
     if (!user) {
       return "User not found";
     }
     if (user.forgotpasswordotp != otp) return "Wrong OTP";
-
     const tempPassword = generateTemporaryPassword();
-  
     const encryptedNewPassword = CryptoJS.AES.encrypt(
       tempPassword,
       process.env.PASS_PHRASE
     ).toString();
-
     const oldPasswords = user.oldPasswords || [];
     oldPasswords.push(encryptedNewPassword);
     if (oldPasswords.length > 5) {
       oldPasswords.shift();
     }
-
     user.oldPasswords = oldPasswords;
     user.password = encryptedNewPassword;
     await user.save();
-       //Send an email with the temporary password
        const reqData = {
-        Email_slug: "Admin_New_Reset",
+        Email_slug: "Mobile_Reset_Password_OTP",
         email: user.business_email,
         VariablesEmail: [username, tempPassword],
   
         receiverNo: user.business_mobile,
-        Message_slug: "Admin_New_Reset",
+        Message_slug: "Mobile_Reset_Password_OTP",
         VariablesMessage: [username, tempPassword],
       };
       await sendDynamicMail(reqData);
@@ -851,15 +845,14 @@ export const forgotPassotpInternal = async (
       { $set: {forgotpasswordotp: otpGenerated } },
       { new: true }
     );
-    // Send OTP On Mail/Mobile
     const reqData = {
-      Email_slug: "User_Login_OTP",
+      Email_slug: "Mobile_Reset_Password_OTP",
       email: updatedUser.business_email,
-      VariablesEmail: [otpGenerated],
+      VariablesEmail: [username,otpGenerated],
 
       receiverNo: updatedUser.business_mobile,
-      Message_slug: "User_Login_OTP",
-      VariablesMessage: [otpGenerated],
+      Message_slug: "Mobile_Reset_Password_OTP",
+      VariablesMessage: [username,otpGenerated],
     };
     await sendDynamicMail(reqData);
     await sendSMS(reqData);

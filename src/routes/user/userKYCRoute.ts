@@ -78,17 +78,10 @@ router.get("/getProduct",[VerifyToken],getProduct)
 // // affiliatePortal
 // router.post("/invite",[VerifyToken],addIvite)
 // router.get("/getInvite",[VerifyToken],getInvite)
-
 //Payment Request Related Routes
-
 //get all payment request
-
 // Accept Payment request
-
 // Reject Payment request
-
-
 /// Notification route
-
 
 export default router;

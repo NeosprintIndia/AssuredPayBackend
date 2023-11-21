@@ -1,4 +1,4 @@
-// src/utils/notificationUtils.ts
+
 import UserNotificationModel from '../models/pushnotifications';
 import GlobalNotificationModel from '../models/globalnotifications';
 import { Socket } from 'socket.io';
@@ -6,11 +6,9 @@ interface UserNotificationPayload {
   userId: string;
   message: string;
 }
-
 interface GlobalNotificationPayload {
   message: string;
 }
-
 export const postUserNotification = async (
   payload: UserNotificationPayload,
   io: Socket,

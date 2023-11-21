@@ -26,7 +26,6 @@ const registrationValidator = [
     .isAlphanumeric()
     .withMessage('Referral code must be alphanumeric.')
 ];
-
 const loginValidatorUser = [
   check('username')
     .isLength({ min: 4 })
@@ -37,7 +36,6 @@ const loginValidatorUser = [
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/) // Contains at least one uppercase letter, one lowercase letter, one digit, and one special character
     .withMessage('Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one digit, and one special character.'),
 ];
-
 const changepasswordValidator = [
      check('username')
     .isLength({ min: 4 })
@@ -52,7 +50,6 @@ const changepasswordValidator = [
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/) // Contains at least one uppercase letter, one lowercase letter, one digit, and one special character
     .withMessage('Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one digit, and one special character.'),
 ];
-
 const forgotpasswordValidator = [
      check('username')
     .isLength({ min: 4 })
@@ -60,7 +57,6 @@ const forgotpasswordValidator = [
      check('otp')
     .isNumeric()
 ];
-
 const addSMSTemplateValidation = [
   check('Title').notEmpty().withMessage('Title is required'),
   check('Subtitle').notEmpty().withMessage('Subtitle is required'),
@@ -75,8 +71,6 @@ const addSMSTemplateValidation = [
   check('Email').optional().notEmpty().withMessage('Email is required'),
   check('Reference_message').notEmpty().withMessage('Reference_message is required'),
 ];
-
-
 // Middleware to handle validation errors
 const handleValidationErrors = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
@@ -85,7 +79,6 @@ const handleValidationErrors = (req: Request, res: Response, next: NextFunction)
   }
   next();
 };
-
 // Middleware to check for unexpected properties in the request body
 const checkForUnexpectedProperties = (allowedProperties: string[]) => {
     return (req: Request, res: Response, next: NextFunction) => {
@@ -98,10 +91,6 @@ const checkForUnexpectedProperties = (allowedProperties: string[]) => {
       next();
     };
   };
-
-
-
-
 export {
   registrationValidator,
   loginValidatorUser,

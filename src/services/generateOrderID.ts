@@ -7,6 +7,5 @@ function generateOrderID(): string {
     const orderID = `${prefix}${currentYear}${month}${day}${randomDigits}`;
     return orderID;
   }
-  
   export { generateOrderID };
   

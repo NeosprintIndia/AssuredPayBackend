@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 
 function generateCustomUUID(): string {
   const prefix = 'AP';
@@ -7,5 +6,4 @@ function generateCustomUUID(): string {
   const customUUID = `${currentYear}${prefix}${randomDigits}`;
   return customUUID;
 }
-
 export { generateCustomUUID };

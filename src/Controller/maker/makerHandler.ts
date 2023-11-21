@@ -34,7 +34,7 @@ export const createPaymentRequestHandler = async (
       paymentDays: paymentDays,
       MilestoneDetails: MilestoneDetails,
       createdby: userId,
-      requester: requester.belongsTo,  // CHnage after
+      requester: requester.belongsTo,  // Change after
       checkerStatus:"pending",
       recipientStatus:"pending",
       recipient: business_id,

@@ -81,8 +81,7 @@ export const updateAffiliate = async (req: Request, res: Response): Promise<void
   sendResponse(res,success,result);
 };
 
-export const settlesaainvitee = async (req: Request, res: Response): Promise<void> => {
-
+export const SettleSpecificAffiliateAccountInvitee = async (req: Request, res: Response): Promise<void> => {
   const {bankAccountNumber,paymentMode,amount,Paidto,Paidfor,utrRef,remark,transactionId} = req.body;
   const userId = (req as any).userId 
   const [success,result] = await createSettlement(Paidto,Paidfor,bankAccountNumber,paymentMode,amount,utrRef,transactionId,remark,userId);

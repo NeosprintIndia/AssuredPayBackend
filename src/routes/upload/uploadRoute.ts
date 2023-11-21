@@ -7,8 +7,6 @@ import { uploadMiddleware } from '../../services/uploads';
 
 const router: Router = Router();
 
-// Define the route to handle file uploads
 router.post('/uploaddoc', [VerifyToken, uploadMiddleware], uploaddoc);
-
 
 export default router;

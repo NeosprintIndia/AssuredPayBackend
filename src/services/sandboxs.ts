@@ -17,7 +17,6 @@ const adminGetData = async () => {
   }
 };
 // Function to authenticate with Sandbox API
-
 const AUTHENTICATE_SB = () => {
   const instance = axios.create({
     baseURL: 'https://api.sandbox.co.in', // Base URL for the API
@@ -43,16 +42,13 @@ const AUTHENTICATE_SB = () => {
     });
 };
 // Exported functions for various KYC verification processes
-
 export const PAN_KYC_SB = async (dynamicData: { id_number: string,userlog:any }) => {
   try {
     const instance = axios.create({
       baseURL: 'https://api.sandbox.co.in',
     });
-
     const adminData = await adminGetData();
     const token = adminData.sandbox_token;
-
     const config: AxiosRequestConfig = {
       method: 'POST',
       url: '/kyc/pan',
@@ -68,8 +64,6 @@ export const PAN_KYC_SB = async (dynamicData: { id_number: string,userlog:any })
         reason: 'For KYC of User',
       },
     };
-
-
     try {
       const response = await instance.request(config);
       await log.create({
@@ -112,8 +106,6 @@ export const GST_KYC_SB = async (dynamicData: { id_number: string,userlog:any })
   });
 };
 export const Aadhaar_KYC_S1 = async (dynamicData: { id_number: string }) => {
-
-
   const adminData = await adminGetData()
   const token = adminData.sandbox_token
   const instance = axios.create({
@@ -132,11 +124,7 @@ export const Aadhaar_KYC_S1 = async (dynamicData: { id_number: string }) => {
     data: {
       aadhaar_number: dynamicData.id_number,
     },
-
   };
-
-
-
   return new Promise((resolve, reject) => {
     instance
       .request(config)
@@ -150,7 +138,6 @@ export const Aadhaar_KYC_S1 = async (dynamicData: { id_number: string }) => {
   });
 };
 export const Aadhaar_KYC_S2 = async (dynamicData: { otp: string; refId: string }) => {
-
   const adminData = await adminGetData()
   const token = adminData.sandbox_token
   const instance = axios.create({
@@ -171,7 +158,6 @@ export const Aadhaar_KYC_S2 = async (dynamicData: { otp: string; refId: string }
       ref_id: dynamicData.refId,
     },
   };
-
   return new Promise((resolve, reject) => {
     instance
       .request(config)
@@ -201,9 +187,6 @@ export const IFSC_Verify = async (dynamicData: { ifsc: string }) => {
       'content-type': 'application/json',
     },
   };
-
-
-
   return new Promise((resolve, reject) => {
     instance
       .request(config)
@@ -254,7 +237,6 @@ export const Bank_Account_Verify = async (dynamicData: { ifsc: string; account_n
     const token = adminData.sandbox_token;
     console.log(token);
     console.log(dynamicData);
-
     const response = await axios.get(`https://api.sandbox.co.in/bank/${dynamicData.ifsc}/accounts/${dynamicData.account_number}/verify`, {
       params: {
         name: dynamicData.name,
@@ -287,9 +269,6 @@ export const UPI_Verify = async (dynamicData: { VPA: string }) => {
       'x-api-version': '1.0',
     },
   };
-
-
-
   return new Promise((resolve, reject) => {
     instance
       .request(config)

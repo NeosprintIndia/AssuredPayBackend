@@ -1,5 +1,4 @@
 const OTP_LENGTH: number = 6;
-
 export const generateOTP = (): string => {
   const min = Math.pow(10, OTP_LENGTH - 1);
   const max = Math.pow(10, OTP_LENGTH) - 1;
