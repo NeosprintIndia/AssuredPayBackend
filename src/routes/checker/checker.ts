@@ -9,7 +9,8 @@ getpaymentrequest,
 actionPaymentRequest,
 businessActionOnPaymentRequest,
 getAllMyMaker,
-manageMyMaker
+manageMyMaker,
+// createPaymentChecker
 } from '../../Controller/checker/checkerController';
 
 const router: Router = Router();
@@ -22,5 +23,7 @@ router.post("/actionpaymentrequest",actionPaymentRequest)
 router.post('/businessactiononpaymentrequest',verifyTokenUsers,businessActionOnPaymentRequest)
 router.get('/getallmymaker',verifyTokenUsers,getAllMyMaker)
 router.put('/managemymaker',verifyTokenUsers,manageMyMaker)
+// router.post('/createpaymentchecker',verifyTokenUsers,createPaymentChecker) if need for separate then will see
+
 
 export default router;

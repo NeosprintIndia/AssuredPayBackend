@@ -7,7 +7,6 @@ import subUsers from "../../models/subUsers";
 import mongoose, { Schema, ObjectId,Document, Model, Types, } from 'mongoose';
 import { getBusinessNetworkDetails} from "../../Controller/user/businessNetworkHandler"
 import {getSkipAndLimitRange} from "../../utils/pagination"
-
 import * as CryptoJS from "crypto-js";
 import "dotenv/config";
 import { sendDynamicMail } from "../../services/sendEmail";
@@ -149,22 +148,15 @@ export const getpaymentrequestInternal = async (userid: string): Promise<boolean
       recipient: userid,
       recipientStatus: 'pending'
     })
-    let modelResults = []; // Initialize an empty array to store the results
+    let modelResults = []; 
     console.log("paymentRequests",paymentRequests)
-      // for (const result of paymentRequests) {
       const requester = (paymentRequests as any).requester;
       const docId=(paymentRequests as any)._id;
       const modelResult = await getRequestDetails(userid, requester);
-      // Push the modelResult into the array
       modelResults.push(modelResult);
-      // Do something with the modelResult
-    // }
-
-    // At this point, modelResults contains an array of all the results
-
     return [true, modelResults]
   } catch (err) {
-    // Handle any errors here
+    
     console.error(err);
   }
 };
@@ -459,3 +451,44 @@ export const manageMyMakerInternal = async (user:any,status:string): Promise<any
     return  [false, error.message];
   }
 };
+// export const createPaymentRequestHandler = async (
+//   orderTitle:string,
+//   business_id: string,
+//   paymentType: string,
+//   POPI: string,
+//   orderAmount: number,
+//   paymentIndentifier: string,
+//   paymentDays: number,
+//   MilestoneDetails: object,
+//   userId: string,
+// ): Promise<boolean | any> => {
+//   try {
+//     if (!orderTitle || !business_id || !paymentType || !POPI || !orderAmount || !paymentIndentifier || !paymentDays || !MilestoneDetails || !userId) {
+//       throw new Error("Missing required input parameters.");
+//     }
+//     const paidto = (paymentIndentifier === "buyer") ? business_id : userId;
+//     const paidby = (paymentIndentifier === "buyer") ? userId : business_id;
+//     const paymentRequestData = {
+//       paymentType: paymentType,
+//       POPI: POPI,
+//       orderAmount: orderAmount,
+//       paymentIndentifier: paymentIndentifier,
+//       paymentDays: paymentDays,
+//       MilestoneDetails: MilestoneDetails,
+//       createdby: userId,
+//       requester: userId,  // Change after
+//       checkerStatus:"approved",
+//       recipientStatus:"pending",
+//       recipient: business_id,
+//       orderTitle:orderTitle,
+//       paidTo:paidto,
+//       paidBy:paidby
+//     }; 
+//     const newPaymentRequest = new PaymentRequestModel(paymentRequestData);
+//     const finalresult = await newPaymentRequest.save();
+//     return [true, finalresult];
+//   } catch (error) {
+//     console.error("Error in createPaymentRequestHandler:", error);
+//     return [false, "Error creating payment request. Please try again."];
+//   }
+// };
