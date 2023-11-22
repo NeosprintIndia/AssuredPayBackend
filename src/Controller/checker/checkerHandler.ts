@@ -16,9 +16,10 @@ export const getMakerRequestInternal = async (userid: string): Promise<boolean |
   try {
     const paymentRequests = await PaymentRequestModel.find({
       requester: userid,
-      checkerStatus: { $in: ['pending', 'approved'] }
+      checkerStatus: 'pending'
     });
-    let modelResults = []; // Initialize an empty array to store the results
+    console.log("paymentRequests",paymentRequests)
+    let modelResults = []; 
 
     for (const result of paymentRequests) {
       const createdby = result.createdby;
@@ -26,25 +27,21 @@ export const getMakerRequestInternal = async (userid: string): Promise<boolean |
       const businessName = result.recipient;
       const docId=result._id;
       const modelResult = await getBusinessDetails(userId, businessName, createdby,docId);
-      // Push the modelResult into the array
       modelResults.push(modelResult);
-      // Do something with the modelResult
       console.log(modelResult);
     }
-
     // At this point, modelResults contains an array of all the results
     console.log(modelResults);
 
     return [true, modelResults]
   } catch (err) {
-    // Handle any errors here
+   
     console.error(err);
   }
 };
 export const getBusinessDetails = async (userId, businessName, createdby,docId) => {
   try {
     // Fetch the 'addedby' details
-   
     const addedby = await userRegisterations.findOne({ _id: createdby });
 console.log("businessName",businessName)
     // Continue with the existing aggregation pipeline
@@ -577,3 +574,36 @@ export const createPaymentRequestHandler = async (
     return [false, "Error creating payment request. Please try again."];
   }
 };
+
+export const getAllPaymentOfCheckerInternal = async (userid: string, paymentIndentifier:any): Promise<any[]> => {
+  try {
+    const paymentRequests = await PaymentRequestModel.find({ requester: userid, paymentIndentifier })
+      .select("recipient orderID proposalCreatedDate orderAmount MilestoneDetails paymentIndentifier");
+    
+    const paymentsWithTotalApFees = await Promise.all(paymentRequests.map(async (payment) => {
+      const { MilestoneDetails, ...paymentWithoutMilestones } = payment.toObject();
+      const totalApFees = MilestoneDetails.reduce((sum, milestone) => sum + milestone.ApFees, 0);
+
+      // Fetch Legal_Name_of_Business from userkycs collection using the recipient's ObjectId
+      const recipientUserKyc = await userKYCs.findOne({ user: payment.recipient });
+      console.log("recipientUserKyc", recipientUserKyc);
+      const legalNameOfBusiness = recipientUserKyc?.Legal_Name_of_Business || null; // Adjust the default value as needed
+
+      return {
+        ...paymentWithoutMilestones,
+        totalApFees,
+        legalNameOfBusiness,
+      };
+    }));
+    
+    console.log("paymentRequestsWithTotalApFees", paymentsWithTotalApFees);
+    return [true, paymentsWithTotalApFees];
+  } catch (err) {
+    console.error(err);
+    throw new Error(err.message); // Throw an exception instead of returning an array
+  }
+};
+
+
+
+

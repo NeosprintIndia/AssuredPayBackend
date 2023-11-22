@@ -8,7 +8,8 @@ import {
  businessActionOnPaymentRequestInternal,
  getAllMyMakerInternal,
  manageMyMakerInternal,
-createPaymentRequestHandler
+createPaymentRequestHandler,
+getAllPaymentOfCheckerInternal
 } from "./checkerHandler";
 
 import { sendDynamicMail } from "../../services/sendEmail";
@@ -17,8 +18,8 @@ import { sendSMS } from "../../services/sendSMS";
 export async function getmakerrequest(req: Request, res: Response) {
     try {
       const userid=(req as any).userId
+      console.log("USERID",userid)
       const [success, result] = await getMakerRequestInternal(userid);
-  
       if (success) {
         res.status(200).send({ result });
       } else {
@@ -136,6 +137,22 @@ export async function getmakerrequest(req: Request, res: Response) {
         orderTitle,  business_id, paymentType, POPI,orderAmount,paymentIndentifier,paymentDays,MilestoneDetails,userid,remark
       );
   
+      if (success) {
+        res.status(200).send({ result });
+      } else {
+        res.status(404).send({ error: result });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: "Internal Server Error" });
+    }
+  }
+  export async function getAllPaymentOfChecker(req: Request, res: Response) {
+    try { 
+      const { paymentIndentifier } = req.query;
+      const userid=(req as any).userId
+      console.log("USERID",userid)
+      const [success, result] = await getAllPaymentOfCheckerInternal(userid,paymentIndentifier);
       if (success) {
         res.status(200).send({ result });
       } else {

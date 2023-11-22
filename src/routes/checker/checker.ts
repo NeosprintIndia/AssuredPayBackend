@@ -10,12 +10,14 @@ actionPaymentRequest,
 businessActionOnPaymentRequest,
 getAllMyMaker,
 manageMyMaker,
-createPaymentChecker
+createPaymentChecker,
+getAllPaymentOfChecker
 } from '../../Controller/checker/checkerController';
 
 const router: Router = Router();
 
-router.get('/getmakerrequest',verifyTokenUsers,getmakerrequest)// It is fetching all payment wether created by maker or by business user
+router.get('/getmakerrequest',verifyTokenUsers,getmakerrequest)
+router.get('/getallpaymentofchecker',verifyTokenUsers,getAllPaymentOfChecker)
 router.get('/getpaymentrequest',verifyTokenUsers,getpaymentrequest)
 router.post('/checkeraction',verifyTokenUsers,checkeraction)
 router.get('/viewparticularrequest',verifyTokenUsers,viewparticularrequest)
