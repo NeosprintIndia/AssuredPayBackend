@@ -15,7 +15,7 @@ createPaymentChecker
 
 const router: Router = Router();
 
-router.get('/getmakerrequest',verifyTokenUsers,getmakerrequest)
+router.get('/getmakerrequest',verifyTokenUsers,getmakerrequest)// It is fetching all payment wether created by maker or by business user
 router.get('/getpaymentrequest',verifyTokenUsers,getpaymentrequest)
 router.post('/checkeraction',verifyTokenUsers,checkeraction)
 router.get('/viewparticularrequest',verifyTokenUsers,viewparticularrequest)

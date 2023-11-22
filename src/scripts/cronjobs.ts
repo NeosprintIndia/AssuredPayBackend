@@ -22,5 +22,5 @@ function UpdateProposalStatus() {cron.schedule('26 21 * * *', async () => {
       console.error('Error updating payment requests:', error);
     }
   });}
-
+  
   export default UpdateProposalStatus;

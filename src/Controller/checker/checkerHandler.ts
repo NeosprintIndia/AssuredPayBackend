@@ -16,8 +16,8 @@ export const getMakerRequestInternal = async (userid: string): Promise<boolean |
   try {
     const paymentRequests = await PaymentRequestModel.find({
       requester: userid,
-      checkerStatus: 'pending'
-    })
+      checkerStatus: { $in: ['pending', 'approved'] }
+    });
     let modelResults = []; // Initialize an empty array to store the results
 
     for (const result of paymentRequests) {
