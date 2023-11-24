@@ -21,12 +21,11 @@ export const getAllKYCRecordsInternal = async (
     .populate('businessUser', 'refferedBy')
     .populate({
       path: 'user',
-      model: 'RegisterUsers',  // 'RegisterUser' should be the model name of your RegisterUser schema
+      model: 'RegisterUsers', 
       select: 'currentStatus'
     })
     .sort({ updatedAt: -1 });
-  
-      query = query.where('userRequestReference').ne('');
+     query = query.where('userRequestReference').ne('');
     if (due !== null) {
       query = query.where('due').equals(due);
     }

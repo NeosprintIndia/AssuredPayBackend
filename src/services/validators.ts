@@ -23,7 +23,6 @@ const registrationValidator = [
 
   check('refferal_code')
     .optional()
-    .isAlphanumeric()
     .withMessage('Referral code must be alphanumeric.')
 ];
 const loginValidatorUser = [
