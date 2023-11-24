@@ -25,28 +25,27 @@ export const getGSTDetails = async (
     const userId = (req as any).userId as string;
     const gst = req.body.GSTNumber as string;
     const [success, result] = await getGSTDetailsInternal(gst, userId);
-    const inputString = result.GSTresult.body.data.gstin;
-    const data = result.GSTresult.body.data;
-    const leftAttempt = result.remainingAttempt;
-    const pan = inputString.substring(2, inputString.length - 3);
-    const results = {
-      Constitution_of_Business: data.ctb,
-      Taxpayer_Type: data.dty,
-      GSTIN_of_the_entity: data.gstin,
-      Legal_Name_of_Business: data.lgnm,
-      Business_PAN: pan,
-      Date_of_Registration: data.rgdt,
-      State: data.pradr.addr.stcd,
-      Trade_Name: data.lgnm,
-      Place_of_Business: `${data.pradr.addr.bno} ${data.pradr.addr.st} ${data.pradr.addr.loc} ${data.pradr.addr.dst} ${data.pradr.addr.pncd}`,
-      Nature_of_Place_of_Business: data.pradr.ntr,
-      Nature_of_Business_Activity: data.nba[0],
-    };
-
+    // const inputString = result.GSTresult.body.data.gstin;
+    // const data = result.GSTresult.body.data;
+    // const leftAttempt = result.remainingAttempt;
+    // const pan = inputString.substring(2, inputString.length - 3);
+    // const results = {
+    //   Constitution_of_Business: data.ctb,
+    //   Taxpayer_Type: data.dty,
+    //   GSTIN_of_the_entity: data.gstin,
+    //   Legal_Name_of_Business: data.lgnm,
+    //   Business_PAN: pan,
+    //   Date_of_Registration: data.rgdt,
+    //   State: data.pradr.addr.stcd,
+    //   Trade_Name: data.lgnm,
+    //   Place_of_Business: `${data.pradr.addr.bno} ${data.pradr.addr.st} ${data.pradr.addr.loc} ${data.pradr.addr.dst} ${data.pradr.addr.pncd}`,
+    //   Nature_of_Place_of_Business: data.pradr.ntr,
+    //   Nature_of_Business_Activity: data.nba[0],
+    // };
     if (success) {
-      res.status(200).send({ results, leftAttempt, Active: true });
+      res.status(200).send({result,  Active: true,});
     } else {
-      res.status(400).send({ message: results, leftAttempt, Active: false });
+      res.status(400).send({ message: result, Active: false });
     }
   } catch (error) {
     console.error({ message: "Error in getGSTDetails:", error, Active: false });

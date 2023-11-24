@@ -23,18 +23,33 @@ export const getGSTDetailsInternal = async (
     const userLimit = user.GST_Attempt;
     console.log(userLimit)
     if (userLimit <= 0) {
-      return [false, "Your GST Verification Attempt exceeded"];
+      return [true, "Your GST Verification Attempt exceeded"];
     }
     const newAttempt = user.GST_Attempt - 1;
     const GSTresult = await GST_KYC_SB({ id_number: gst,userlog:userId });
+    const inputString = (GSTresult as any).body.data.gstin;
+    const data = (GSTresult as any).body.data;
+    const pan = inputString.substring(2, inputString.length - 3);
+    const results = {
+      Constitution_of_Business: data.ctb,
+      Taxpayer_Type: data.dty,
+      GSTIN_of_the_entity: data.gstin,
+      Legal_Name_of_Business: data.lgnm,
+      Business_PAN: pan,
+      Date_of_Registration: data.rgdt,
+      State: data.pradr.addr.stcd,
+      Trade_Name: data.lgnm,
+      Place_of_Business: `${data.pradr.addr.bno} ${data.pradr.addr.st} ${data.pradr.addr.loc} ${data.pradr.addr.dst} ${data.pradr.addr.pncd}`,
+      Nature_of_Place_of_Business: data.pradr.ntr,
+      Nature_of_Business_Activity: data.nba[0],
+    };
     const attemptResult = await businessUser.findOneAndUpdate(
       { userId: userId },
       { $set: { GST_Attempt: newAttempt } },
       { new: true }
     );
     const remainingAttempt = attemptResult.GST_Attempt;
-
-    const result = { GSTresult: GSTresult, remainingAttempt: remainingAttempt };
+    const result = { result: results, leftAttempt: remainingAttempt };
 
     return [true, result];
   } catch (error) {
