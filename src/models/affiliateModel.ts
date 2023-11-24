@@ -20,7 +20,6 @@ interface BankACDetail {
 interface IAffiliate extends Document {
   userId: Types.ObjectId | IUser
   type: String,
-  status: String,
   date: Date
   panNumber: String,
   panFirstName: String,
@@ -55,11 +54,6 @@ const AffiliateSchema: Schema<IAffiliate> = new Schema<IAffiliate>({
     type: String,
     // required: true, 
     enum: ["individual", "businessFirm"] 
-  },
-  status: {
-    type: String,
-    // required: true,
-    default: "active"
   },
   date:{
     type: Date,

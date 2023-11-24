@@ -154,11 +154,11 @@ export const find = async (role: string, searchKey: string, page: number, rowsLi
           business_mobile: 1, 
           role: 1, 
           username: 1,
+          currentStatus:1,
           'affiliates._id': 1,
           'affiliates.userId': 1,
           'affiliates.type': 1,
           'affiliates.referralCode': 1,
-          'affiliates.status': 1,
           'affiliates.date': 1
         }
       }
@@ -175,7 +175,7 @@ export const findAndUpdate = async (affiliateId: string, affiliateDetails): Prom
   try {
     if(!isValidObjectId(affiliateId)) throw({message: "Affiliate Id not valid."});
     const {status} = affiliateDetails;
-    const result = await affiliate.findOneAndUpdate({userId: new mongoose.Types.ObjectId(affiliateId)}, {status: status}, {new:true});
+    const result = await userRegisterations.findOneAndUpdate({_id: new mongoose.Types.ObjectId(affiliateId)}, {currentStatus: status}, {new:true});
     console.log("Affiliate updated successfully");
     return [true, result];
   } catch (error) {
