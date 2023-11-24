@@ -49,10 +49,6 @@ export const getAllKYCRecordsInternal = async (
     return [false, error];
   }
 };
-// new function after currentstatus feild is added
-
-
-
 
 // Function to update various limits and settings in the global admin configuration
 export const setLimitInternal = async (
@@ -153,7 +149,6 @@ export const setLimitInternal = async (
     return error;
   }
 };
-
 // Function to retrieve all configuration settings from the global admin configuration
 
 export const getAllConfigurationInternal = async (): Promise<any[]> => {
@@ -440,7 +435,7 @@ export const updateBusinessStatusInternal = async (user:any,status:string): Prom
       throw new Error("Invalid input parameters");
     }
     const result = await Registration.findOneAndUpdate(
-      { userId: user },
+      { _id: user },
       { $set: { currentStatus: status } },
       { new: true }
     );
