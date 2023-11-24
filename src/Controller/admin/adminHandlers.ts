@@ -18,7 +18,14 @@ export const getAllKYCRecordsInternal = async (
     const skipCount = (page - 1) * pageSize;
     let query = UserKYC1.find()
       .select({ Legal_Name_of_Business: 1, GSTIN_of_the_entity: 1, userRequestReference: 1, due: 1, kycrequested: 1 ,user:1,PAN_number:1})
-      .populate('businessUser', 'refferedBy currentStatus')
+      .populate({
+    path: 'businessUser',
+    select: 'refferedBy',
+    populate: {
+      path: 'RegisterUser',
+      select: 'currentStatus'
+    }
+  })
       .sort({ updatedAt: -1 });
       query = query.where('userRequestReference').ne('');
     if (due !== null) {
@@ -429,7 +436,7 @@ export const updateBusinessStatusInternal = async (user:any,status:string): Prom
     if (!user || !status) {
       throw new Error("Invalid input parameters");
     }
-    const result = await businessUser.findOneAndUpdate(
+    const result = await Registration.findOneAndUpdate(
       { userId: user },
       { $set: { currentStatus: status } },
       { new: true }

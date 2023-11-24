@@ -10,6 +10,7 @@ interface IRegisterUser extends Document {
   createdAt: Number;
   lastActive?: string;
   active: boolean;
+  currentStatus:string;
   role: string;
   forgotpasswordotp:string;
   MFA: string;
@@ -43,6 +44,11 @@ const RegisterUserSchema: Schema<IRegisterUser> = new Schema({
   active: {
     type: Boolean,
     default: false,
+  },
+  currentStatus: {
+    type: String,
+    default: "active",
+    enum: ["active", "inActive"]
   },
   role: {
     type: String,

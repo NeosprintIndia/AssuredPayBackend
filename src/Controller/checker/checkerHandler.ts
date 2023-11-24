@@ -436,7 +436,7 @@ export const manageMyMakerInternal = async (user:any,status:string): Promise<any
     if (!user || !status) {
       throw new Error("Invalid input parameters");
     }
-    const result = await subUsers.findOneAndUpdate(
+    const result = await userRegisterations.findOneAndUpdate(
       { userId: user },
       { $set: { currentStatus: status } },
       { new: true }
