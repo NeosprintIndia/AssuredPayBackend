@@ -387,6 +387,7 @@ export const getBusinessFromBusinessNetwork = async (id, businessQuery): Promise
           },
         },
       ]);
+      console.log("statusCountsQuery",statusCountsQuery)
 
       const statusCounts = statusCountsQuery.reduce((acc, { _id, count }) => {
         acc[_id] = count;
@@ -402,7 +403,7 @@ export const getBusinessFromBusinessNetwork = async (id, businessQuery): Promise
           $lookup: {
             from: "userkycs",
             localField: "businessId",
-            foreignField: "_id",
+            foreignField: "user",  //previous _id tha 
             as: "businessDetails",
           },
         },

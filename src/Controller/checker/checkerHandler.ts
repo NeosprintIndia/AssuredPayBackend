@@ -579,7 +579,6 @@ export const getAllPaymentOfCheckerInternal = async (userid: string, paymentInde
   try {
     const paymentRequests = await PaymentRequestModel.find({ requester: userid, paymentIndentifier })
       .select("recipient orderID proposalCreatedDate orderAmount MilestoneDetails paymentIndentifier");
-    
     const paymentsWithTotalApFees = await Promise.all(paymentRequests.map(async (payment) => {
       const { MilestoneDetails, ...paymentWithoutMilestones } = payment.toObject();
       const totalApFees = MilestoneDetails.reduce((sum, milestone) => sum + milestone.ApFees, 0);
@@ -588,14 +587,12 @@ export const getAllPaymentOfCheckerInternal = async (userid: string, paymentInde
       const recipientUserKyc = await userKYCs.findOne({ user: payment.recipient });
       console.log("recipientUserKyc", recipientUserKyc);
       const legalNameOfBusiness = recipientUserKyc?.Legal_Name_of_Business || null; // Adjust the default value as needed
-
       return {
         ...paymentWithoutMilestones,
         totalApFees,
         legalNameOfBusiness,
       };
     }));
-    
     console.log("paymentRequestsWithTotalApFees", paymentsWithTotalApFees);
     return [true, paymentsWithTotalApFees];
   } catch (err) {
