@@ -25,23 +25,6 @@ export const getGSTDetails = async (
     const userId = (req as any).userId as string;
     const gst = req.body.GSTNumber as string;
     const [success, result] = await getGSTDetailsInternal(gst, userId);
-    // const inputString = result.GSTresult.body.data.gstin;
-    // const data = result.GSTresult.body.data;
-    // const leftAttempt = result.remainingAttempt;
-    // const pan = inputString.substring(2, inputString.length - 3);
-    // const results = {
-    //   Constitution_of_Business: data.ctb,
-    //   Taxpayer_Type: data.dty,
-    //   GSTIN_of_the_entity: data.gstin,
-    //   Legal_Name_of_Business: data.lgnm,
-    //   Business_PAN: pan,
-    //   Date_of_Registration: data.rgdt,
-    //   State: data.pradr.addr.stcd,
-    //   Trade_Name: data.lgnm,
-    //   Place_of_Business: `${data.pradr.addr.bno} ${data.pradr.addr.st} ${data.pradr.addr.loc} ${data.pradr.addr.dst} ${data.pradr.addr.pncd}`,
-    //   Nature_of_Place_of_Business: data.pradr.ntr,
-    //   Nature_of_Business_Activity: data.nba[0],
-    // };
     if (success) {
       res.status(200).send({result,  Active: true,});
     } else {
@@ -103,10 +86,7 @@ export const getsavedgstdetail = async (
   res: Response
 ): Promise<void> => {
   try {
-    // Assuming userId is a string
     const userId = (req as any).userId as string;
-
-    // Call the internal function to get GST details
     const [success, result] = await getGSTDetailsInternalsaved(userId);
     if (success) {
       res.status(200).send({ result, Active: true });
@@ -124,11 +104,8 @@ export const verifyAadharNumber = async (
   res: Response
 ): Promise<void> => {
   try {
-    // Assuming userId is a string
     const { AadharNumber } = req.body;
     const userId = (req as any).userId as string;
-
-    // Call the internal function to verify Aadhar number and update reference ID
     const [success, result] = await verifyAadharNumberInternal(
       userId,
       AadharNumber
@@ -151,18 +128,14 @@ export const verifyAadharNumberOTP = async (
   res: Response
 ): Promise<void> => {
   try {
-    // Assuming userId is a string
     const userId = (req as any).userId as string;
     const aadharNum = req.body.aadharNum;
     const otp = req.body.otp as string;
-
-    // Call the internal function to verify Aadhar number OTP
     const [success, results] = await verifyAadharNumberOTPInternal(
       userId,
       aadharNum,
       otp
     );
-
     if (success) {
       res.status(200).send({ results, Active: true });
     } else {
@@ -177,10 +150,8 @@ export const verifyAadharNumberOTP = async (
 export const verifyPAN = async (req: Request, res: Response): Promise<void> => {
   try {
     const PanNumber = req.body.PanNumber as string;
-    const id = (req as any).userId as string; // Assuming userId is a string
-
+    const id = (req as any).userId as string; 
     const [success, result] = await verifyPANDetails(PanNumber, id);
-
     if (success) {
       res.status(200).send({ result, Active: true });
     } else {
@@ -220,7 +191,6 @@ export const setglobalstatus = async (
   const { globalStatus } = req.body;
   const userId = (req as any).userId;
   const [success, result] = await setGlobalStatusInternal(globalStatus, userId);
-
   if (success) {
     res.send({ result, Active: true });
   } else {
@@ -236,7 +206,6 @@ export const getglobalstatus = async (
 ): Promise<void> => {
   const userId = (req as any).userId;
   const [success, result] = await getGlobalStatusInternal(userId);
-
   if (success) {
     res.send({ result, Active: true });
   } else {
@@ -261,7 +230,6 @@ export const kycRedoRequested = async (
     });
   }
 };
-
 export const getRejectedDocuments = async (
   req: Request,
   res: Response
@@ -282,7 +250,6 @@ export const getUUID = async (
   res: Response
 ): Promise<void> => {
   try {
-    // Assuming userId is a string
     const userId = (req as any).userId as string;
     const [success, result] = await getUUIDInternal(userId);
     if (success) {

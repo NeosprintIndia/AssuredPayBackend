@@ -462,11 +462,6 @@ export const getBusinessFromBusinessNetwork = async (id, businessQuery): Promise
   }
 };
 
-
-
-
-
-
 export const findAndUpdate = async (userId, businessId, businessDetails): Promise<any> => {
     try {
       const result = await businessNetwork.findOneAndUpdate(

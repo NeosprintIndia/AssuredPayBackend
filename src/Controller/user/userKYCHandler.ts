@@ -22,6 +22,18 @@ export const getGSTDetailsInternal = async (
     const user = await businessUser.findOne({ userId: userId });
     const userLimit = user.GST_Attempt;
     if (userLimit <= 0) {
+      const user = await Registration.findOne({ _id: userId });
+      const reqData = {
+        Email_slug: "API_Limits_Exceeded",
+        email: user.business_email,
+        VariablesEmail: ["GST","www.assuredpay.in"],
+        receiverNo: user.business_mobile,
+        Message_slug: "API_Limits_Exceeded",
+        VariablesMessage: ["GST","www.assuredpay.in"],
+      };
+  
+      await sendDynamicMail(reqData);
+      await sendSMS(reqData);
       return [true, "Your GST Verification Attempt exceeded"];
     }
     const newAttempt = user.GST_Attempt - 1;
@@ -160,14 +172,11 @@ export const verifyAadharNumberOTPInternal = async (
     const data = (result as any).body.data;
 
     const base64String = data.photo_link;
-
     // Remove the data:image/png;base64 header if present
     const base64Data = base64String.replace(/^data:image\/\w+;base64,/, "");
-
     // Create a buffer from the base64 data
     const imageBuffer = Buffer.from(base64Data, "base64");
     const s3ObjectUrl = await uploadtos3(refId, imageBuffer);
-
     const results = {
       aadharNumber: aadharNum,
       aadharCO: data.care_of,
