@@ -8,6 +8,43 @@ import { sendSMS } from "../../services/sendSMS";
 
 // Function to retrieve all KYC records based on sorting
 
+// export const getAllKYCRecordsInternal = async (
+//   page: number = 1, 
+//   pageSize: number = 10, 
+//   due: string | null = null, 
+//   search: string | null = null 
+// ): Promise<any[]> => { 
+//   try {
+//     const skipCount = (page - 1) * pageSize;
+//     let query = UserKYC1.find()
+//       .select({ Legal_Name_of_Business: 1, GSTIN_of_the_entity: 1, userRequestReference: 1, due: 1, kycrequested: 1 ,user:1,PAN_number:1})
+//       .populate('businessUser', 'refferedBy')
+//       //.populate('RegisterUsers', 'currentStatus')
+//       .sort({ updatedAt: -1 });
+//       query = query.where('userRequestReference').ne('');
+//     if (due !== null) {
+//       query = query.where('due').equals(due);
+//     }
+//     if (search !== null) {
+//       query.or([
+//         { userRequestReference: search },
+//         { GSTIN_of_the_entity: search }
+//       ]);
+//     }
+//     const results: any[] = await query.skip(skipCount).limit(pageSize).exec();
+//     const dueCounts = {
+//       approved: await UserKYC1.countDocuments({ due: 'Approved', userRequestReference: { $ne: '' } }),
+//       rejected: await UserKYC1.countDocuments({ due: 'Rejected', userRequestReference: { $ne: '' } }),
+//       new: await UserKYC1.countDocuments({ due: 'New', userRequestReference: { $ne: '' } }),
+//       total: await UserKYC1.countDocuments({ userRequestReference: { $ne: '' } }),
+//     };
+//     return [true, { results, dueCounts }];
+//   } catch (error) {
+   
+//     return [false, error];
+//   }
+// };
+// new function after currentstatus feild is added
 export const getAllKYCRecordsInternal = async (
   page: number = 1, 
   pageSize: number = 10, 
@@ -18,16 +55,9 @@ export const getAllKYCRecordsInternal = async (
     const skipCount = (page - 1) * pageSize;
     let query = UserKYC1.find()
       .select({ Legal_Name_of_Business: 1, GSTIN_of_the_entity: 1, userRequestReference: 1, due: 1, kycrequested: 1 ,user:1,PAN_number:1})
-      .populate({
-    path: 'businessUser',
-    select: 'refferedBy',
-    populate: {
-      path: 'RegisterUser',
-      select: 'currentStatus'
-    }
-  })
+      .populate('businessUser', 'referredBy')
       .sort({ updatedAt: -1 });
-      query = query.where('userRequestReference').ne('');
+    query = query.where('userRequestReference').ne('');
     if (due !== null) {
       query = query.where('due').equals(due);
     }
@@ -38,18 +68,26 @@ export const getAllKYCRecordsInternal = async (
       ]);
     }
     const results: any[] = await query.skip(skipCount).limit(pageSize).exec();
+    const resultsWithCurrentStatus = await Promise.all(results.map(async (result) => {
+      const registrationData = await Registration.findOne({ _id: result.user });
+      const currentStatus = registrationData ? registrationData.currentStatus : null;
+
+      return { ...result.toObject(), currentStatus };
+    }));
+
     const dueCounts = {
       approved: await UserKYC1.countDocuments({ due: 'Approved', userRequestReference: { $ne: '' } }),
       rejected: await UserKYC1.countDocuments({ due: 'Rejected', userRequestReference: { $ne: '' } }),
       new: await UserKYC1.countDocuments({ due: 'New', userRequestReference: { $ne: '' } }),
       total: await UserKYC1.countDocuments({ userRequestReference: { $ne: '' } }),
     };
-    return [true, { results, dueCounts }];
+
+    return [true, { results: resultsWithCurrentStatus, dueCounts }];
   } catch (error) {
-   
     return [false, error];
   }
 };
+
 
 // Function to update various limits and settings in the global admin configuration
 export const setLimitInternal = async (
