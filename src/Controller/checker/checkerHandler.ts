@@ -140,7 +140,6 @@ console.log("businessName",businessName)
 }
 export const getpaymentrequestInternal = async (userid: string): Promise<boolean | any> => {
   try {
-
     const paymentRequests = await PaymentRequestModel.find({
       recipient: userid,
       recipientStatus: 'pending'

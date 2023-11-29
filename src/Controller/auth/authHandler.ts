@@ -314,8 +314,6 @@ export const validateUserSignUp = async (
     return [true, "Verification pending"];
   }
 };
-
-
 export const authenticateUser = async (
   username: string,
   password: string,

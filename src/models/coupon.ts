@@ -41,7 +41,8 @@ const CouponCodeSchema: Schema<IReferralCode> = new Schema<IReferralCode>({
   },
   maxUseLimit: {
     type: Number,
-    required: true
+    required: true,
+    default:10000,
   },
   discount: {
     type: Object,
@@ -64,7 +65,6 @@ const CouponCodeSchema: Schema<IReferralCode> = new Schema<IReferralCode>({
   versionKey : false
   }
 );
-
 const couponModel: Model<IReferralCode> = mongoose.model<IReferralCode>('coupon', CouponCodeSchema);
 
 export default couponModel;

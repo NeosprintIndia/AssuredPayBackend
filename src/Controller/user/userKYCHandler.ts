@@ -140,6 +140,18 @@ export const verifyAadharNumberInternal = async (
     const userRemain = await businessUser.findOne({ userId: userId });
     const userLimit = userRemain.Aadhaar_Attempt;
     if (userLimit <= 0) {
+      const user = await Registration.findOne({ _id: userId });
+      const reqData = {
+        Email_slug: "API_Limits_Exceeded",
+        email: user.business_email,
+        VariablesEmail: ["Aadhar","www.assuredpay.in"],
+        receiverNo: user.business_mobile,
+        Message_slug: "API_Limits_Exceeded",
+        VariablesMessage: ["Aadhar","www.assuredpay.in"],
+      };
+  
+      await sendDynamicMail(reqData);
+      await sendSMS(reqData);
       return [false, "Your Aadhar Verification Attempt exceeded "];
     }
     const result = await Aadhaar_KYC_S1({ id_number: AadharNumber });
@@ -170,11 +182,8 @@ export const verifyAadharNumberOTPInternal = async (
     const refId = result1.aadhar_ref_id;
     const result = await Aadhaar_KYC_S2({ otp, refId });
     const data = (result as any).body.data;
-
     const base64String = data.photo_link;
-    // Remove the data:image/png;base64 header if present
     const base64Data = base64String.replace(/^data:image\/\w+;base64,/, "");
-    // Create a buffer from the base64 data
     const imageBuffer = Buffer.from(base64Data, "base64");
     const s3ObjectUrl = await uploadtos3(refId, imageBuffer);
     const results = {
@@ -240,7 +249,18 @@ export const verifyPANDetails = async (
     const userRemain = await businessUser.findOne({ userId: id });
     const userLimit = userRemain.PAN_Attempt;
     if (userLimit <= 0) {
-      return [false, "Your GST Verification Attempt exceeded "];
+      const user = await Registration.findOne({ _id: id });
+      const reqData = {
+        Email_slug: "API_Limits_Exceeded",
+        email: user.business_email,
+        VariablesEmail: ["Pan","www.assuredpay.in"],
+        receiverNo: user.business_mobile,
+        Message_slug: "API_Limits_Exceeded",
+        VariablesMessage: ["Pan","www.assuredpay.in"],
+      };
+      await sendDynamicMail(reqData);
+      await sendSMS(reqData);
+      return [false, "Your Pan Verification Attempt exceeded "];
     }
     const aadharFullName = user.nameInAadhaar;
     const myArray = aadharFullName.split(" ");
@@ -254,19 +274,16 @@ export const verifyPANDetails = async (
         { $set: { isPANVerified: true, PAN_number: panNumber } },
         { new: true }
       );
-      const newAttempt = userRemain.GST_Attempt - 1;
+      const newAttempt = userRemain.PAN_Attempt - 1;
       await businessUser.findOneAndUpdate(
         { userId: id },
-        { $set: { GST_Attempt: newAttempt } },
+        { $set: { PAN_Attempt: newAttempt } },
         { new: true }
       );
 
-      return [true, newAttempt];
+      return [true, {left_attempt:newAttempt}];
     } else {
-      return [
-        false,
-        "Your PAN details don't match with the Aadhar name provided",
-      ];
+      return [false, "Your PAN details don't match with the Aadhar name provided"];
     }
   } catch (error) {
     throw error;
@@ -351,7 +368,6 @@ export const getGlobalStatusInternal = async (
   userId: string
 ): Promise<[boolean, any]> => {
   try {
-
     const getGlobalStatus = await UserKYC1.findOne(
       { user: userId },
       { due: 1, globalStatus: 1 }
