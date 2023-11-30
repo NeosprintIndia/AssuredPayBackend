@@ -11,7 +11,8 @@ businessActionOnPaymentRequest,
 getAllMyMaker,
 manageMyMaker,
 createPaymentChecker,
-getAllPaymentOfChecker
+getAllPaymentOfChecker,
+getrecievables
 } from '../../Controller/checker/checkerController';
 
 const router: Router = Router();
@@ -27,5 +28,8 @@ router.get('/getallmymaker',verifyTokenUsers,getAllMyMaker)
 router.put('/managemymaker',verifyTokenUsers,manageMyMaker)
 router.post('/createpaymentchecker',verifyTokenUsers,createPaymentChecker) 
 
+
+// Payment Request
+router.get('/getrecievables',verifyTokenUsers,getrecievables) 
 
 export default router;

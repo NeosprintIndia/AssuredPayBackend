@@ -3,37 +3,44 @@ import { Schema, Document, Model, model, Types } from "mongoose";
 interface IPaymentRequest extends Document {
   createdby: Types.ObjectId | IUser;
   requester: Types.ObjectId | IUser; // Reference to the user making the request
-  paidTo:Types.ObjectId | IUser;
-  paidBy:Types.ObjectId | IUser;
+  paidTo: Types.ObjectId | IUser;
+  paidBy: Types.ObjectId | IUser;
   recipient: Types.ObjectId | IUser; // Reference to the user receiving the payment
   orderID: string; // Reference to the order associated with the payment
   paymentType: "full" | "partial";
   checkerStatus: "pending" | "approved" | "rejected";
   recipientStatus: "pending" | "approved" | "rejected";
-  remark:string;
+  remark: string;
   orderTitle: string;
   POPI: string;
   orderAmount: number;
   proposalCreatedDate: Number;
   updated_at: Date;
-  proposalStatus:string,
+  proposalStatus: string,
   proposalValidity: number;
   proposalExpireDate: Number;
   paymentIndentifier: "buyer" | "seller";
   paymentDays?: number; // Number of days for full payment
   MilestoneDetails?: Array<{
     date: Number; // Date when the partial payment should be made
-    days:Number
-    isFDAllowed:string
-    ApproxInterest:number
+    days: Number
+    isFDAllowed: string
+    ApproxInterest: number
     amount: number; // Amount to be paid on that date
     balancedUsed: number; //Bank balance if used
-    recievableUsed:number;
-    ApFees:number;
+    recievableUsed: number;
+    walletBalanceUsed: number;
+    ApFees: number;
+    utilisedbySeller: number;
+    utilisedforpr: Types.ObjectId | IUser;
+    isBBFDAllowed: String
+    isBBFDCreated: String
+    isRCFDAllowed: String
+    isRCFDCreated: String
   }>;
 }
 
-// Define the reference interface for the user field
+// Define the reference interface for the user field 
 interface IUser extends Document {
   _id: Types.ObjectId;
 }
@@ -71,9 +78,9 @@ const paymentRequestSchema = new Schema<IPaymentRequest>({
   proposalStatus: {
     type: String,
     enum: ["active", "expired"],
-    default:"active"
+    default: "active"
   },
-  
+
   paymentType: {
     type: String,
     enum: ["full", "partial"],
@@ -109,17 +116,18 @@ const paymentRequestSchema = new Schema<IPaymentRequest>({
     enum: ["buyer", "seller"],
     required: true,
   },
-  proposalCreatedDate:{ 
+  proposalCreatedDate: {
     type: Number,
-    default: Date.now },
+    default: Date.now
+  },
   proposalValidity: {
     type: Number,
-    
+
   },
   proposalExpireDate: {
     type: Number,
-    default:Date.now
-   
+    default: Date.now
+
   },
   paymentDays: {
     type: Number,
@@ -139,23 +147,43 @@ const paymentRequestSchema = new Schema<IPaymentRequest>({
       },
       balancedUsed: {
         type: Number,
-      
+
       },
+      walletBalanceUsed: { type: Number, default: 0 },
       recievableUsed: {
         type: Number,
-      
+
       },
-      isFDAllowed: {
+      isBBFDAllowed: {
         type: String,
-      
+
+      },
+      isBBFDCreated: {
+        type: String,
+
+      },
+      isRCFDAllowed: {
+        type: String,
+
+      },
+      isRCFDCreated: {
+        type: String,
+
       },
       ApproxInterest: {
         type: Number,
-     
+      },
+      utilisedbySeller: {
+        type: Number,
+
+      },
+      utilisedforpr: {
+        type: Types.ObjectId,
+        ref: "PaymentRequest",
       },
       ApFees: {
         type: Number,
-       
+
       },
     },
   ],

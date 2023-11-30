@@ -5,6 +5,7 @@ import affiliateInvite from '../../models/affiliateInviteModel';
 import affiliate from '../../models/affiliateModel';
 import subUsers from "../../models/subUsers";
 import Referral from "../../models/refferalCodes";
+import walletModel from "../../models/walletModel";
 import globalSetting from "../../models/globalAdminSettings";
 import * as CryptoJS from "crypto-js";
 import * as jwt from "jsonwebtoken";
@@ -240,6 +241,10 @@ console.log(updateStatus)
       user: newUser._id,
       refferal_code: Refer_code,
     });
+
+    await walletModel.create({
+      user: newUser._id
+    })
     const reqData = {
       Email_slug: "User_Login_OTP",
       email: business_email,

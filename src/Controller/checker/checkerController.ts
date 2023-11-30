@@ -9,7 +9,8 @@ import {
  getAllMyMakerInternal,
  manageMyMakerInternal,
 createPaymentRequestHandler,
-getAllPaymentOfCheckerInternal
+getAllPaymentOfCheckerInternal,
+getrecievablesInternal
 } from "./checkerHandler";
 
 import { sendDynamicMail } from "../../services/sendEmail";
@@ -30,7 +31,7 @@ export async function getmakerrequest(req: Request, res: Response) {
       res.status(500).send({ message: "Internal Server Error" });
     }
   }
-  export async function getpaymentrequest(req: Request, res: Response) {
+  export async function getpaymentrequest(req: Request, res: Response) {2
     try {
       const userid=(req as any).userId
       const [success, result] = await getpaymentrequestInternal(userid);
@@ -48,7 +49,8 @@ export async function getmakerrequest(req: Request, res: Response) {
  export async function checkeraction(req: Request, res: Response) {
     try {
       const {action,docId ,remark}=req.body
-      const [success, result] = await checkeractionInternal(docId,action,remark);
+      const userid=(req as any).belongsto
+      const [success, result] = await checkeractionInternal(docId,action,remark,userid);
       if (success) {
         res.status(200).send({ result });
       } else {
@@ -91,7 +93,8 @@ export async function getmakerrequest(req: Request, res: Response) {
   export async function businessActionOnPaymentRequest(req: Request, res: Response) {
     try {
       const {action,docId ,remark}=req.body
-      const [success, result] = await businessActionOnPaymentRequestInternal(docId,action,remark);
+      const userId=(req as any).userId
+      const [success, result] = await businessActionOnPaymentRequestInternal(docId,action,remark,userId);
   
       if (success) {
         res.status(200).send({ result });
@@ -163,3 +166,22 @@ export async function getmakerrequest(req: Request, res: Response) {
       res.status(500).send({ message: "Internal Server Error" });
     }
   }
+
+  export async function getrecievables(req: Request, res: Response) {
+    try { 
+      const { startDate, endDate } = req.query;
+      const userid=(req as any).userId
+      console.log("USERID",userid)
+      const [success, result] = await getrecievablesInternal(userid, startDate,endDate);
+      if (success) {
+        res.status(200).send({ result });
+      } else {
+        res.status(404).send({ error: result });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: "Internal Server Error" });
+    }
+  }
+
+  getrecievables

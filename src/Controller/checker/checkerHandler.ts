@@ -2,6 +2,8 @@ import PaymentRequestModel from "../../models/paymentRequest";
 import userRegisterations from "../../models/userRegisterations";
 import globalAdminSettings from "../../models/globalAdminSettings";
 import userKYCs from "../../models/userKYCs"
+import walletTransaction from "../../models/walletTransaction"
+import walletModel from "../../models/walletModel"
 import { generateOrderID } from "../../services/generateOrderID";
 import subUsers from "../../models/subUsers";
 import mongoose, { Schema, ObjectId,Document, Model, Types, } from 'mongoose';
@@ -140,6 +142,7 @@ console.log("businessName",businessName)
 }
 export const getpaymentrequestInternal = async (userid: string): Promise<boolean | any> => {
   try {
+
     const paymentRequests = await PaymentRequestModel.find({
       recipient: userid,
       recipientStatus: 'pending'
@@ -253,7 +256,8 @@ export const getRequestDetails = async (userId, requester) => {
 export const checkeractionInternal = async (
   docId: string,
   action:string,
-  remark:string): Promise<boolean | any> => {
+  remark:string,
+  userid:string): Promise<boolean | any> => {
   try {
     const orderId= await generateOrderID();
     const expireDate=await globalAdminSettings.findOne({}).select("buyerpaymentRequestDuration")
@@ -276,9 +280,43 @@ export const checkeractionInternal = async (
     }
   },
     {new:true})
+console.log(actionResult)
+   if (action=="Approve" && actionResult.paymentIndentifier=="buyer") {
+    const walletres=await walletModel.findOne({"userid":userid})
+    const walletid=walletres._id
+    const paidby=(actionResult as any).paidTo
+    const paidto=(actionResult as any).paidBy
+    const paymenttype="debit"
+    const paymentstatus="hold"
+    await createWalletTransaction(walletid,paidby,paidto,paymenttype,paymentstatus)
+   }
     return [true,actionResult]
   } catch (err) {
     console.error(err);
+  }
+};
+// To create Wallert Transaction
+export const createWalletTransaction = async (
+  walletID:string,
+  paidBy:string,
+  paidto:string,
+  paymentype:string,
+  paymentstatus:string,
+  ): Promise<boolean | any> => {
+  try {
+   const finalbody={
+      "walletID": walletID,
+      "paidBy": paidBy,
+      "paidto": paidto,
+      "paymentype": paymentype,
+      "paymentstatus": paymentstatus,
+      "updated_at": new Date()
+    }
+    const walletTransactionres = new walletTransaction(finalbody);
+    const savedTransaction = await walletTransactionres.save();
+    return savedTransaction
+  } catch (error) {
+  return( error.message );
   }
 };
 export const viewparticularrequestInternal = async (
@@ -323,6 +361,8 @@ export const actionPaymentRequestInternal = async (
 
         // Save the updated document
       const finalactionResult = await paymentRequest.save();
+
+      
         return [true,finalactionResult]
     } else {
       return [false,'Payment request not found']
@@ -343,7 +383,9 @@ const updateDate = (days) => {
 export const businessActionOnPaymentRequestInternal = async (
   docId: string,
   action:string,
-  remark:string): Promise<boolean | any> => {
+  remark:string,
+  userId:string
+  ): Promise<boolean | any> => {
   try {
     const actionResult=await PaymentRequestModel.findOneAndUpdate({_id:docId},
       {
@@ -357,6 +399,7 @@ export const businessActionOnPaymentRequestInternal = async (
     if(action!=="Approve"){
       return[true,actionResult]
     }
+
     const paymentRequest = await PaymentRequestModel.findOne({_id:docId});
 
     if (paymentRequest) {
@@ -367,6 +410,16 @@ export const businessActionOnPaymentRequestInternal = async (
 
         // Save the updated document
       const finalactionResult = await paymentRequest.save();
+      // Hold the amount if payment requester is buyer.
+      if (action=="Approve" && paymentRequest.paymentIndentifier=="buyer") {
+        const walletres=await walletModel.findOne({"userid":userId})
+        const walletid=walletres._id
+        const paidby=(paymentRequest as any).paidTo
+        const paidto=(paymentRequest as any).paidBy
+        const paymenttype="debit"
+        const paymentstatus="hold"
+        await createWalletTransaction(walletid,paidby,paidto,paymenttype,paymentstatus)
+       }
         return [true,finalactionResult]
     } else {
       return [false,'Payment request not found']
@@ -445,6 +498,70 @@ export const manageMyMakerInternal = async (user:any,status:string): Promise<any
   } catch (error) {
     console.log("Error occured while updating the Maker", error);
     return  [false, error.message];
+  }
+};
+
+// Get recievables between a date range
+export const getrecievablesInternal = async (
+  userid:string,
+  startDate:any,
+  endDate:any
+  ): Promise<boolean | any> => {
+  try {
+    
+    let matchQuery = {
+      'paidTo': userid,
+    };
+
+    if (startDate && endDate) {
+      matchQuery['MilestoneDetails.date'] = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      };
+    }
+
+    const milestones = await PaymentRequestModel.aggregate([
+      {
+        $match: matchQuery,
+      },
+      {
+        $unwind: '$MilestoneDetails',
+      },
+      {
+        $match: {
+          ...matchQuery,
+          'MilestoneDetails.utilisedbySeller': { $eq: 0 }, // Exclude milestones where utilisedbySeller > 0
+        },
+      },
+      {
+        $addFields: {
+          'MilestoneDetails.isFDAllowed': {
+            $cond: {
+              if: {
+                $gt: [
+                  { $subtract: [new Date(endDate), new Date(startDate)] }, // Calculate the difference
+                  7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
+                ],
+              },
+              then: 'yes',
+              else: 'no',
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          date: '$MilestoneDetails.date',
+          amount: '$MilestoneDetails.amount',
+          isFDAllowed: '$MilestoneDetails.isFDAllowed',
+        },
+      },
+    ]);
+
+      return [true,milestones]
+  } catch (err) {
+    console.error(err);
   }
 };
 // export const createPaymentRequestHandler = async (
@@ -528,7 +645,6 @@ export const createPaymentRequestHandler = async (
     if (requiredInputs.some(input => !input)) {
       throw new Error("Missing required input parameters.");
     }
-
     const isBuyerPayment = paymentIndentifier === "buyer";
     const paidto = isBuyerPayment ? business_id : userId;
     const paidby = isBuyerPayment ? userId : business_id;
@@ -567,6 +683,17 @@ export const createPaymentRequestHandler = async (
       },
       { new: true }
     );
+   
+    if (actionResult.paymentIndentifier=="buyer") {
+      const walletres=await walletModel.findOne({"userid":userId})
+      const walletid=walletres._id
+      const paidby=(actionResult as any).paidTo
+      const paidto=(actionResult as any).paidBy
+      const paymenttype="debit"
+      const paymentstatus="hold"
+      await createWalletTransaction(walletid,paidby,paidto,paymenttype,paymentstatus)
+     }
+
     return [true, actionResult];
   } catch (error) {
     console.error("Error in createPaymentRequestHandler:", error);
