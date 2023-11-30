@@ -507,18 +507,15 @@ export const getrecievablesInternal = async (
   endDate:any
   ): Promise<boolean | any> => {
   try {
-    
     let matchQuery = {
       'paidTo': userid,
     };
-
     if (startDate && endDate) {
       matchQuery['MilestoneDetails.date'] = {
         $gte: new Date(startDate),
         $lte: new Date(endDate),
       };
     }
-
     const milestones = await PaymentRequestModel.aggregate([
       {
         $match: matchQuery,
