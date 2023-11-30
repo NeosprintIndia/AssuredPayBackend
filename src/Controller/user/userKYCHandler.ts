@@ -237,6 +237,10 @@ export const verifyPANDetails = async (
     if (user.isAadharDetailSave != true) {
       return [false, "User Aadhar details not Found"];
     }
+    if ((user as any).isPANVerified != true) {
+      return [false, "User Aadhar details not Found"];
+    }
+   
     const userRemain = await businessUser.findOne({ userId: id });
     const userLimit = userRemain.PAN_Attempt;
     if (userLimit <= 0) {
@@ -257,11 +261,11 @@ export const verifyPANDetails = async (
       const newAttempt = userRemain.GST_Attempt - 1;
       await businessUser.findOneAndUpdate(
         { userId: id },
-        { $set: { GST_Attempt: newAttempt } },
+        { $set: { PAN_Attempt: newAttempt } },
         { new: true }
       );
 
-      return [true, newAttempt];
+      return [true, {"left_attempt":newAttempt}];
     } else {
       return [
         false,

@@ -34,7 +34,6 @@ export const getMakerRequestInternal = async (userid: string): Promise<boolean |
     }
     // At this point, modelResults contains an array of all the results
     console.log(modelResults);
-
     return [true, modelResults]
   } catch (err) {
    
