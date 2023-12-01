@@ -79,7 +79,8 @@ export async function getmakerrequest(req: Request, res: Response) {
   export async function actionPaymentRequest(req: Request, res: Response) {
     try {
       const {action,docId ,remark}=req.body
-      const [success, result] = await actionPaymentRequestInternal(docId,action,remark);
+      const userid=(req as any).userId
+      const [success, result] = await actionPaymentRequestInternal(docId,action,remark,userid);
       if (success) {
         res.status(200).send({ result });
       } else {

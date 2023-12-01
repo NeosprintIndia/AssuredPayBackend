@@ -39,3 +39,4 @@ const rcfdSchema = new Schema<IRCFD>({
 });
 
 const RCFD = mongoose.model<IRCFD>('RCFD', rcfdSchema);
+export default RCFD;

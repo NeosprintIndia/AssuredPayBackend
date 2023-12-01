@@ -28,11 +28,14 @@ interface IPaymentRequest extends Document {
     ApproxInterest: number
     amount: number; // Amount to be paid on that date
     balancedUsed: number; //Bank balance if used
+    balancedUsedStatus: string; 
     recievableUsed: number;
+    recievableUsedStatus: string;
     walletBalanceUsed: number;
     ApFees: number;
     utilisedbySeller: number;
     utilisedforpr: Types.ObjectId | IUser;
+    utilisedforms: Types.ObjectId | IUser;
     isBBFDAllowed: String
     isBBFDCreated: String
     isRCFDAllowed: String
@@ -149,9 +152,17 @@ const paymentRequestSchema = new Schema<IPaymentRequest>({
         type: Number,
 
       },
+      balancedUsedStatus: {
+        type: String,
+
+      },
       walletBalanceUsed: { type: Number, default: 0 },
       recievableUsed: {
         type: Number,
+
+      },
+      recievableUsedStatus: {
+        type: String,
 
       },
       isBBFDAllowed: {
@@ -178,6 +189,10 @@ const paymentRequestSchema = new Schema<IPaymentRequest>({
 
       },
       utilisedforpr: {
+        type: Types.ObjectId,
+        ref: "PaymentRequest",
+      },
+      utilisedforms: {
         type: Types.ObjectId,
         ref: "PaymentRequest",
       },

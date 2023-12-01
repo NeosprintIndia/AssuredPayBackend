@@ -25,3 +25,4 @@ const bbfdSchema = new Schema<IBBFD>({
 });
 
 const BBFD = mongoose.model<IBBFD>('BBFD', bbfdSchema);
+export default BBFD;
