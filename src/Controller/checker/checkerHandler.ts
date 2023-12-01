@@ -922,7 +922,6 @@ export const createPaymentRequestHandler = async (
       const paymentstatus = "hold"
       await createWalletTransaction(walletid, paidby, paidto, paymenttype, paymentstatus)
     }
-
     return [true, actionResult];
   } catch (error) {
     console.error("Error in createPaymentRequestHandler:", error);
@@ -930,29 +929,49 @@ export const createPaymentRequestHandler = async (
   }
 };
 
+// export const getAllPaymentOfCheckerInternal = async (userid: string, paymentIndentifier: any): Promise<any[]> => {
+//   try {
+//     const paymentRequests = await PaymentRequestModel.find({ requester: userid, paymentIndentifier })
+//       .select("recipient orderID proposalCreatedDate orderAmount MilestoneDetails paymentIndentifier");
+//     // const paymentsWithTotalApFees = await Promise.all(paymentRequests.map(async (payment) => {
+//     //   const { MilestoneDetails, ...paymentWithoutMilestones } = payment.toObject();
+//     //   const totalApFees = MilestoneDetails.reduce((sum, milestone) => sum + milestone.ApFees, 0);
+
+//     //   // Fetch Legal_Name_of_Business from userkycs collection using the recipient's ObjectId
+//       const recipientUserKyc = await userKYCs.findOne({ user: paymentRequests.recipient });
+//       console.log("recipientUserKyc", recipientUserKyc);
+//       const legalNameOfBusiness = recipientUserKyc?.Legal_Name_of_Business || null; // Adjust the default value as needed
+//     //   return {
+//     //     ...paymentWithoutMilestones,
+//     //     totalApFees,
+//     //     legalNameOfBusiness,
+//     //   };
+//     // }));
+//     console.log("paymentRequestsWithTotalApFees", paymentRequests);
+//     return [true, paymentRequests];
+//   } catch (err) {
+//     console.error(err);
+//     throw new Error(err.message); // Throw an exception instead of returning an array
+//   }
+// };
 export const getAllPaymentOfCheckerInternal = async (userid: string, paymentIndentifier: any): Promise<any[]> => {
   try {
     const paymentRequests = await PaymentRequestModel.find({ requester: userid, paymentIndentifier })
-      .select("recipient orderID proposalCreatedDate orderAmount MilestoneDetails paymentIndentifier");
-    const paymentsWithTotalApFees = await Promise.all(paymentRequests.map(async (payment) => {
-      const { MilestoneDetails, ...paymentWithoutMilestones } = payment.toObject();
-      const totalApFees = MilestoneDetails.reduce((sum, milestone) => sum + milestone.ApFees, 0);
-
-      // Fetch Legal_Name_of_Business from userkycs collection using the recipient's ObjectId
-      const recipientUserKyc = await userKYCs.findOne({ user: payment.recipient });
+      //.select("recipient orderID proposalCreatedDate orderAmount MilestoneDetails paymentIndentifier");
+    const recipientUserKycs = [];
+    // Fetch Legal_Name_of_Business from userkycs collection for each recipient
+    for (const paymentRequest of paymentRequests) {
+      const recipientUserKyc = await userKYCs.findOne({ user: paymentRequest.recipient });
       console.log("recipientUserKyc", recipientUserKyc);
-      const legalNameOfBusiness = recipientUserKyc?.Legal_Name_of_Business || null; // Adjust the default value as needed
-      return {
-        ...paymentWithoutMilestones,
-        totalApFees,
-        legalNameOfBusiness,
-      };
-    }));
-    console.log("paymentRequestsWithTotalApFees", paymentsWithTotalApFees);
-    return [true, paymentsWithTotalApFees];
+      recipientUserKycs.push({
+        legalNameOfBusiness: recipientUserKyc?.Legal_Name_of_Business || null,
+        paymentRequest,
+      });
+    }
+    return [true, recipientUserKycs];
   } catch (err) {
     console.error(err);
-    throw new Error(err.message); // Throw an exception instead of returning an array
+    throw new Error(err.message); 
   }
 };
 
