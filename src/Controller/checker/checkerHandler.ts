@@ -913,15 +913,16 @@ export const createPaymentRequestHandler = async (
       { new: true }
     );
 
-    if (actionResult.paymentIndentifier == "buyer") {
-      const walletres = await walletModel.findOne({ "userid": userId })
-      const walletid = walletres._id
-      const paidby = (actionResult as any).paidTo
-      const paidto = (actionResult as any).paidBy
-      const paymenttype = "debit"
-      const paymentstatus = "hold"
-      await createWalletTransaction(walletid, paidby, paidto, paymenttype, paymentstatus)
-    }
+    // if (actionResult.paymentIndentifier == "buyer") {
+    //   console.log("INNNNNNN")
+    //   const walletres = await walletModel.findOne({ "userid": userId })
+    //   const walletid = walletres._id
+    //   const paidby = (actionResult as any).paidTo
+    //   const paidto = (actionResult as any).paidBy
+    //   const paymenttype = "debit"
+    //   const paymentstatus = "hold"
+    //   await createWalletTransaction(walletid, paidby, paidto, paymenttype, paymentstatus)
+    // }
     return [true, actionResult];
   } catch (error) {
     console.error("Error in createPaymentRequestHandler:", error);
