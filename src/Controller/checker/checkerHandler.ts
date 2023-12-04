@@ -530,6 +530,7 @@ export const businessActionOnPaymentRequestInternal = async (
 
       // Save the updated document
       const finalactionResult = await paymentRequest.save();
+      
       // Hold the amount if payment requester is buyer.
       if ((action as "Approve") === "Approve" && (paymentRequest.paymentIndentifier as "buyer") === "buyer") {
         // Create Bank FD
@@ -639,8 +640,6 @@ const RevertHoldWalletAmount = async (walletId) => {
     console.error('Error reverting hold wallet amount:', error.message);
   }
 };
-
-
 
 const createRCFDRecords = async (paymentRequestId) => {
   try {
@@ -926,13 +925,16 @@ export const createPaymentRequestHandler = async (
 ): Promise<[boolean, any]> => {
   try {
     const requiredInputs = [orderTitle, business_id, paymentType, POPI, orderAmount, paymentIndentifier, paymentDays, MilestoneDetails, userId];
-
+console.log("requiredInputs",requiredInputs)
     if (requiredInputs.some(input => !input)) {
       throw new Error("Missing required input parameters.");
     }
     const isBuyerPayment = paymentIndentifier === "buyer";
     const paidto = isBuyerPayment ? business_id : userId;
     const paidby = isBuyerPayment ? userId : business_id;
+console.log("isBuyerPayment",isBuyerPayment)
+console.log("paidto",paidto)
+console.log("paidby",paidby)
 
     const paymentRequestData = {
       paymentType,
@@ -950,6 +952,7 @@ export const createPaymentRequestHandler = async (
       paidTo: paidto,
       paidBy: paidby,
     };
+    console.log("paymentRequestData",paymentRequestData)
     const newPaymentRequest = new PaymentRequestModel(paymentRequestData);
     const finalresult = await newPaymentRequest.save();
     const orderId = await generateOrderID();

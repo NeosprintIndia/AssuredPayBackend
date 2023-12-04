@@ -4,7 +4,7 @@ import {
  checkeractionInternal,
  viewparticularrequestInternal,
  getpaymentrequestInternal,
- actionPaymentRequestInternal,
+actionPaymentRequestInternal,
  businessActionOnPaymentRequestInternal,
  getAllMyMakerInternal,
  manageMyMakerInternal,
@@ -185,4 +185,3 @@ export async function getmakerrequest(req: Request, res: Response) {
     }
   }
 
-  getrecievables
