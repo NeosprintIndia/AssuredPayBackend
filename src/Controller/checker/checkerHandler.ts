@@ -593,6 +593,7 @@ export const getRequestDetails = async (userId, requester) => {
           "orderAmount": 1,
           "paymentType": 1,
           "MilestoneDetails":1,
+          "proposalCreatedDate":1,
 //Abhi k lie figma mai needed ni hai
           // "GSTIN_of_the_entity": "$businessNetworkDetails.GSTIN_of_the_entity",
           // "recipient": 1,
