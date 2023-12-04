@@ -29,13 +29,15 @@ interface IPaymentRequest extends Document {
     amount: number; // Amount to be paid on that date
     balancedUsed: number; //Bank balance if used
     balancedUsedStatus: string; 
-    recievableUsed: number;
+    recievableUsed: number; // Amount of recievable used
+    recievablewhichpr: Types.ObjectId | IUser; // recievable of which payment request // think from Paidby user
+    recievablewhichms: Types.ObjectId | IUser; // recievable of which milestone of above payment request //think from Paidby user
     recievableUsedStatus: string;
     walletBalanceUsed: number;
     ApFees: number;
     utilisedbySeller: number;
-    utilisedforpr: Types.ObjectId | IUser;
-    utilisedforms: Types.ObjectId | IUser;
+    utilisedforpr: Types.ObjectId | IUser; // If this recievable is used by any other pr//think from Paidto user
+    utilisedforms: Types.ObjectId | IUser; // If this recievable is used by any other milestone//think from Paidto user
     isBBFDAllowed: String
     isBBFDCreated: String
     isRCFDAllowed: String
@@ -158,11 +160,22 @@ const paymentRequestSchema = new Schema<IPaymentRequest>({
       },
       walletBalanceUsed: { type: Number, default: 0 },
       recievableUsed: {
-        type: Number,
+        type: String,
+
+      },
+      recievablewhichpr: {
+        type: Types.ObjectId,
+        ref: "PaymentRequest",
+
+      },
+      recievablewhichms: {
+        type: Types.ObjectId,
+        ref: "PaymentRequest",
 
       },
       recievableUsedStatus: {
-        type: String,
+        type: Types.ObjectId,
+        ref: "PaymentRequest",
 
       },
       isBBFDAllowed: {

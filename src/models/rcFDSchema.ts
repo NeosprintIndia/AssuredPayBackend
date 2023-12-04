@@ -6,6 +6,8 @@ interface IRCFD extends Document {
   creationDate: Date;
   endDate: Date;
   amount: number;
+  recievablewhichpr:Types.ObjectId | IUser;
+  recievablewhichms:Types.ObjectId | IUser;
   eliglibleforInterest:string;
 }
 
@@ -20,6 +22,16 @@ const rcfdSchema = new Schema<IRCFD>({
     type: Types.ObjectId,
     ref: "PaymentRequest.MilestoneDetails", // Reference to the MilestoneDetails in the PaymentRequest
     required: true,
+  },
+  recievablewhichpr: {
+    type: Types.ObjectId,
+    ref: "PaymentRequest",
+
+  },
+  recievablewhichms: {
+    type: Types.ObjectId,
+    ref: "PaymentRequest",
+
   },
   creationDate: {
     type: Date,

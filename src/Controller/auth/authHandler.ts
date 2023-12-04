@@ -242,9 +242,10 @@ console.log(updateStatus)
       refferal_code: Refer_code,
     });
 
-    await walletModel.create({
-      user: newUser._id
+    const result=await walletModel.create({
+      userId: newUser._id
     })
+    console.log("result",result)
     const reqData = {
       Email_slug: "User_Login_OTP",
       email: business_email,

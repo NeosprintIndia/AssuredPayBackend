@@ -284,7 +284,9 @@ export const checkeractionInternal = async (
       { new: true })
     console.log(actionResult)
     if (action == "Approve" && actionResult.paymentIndentifier == "buyer") {
+
       const walletres = await walletModel.findOne({ "userid": userid })
+      
       const walletid = walletres._id
       const paidby = (actionResult as any).paidTo
       const paidto = (actionResult as any).paidBy
@@ -396,35 +398,89 @@ const cascadeUpdateMilestoneAndPaymentRequest = async (paymentRequestId) => {
     if (!paymentRequest) {
       throw new Error('Payment request not found');
     }
-
+    const utilisedforpr=paymentRequest._id
     // Find milestones that meet specific conditions
     const milestonesToUpdate = paymentRequest.MilestoneDetails.filter(
       (milestone) =>
-        milestone.utilisedforpr &&
-        milestone.utilisedbySeller &&
-        milestone.recievableUsedStatus
+        milestone.recievablewhichpr &&
+        milestone.recievablewhichms 
+     
     );
 
     // Iterate over the selected milestones
     for (const milestone of milestonesToUpdate) {
       // Extract relevant information
-      const { utilisedforpr, utilisedbySeller } = milestone;
+      const { recievableUsed,recievablewhichpr,recievablewhichms} = milestone;
       const milestoneId = (milestone as any)._id;
 
       // Find other payment requests with the same utilisedforpr value
       const relatedPaymentRequests = await PaymentRequestModel.find({
-        'MilestoneDetails.utilisedforpr': utilisedforpr,
+        '_id': recievablewhichpr,
       });
 
       // Iterate over related payment requests and update utilisedbySeller
       for (const relatedPaymentRequest of relatedPaymentRequests) {
         const relatedMilestone = relatedPaymentRequest.MilestoneDetails.find(
-          (m) => (m as any)._id.toString() === milestoneId.toString()
+          (m) => (m as any)._id.toString() === recievablewhichms
         );
 
         if (relatedMilestone) {
           // Update utilisedbySeller for the related milestone
-          relatedMilestone.utilisedbySeller = utilisedbySeller;
+          relatedMilestone.utilisedbySeller = recievableUsed;
+          relatedMilestone.utilisedforpr = utilisedforpr;
+          relatedMilestone.utilisedforms = milestoneId;
+
+          // Save the updated payment request
+          await relatedPaymentRequest.save();
+
+          console.log(`Updated utilisedbySeller for milestone ${milestoneId} in payment request ${relatedPaymentRequest._id}`);
+        }
+      }
+    }
+
+    console.log('Cascade update completed successfully');
+  } catch (error) {
+    console.error('Error in cascade update:', error.message);
+  }
+};
+const RevertRCRecordfinal = async (paymentRequestId) => {
+  try {
+    const paymentRequest = await PaymentRequestModel.findById(paymentRequestId);
+
+    if (!paymentRequest) {
+      throw new Error('Payment request not found');
+    }
+    const utilisedforpr=paymentRequest._id
+    // Find milestones that meet specific conditions
+    const milestonesToUpdate = paymentRequest.MilestoneDetails.filter(
+      (milestone) =>
+        milestone.recievablewhichpr &&
+        milestone.recievablewhichms 
+     
+    );
+
+    // Iterate over the selected milestones
+    for (const milestone of milestonesToUpdate) {
+      // Extract relevant information
+      const { recievableUsed,recievablewhichpr,recievablewhichms} = milestone;
+      const milestoneId = (milestone as any)._id;
+
+      // Find other payment requests with the same utilisedforpr value
+      const relatedPaymentRequests = await PaymentRequestModel.find({
+        '_id': recievablewhichpr,
+      });
+
+      // Iterate over related payment requests and update utilisedbySeller
+      for (const relatedPaymentRequest of relatedPaymentRequests) {
+        const relatedMilestone = relatedPaymentRequest.MilestoneDetails.find(
+          (m) => (m as any)._id.toString() === recievablewhichms
+        );
+
+        if (relatedMilestone) {
+          // Update utilisedbySeller for the related milestone
+          relatedMilestone.utilisedbySeller = 0;
+          relatedMilestone.utilisedforpr = null;
+          relatedMilestone.utilisedforms = null;
 
           // Save the updated payment request
           await relatedPaymentRequest.save();
@@ -488,7 +544,7 @@ export const businessActionOnPaymentRequestInternal = async (
         const walletid = walletres._id
         await RevertHoldWalletAmount(walletid);
         // Create RC FD
-        await RevertRCRecord(docId);
+        await RevertRCRecordfinal(docId);
       }
       return [true, finalactionResult]
     } else {
@@ -584,9 +640,6 @@ const RevertHoldWalletAmount = async (walletId) => {
   }
 };
 
-// Example usage
-const walletId = 'your_wallet_id';
-RevertHoldWalletAmount(walletId);
 
 
 const createRCFDRecords = async (paymentRequestId) => {
@@ -600,13 +653,13 @@ const createRCFDRecords = async (paymentRequestId) => {
     // Iterate over MilestoneDetails and create a record in rcfdSchema for each milestone
     for (const milestone of paymentRequest.MilestoneDetails) {
       // Check if utilisedforpr exists
-      if (!milestone.utilisedforpr) {
-        console.warn(`utilisedforpr not found for milestone ${(milestone as any)._id}`);
+      if (!milestone.recievablewhichpr) {
+        console.warn(`recievablewhichpr not found for milestone ${(milestone as any)._id}`);
         continue; // Skip this milestone if utilisedforpr is not found
       }
 
       // Find the related payment request using utilisedforpr
-      const relatedPaymentRequest = await PaymentRequestModel.findById(milestone.utilisedforpr);
+      const relatedPaymentRequest = await PaymentRequestModel.findById(milestone.recievablewhichpr);
 
       if (!relatedPaymentRequest) {
         console.warn(`Related payment request not found for milestone ${(milestone as any)._id}`);
@@ -617,6 +670,8 @@ const createRCFDRecords = async (paymentRequestId) => {
       const newRCFDRecord = new rcFDSchema({
         paymentRequest: paymentRequest._id,
         milestoneDetails: (milestone as any)._id,
+        recievablewhichpr:milestone.recievablewhichpr,
+        recievablewhichms:milestone.recievablewhichms,
         creationDate: new Date(),
         endDate: milestone.date,
         getrcdate: (finaldate as any).date, // Adjust this line based on the actual structure of your MilestoneDetails
@@ -740,8 +795,9 @@ export const getrecievablesInternal = async (
   endDate: any
 ): Promise<boolean | any> => {
   try {
+    const userIdObject = new mongoose.Types.ObjectId(userid)
     let matchQuery = {
-      'paidTo': userid,
+      'paidTo': userIdObject,
     };
     if (startDate && endDate) {
       matchQuery['MilestoneDetails.date'] = {
@@ -756,12 +812,12 @@ export const getrecievablesInternal = async (
       {
         $unwind: '$MilestoneDetails',
       },
-      {
-        $match: {
-          ...matchQuery,
-          'MilestoneDetails.utilisedbySeller': { $eq: 0 }, // Exclude milestones where utilisedbySeller > 0
-        },
-      },
+      // {
+      //   $match: {
+      //     ...matchQuery,
+      //     'MilestoneDetails.utilisedbySeller': { $eq: 0 }, // Exclude milestones where utilisedbySeller > 0
+      //   },
+      // },
       {
         $addFields: {
           'MilestoneDetails.isFDAllowed': {
@@ -912,17 +968,19 @@ export const createPaymentRequestHandler = async (
       },
       { new: true }
     );
-
-    // if (actionResult.paymentIndentifier == "buyer") {
-    //   console.log("INNNNNNN")
-    //   const walletres = await walletModel.findOne({ "userid": userId })
-    //   const walletid = walletres._id
-    //   const paidby = (actionResult as any).paidTo
-    //   const paidto = (actionResult as any).paidBy
-    //   const paymenttype = "debit"
-    //   const paymentstatus = "hold"
-    //   await createWalletTransaction(walletid, paidby, paidto, paymenttype, paymentstatus)
-    // }
+    console.log("before hold")
+    if (actionResult.paymentIndentifier == "buyer") {
+      const walletres = await walletModel.findOne({ "userId": userId })
+      console.log("wallet",walletres)
+      const walletid = walletres._id
+      const paidby = (actionResult as any).paidTo
+      const paidto = (actionResult as any).paidBy
+      const paymenttype = "debit"
+      const paymentstatus = "hold"
+      await createWalletTransaction(walletid, paidby, paidto, paymenttype, paymentstatus)
+      if (actionResult.paymentType!=="full")
+      await cascadeUpdateMilestoneAndPaymentRequest(actionResult._id);
+    }
     return [true, actionResult];
   } catch (error) {
     console.error("Error in createPaymentRequestHandler:", error);
@@ -930,49 +988,29 @@ export const createPaymentRequestHandler = async (
   }
 };
 
-// export const getAllPaymentOfCheckerInternal = async (userid: string, paymentIndentifier: any): Promise<any[]> => {
-//   try {
-//     const paymentRequests = await PaymentRequestModel.find({ requester: userid, paymentIndentifier })
-//       .select("recipient orderID proposalCreatedDate orderAmount MilestoneDetails paymentIndentifier");
-//     // const paymentsWithTotalApFees = await Promise.all(paymentRequests.map(async (payment) => {
-//     //   const { MilestoneDetails, ...paymentWithoutMilestones } = payment.toObject();
-//     //   const totalApFees = MilestoneDetails.reduce((sum, milestone) => sum + milestone.ApFees, 0);
-
-//     //   // Fetch Legal_Name_of_Business from userkycs collection using the recipient's ObjectId
-//       const recipientUserKyc = await userKYCs.findOne({ user: paymentRequests.recipient });
-//       console.log("recipientUserKyc", recipientUserKyc);
-//       const legalNameOfBusiness = recipientUserKyc?.Legal_Name_of_Business || null; // Adjust the default value as needed
-//     //   return {
-//     //     ...paymentWithoutMilestones,
-//     //     totalApFees,
-//     //     legalNameOfBusiness,
-//     //   };
-//     // }));
-//     console.log("paymentRequestsWithTotalApFees", paymentRequests);
-//     return [true, paymentRequests];
-//   } catch (err) {
-//     console.error(err);
-//     throw new Error(err.message); // Throw an exception instead of returning an array
-//   }
-// };
 export const getAllPaymentOfCheckerInternal = async (userid: string, paymentIndentifier: any): Promise<any[]> => {
   try {
     const paymentRequests = await PaymentRequestModel.find({ requester: userid, paymentIndentifier })
-      //.select("recipient orderID proposalCreatedDate orderAmount MilestoneDetails paymentIndentifier");
-    const recipientUserKycs = [];
-    // Fetch Legal_Name_of_Business from userkycs collection for each recipient
-    for (const paymentRequest of paymentRequests) {
-      const recipientUserKyc = await userKYCs.findOne({ user: paymentRequest.recipient });
+      .select("recipient orderID proposalCreatedDate orderAmount MilestoneDetails paymentIndentifier");
+    const paymentsWithTotalApFees = await Promise.all(paymentRequests.map(async (payment) => {
+      const { MilestoneDetails, ...paymentWithoutMilestones } = payment.toObject();
+      const totalApFees = MilestoneDetails.reduce((sum, milestone) => sum + milestone.ApFees, 0);
+
+      // Fetch Legal_Name_of_Business from userkycs collection using the recipient's ObjectId
+      const recipientUserKyc = await userKYCs.findOne({ user: payment.recipient });
       console.log("recipientUserKyc", recipientUserKyc);
-      recipientUserKycs.push({
-        legalNameOfBusiness: recipientUserKyc?.Legal_Name_of_Business || null,
-        paymentRequest,
-      });
-    }
-    return [true, recipientUserKycs];
+      const legalNameOfBusiness = recipientUserKyc?.Legal_Name_of_Business || null; // Adjust the default value as needed
+      return {
+        ...paymentWithoutMilestones,
+        totalApFees,
+        legalNameOfBusiness,
+      };
+    }));
+    console.log("paymentRequestsWithTotalApFees", paymentsWithTotalApFees);
+    return [true, paymentsWithTotalApFees];
   } catch (err) {
     console.error(err);
-    throw new Error(err.message); 
+    throw new Error(err.message); // Throw an exception instead of returning an array
   }
 };
 
