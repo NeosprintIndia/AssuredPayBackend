@@ -234,9 +234,7 @@ export const verifyPANDetails = async (
     if (!user) {
       return [false, "User not found"];
     }
-    if (user.isAadharDetailSave != true) {
-      return [false, "User Aadhar details not Found"];
-    }
+   
     const userRemain = await businessUser.findOne({ userId: id });
     const userLimit = userRemain.PAN_Attempt;
     if (userLimit <= 0) {

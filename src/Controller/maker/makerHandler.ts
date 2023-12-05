@@ -1,6 +1,7 @@
 import PaymentRequestModel from "../../models/paymentRequest";
 import userRegisterations from "../../models/userRegisterations";
 import subUsers from "../../models/subUsers";
+import walletModel from "../../models/walletModel"
 import {findUserByEmailUsername,generateTemporaryPassword} from "../../Controller/auth/authHandler"
 
 import * as CryptoJS from "crypto-js";
@@ -21,6 +22,11 @@ export const createPaymentRequestHandler = async (
 ): Promise<boolean | any> => {
   try {
     const requester = await subUsers.findOne({"userId":userId})
+    const walletres = await walletModel.findOne({ "userid": userId })
+    if(orderAmount>walletres.amount)
+    {
+      return [true, "You don't have sufficient balance in your account to create payment request"]
+    }
     //.select('belongsTo');  bad mai sahi krna hai projection se belong to lena hai
     const paidto = (paymentIndentifier === "buyer") ? business_id :  requester.belongsTo;
     const paidby = (paymentIndentifier === "buyer") ?  requester.belongsTo : business_id;
