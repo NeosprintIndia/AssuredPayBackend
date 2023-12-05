@@ -292,7 +292,8 @@ export const checkeractionInternal = async (
       const paidto = (actionResult as any).paidBy
       const paymenttype = "debit"
       const paymentstatus = "hold"
-      await createWalletTransaction(walletid, paidby, paidto, paymenttype, paymentstatus)
+      const orderAmount=(actionResult as any).orderAmount
+      await createWalletTransaction(walletid, paidby, paidto, paymenttype, paymentstatus,orderAmount)
     }
     return [true, actionResult]
   } catch (err) {
@@ -306,6 +307,7 @@ export const createWalletTransaction = async (
   paidto: string,
   paymentype: string,
   paymentstatus: string,
+  orderAmount:number
 ): Promise<boolean | any> => {
   try {
     const finalbody = {
@@ -314,6 +316,7 @@ export const createWalletTransaction = async (
       "paidto": paidto,
       "paymentype": paymentype,
       "paymentstatus": paymentstatus,
+      "BankBalanceAmount":orderAmount,
       "updated_at": new Date()
     }
     const walletTransactionres = new walletTransaction(finalbody);
@@ -376,7 +379,8 @@ export const actionPaymentRequestInternal = async (
         const paidto = (paymentRequest as any).paidBy
         const paymenttype = "debit"
         const paymentstatus = "hold"
-        await createWalletTransaction(walletid, paidby, paidto, paymenttype, paymentstatus)
+        const orderAmount=(paymentRequest as any).orderAmount
+        await createWalletTransaction(walletid, paidby, paidto, paymenttype, paymentstatus,orderAmount)
         await cascadeUpdateMilestoneAndPaymentRequest(paymentRequest._id);
       }
 
@@ -941,10 +945,14 @@ export const createPaymentRequestHandler = async (
     if (requiredInputs.some(input => !input)) {
       throw new Error("Missing required input parameters.");
     }
-    const walletres = await walletModel.findOne({ "userid": userId })
+    const walletres = await walletModel.findOne({ "userId": userId })
+    console.log("Before order amopunt",orderAmount)
+    console.log("Wallet order amopunt", walletres.amount)
     if (orderAmount > walletres.amount) {
+      console.log("After order amopunt")
       return [true, "You don't have sufficient balance in your account to create payment request"]
     }
+ 
     const isBuyerPayment = paymentIndentifier === "buyer";
     const paidto = isBuyerPayment ? business_id : userId;
     const paidby = isBuyerPayment ? userId : business_id;
@@ -990,13 +998,16 @@ export const createPaymentRequestHandler = async (
     console.log("before hold")
     if (actionResult.paymentIndentifier == "buyer") {
       const walletres = await walletModel.findOne({ "userId": userId })
+      const amountFinal=walletres.amount-orderAmount
+      const updatedWallet=await walletModel.findOneAndUpdate({ "userId": userId },{$set:{"amount":amountFinal}})
+      console.log("UPDATED WALLET",updatedWallet)
       console.log("wallet", walletres)
       const walletid = walletres._id
       const paidby = (actionResult as any).paidTo
       const paidto = (actionResult as any).paidBy
       const paymenttype = "debit"
       const paymentstatus = "hold"
-      await createWalletTransaction(walletid, paidby, paidto, paymenttype, paymentstatus)
+      await createWalletTransaction(walletid, paidby, paidto, paymenttype, paymentstatus,orderAmount)
       if (actionResult.paymentType !== "full")
         await cascadeUpdateMilestoneAndPaymentRequest(actionResult._id);
     }
