@@ -559,7 +559,6 @@ export const businessActionOnPaymentRequestInternal = async (
     return [false, err]
   }
 };
-
 // const RevertRCRecord = async (paymentRequestId) => {
 //   try {
 //     const paymentRequest = await PaymentRequestModel.findById(paymentRequestId);
@@ -640,7 +639,6 @@ const RevertHoldWalletAmount = async (walletId) => {
     console.error('Error reverting hold wallet amount:', error.message);
   }
 };
-
 const createRCFDRecords = async (paymentRequestId) => {
   try {
     const paymentRequest = await PaymentRequestModel.findById(paymentRequestId);
@@ -689,7 +687,6 @@ const createRCFDRecords = async (paymentRequestId) => {
     console.error('Error creating RCFD records:', error.message);
   }
 };
-
 const createBBFDRecords = async (paymentRequestId) => {
   try {
     const paymentRequest = await PaymentRequestModel.findById(paymentRequestId);
@@ -786,7 +783,6 @@ export const manageMyMakerInternal = async (user: any, status: string): Promise<
     return [false, error.message];
   }
 };
-
 // Get recievables between a date range
 export const getrecievablesInternal = async (
   userid: string,
@@ -1010,7 +1006,6 @@ export const createPaymentRequestHandler = async (
     return [false, "Error creating payment request. Please try again."];
   }
 };
-
 export const getAllPaymentOfCheckerInternal = async (userid: string, paymentIndentifier: any): Promise<any[]> => {
   try {
     const paymentRequests = await PaymentRequestModel.find({ requester: userid, paymentIndentifier })
@@ -1036,6 +1031,75 @@ export const getAllPaymentOfCheckerInternal = async (userid: string, paymentInde
     throw new Error(err.message); // Throw an exception instead of returning an array
   }
 };
+export const getrecievablesdashboardInternal = async (
+  userid: string,
+): Promise<boolean | any> => {
+  try {
+    const userIdObject = new mongoose.Types.ObjectId(userid)
+    const query = {
+      "paidTo": userIdObject,
+      "recipientStatus": "approved",
+      "MilestoneDetails.date": { "$gte": new Date() } // Fetch upcoming milestones
+    }
+    console.log("QUERY", query)
+    const projection = {
+      "MilestoneDetails.amount": 1,
+      "MilestoneDetails.ApFees": 1,
+      "MilestoneDetails.utilisedbySeller": 1,
+      "MilestoneDetails.ApproxInterest": 1
+    };
+    console.log("projection", projection)
+    const result = await PaymentRequestModel.find(query, projection)
+    console.log("RESULT", result)
+
+    let totalMilestones = 0;
+    let totalReceivable = 0;
+
+    result.forEach((paymentRequest) => {
+      paymentRequest.MilestoneDetails.forEach((milestone) => {
+        totalMilestones++;
+        totalReceivable += milestone.amount - milestone.utilisedbySeller - milestone.ApFees;
+      });
+    });
+
+    console.log("Total Number of Milestones:", totalMilestones);
+    console.log("Total Receivable Amount:", totalReceivable);
+
+    return [true, {totalMilestones,totalReceivable}];
+  } catch (err) {
+    console.error(err);
+  }
+};
+export const getacceptpaymentdashboardInternal = async (
+  userid: string,
+): Promise<boolean | any> => {
+  try {
+    const userIdObject = new mongoose.Types.ObjectId(userid)
+    const query = {
+      "paidTo": userIdObject,
+      "recipientStatus": "pending",
+      "paymentIndentifier": "buyer", // Add this condition to filter by paymentIndentifier
+    }
+    console.log("QUERY", query)
+    const projection = {
+      "orderAmount": 1,
+      "paymentIndentifier": 1,
+    };
+    console.log("projection", projection)
+    const result = await PaymentRequestModel.find(query, projection)
+    console.log("RESULT", result)
+
+    // Calculate the sum and count
+    const sumOrderAmount = result.reduce((sum, item) => sum + item.orderAmount, 0);
+    const documentCount = result.length;
+    return [true, {sumOrderAmount,documentCount,}];
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+
+
 
 
 

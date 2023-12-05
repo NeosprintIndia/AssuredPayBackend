@@ -12,7 +12,9 @@ getAllMyMaker,
 manageMyMaker,
 createPaymentChecker,
 getAllPaymentOfChecker,
-getrecievables
+getrecievables,
+getrecievablesdashboard,
+getacceptpaymentdashboard,
 } from '../../Controller/checker/checkerController';
 
 const router: Router = Router();
@@ -22,6 +24,9 @@ router.post('/businessactiononpaymentrequest',verifyTokenUsers,businessActionOnP
 router.get('/viewparticularrequest',verifyTokenUsers,viewparticularrequest)
 // Payment Request
 router.get('/getrecievables',verifyTokenUsers,getrecievables) 
+router.get('/getrecievablesdashboard',verifyTokenUsers,getrecievablesdashboard) 
+router.get('/getacceptpaymentdashboard',verifyTokenUsers,getacceptpaymentdashboard) 
+
 
 
 
