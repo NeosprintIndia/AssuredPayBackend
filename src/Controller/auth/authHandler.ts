@@ -517,12 +517,9 @@ export const resendOtpInternal = async (
 
 export const getlegaldocumentsInternal = async (): Promise<any[]> => {
   try {
-    
-    const result = await globalSetting.find().select('privacyPolicy termsOfService disclaimer').exec();
-    
+    const result = await globalSetting.find().exec();
     return [true, result];
   } catch (error) {
-   
     return error;
   }
 };

@@ -804,6 +804,7 @@ export const getrecievablesInternal = async (
         $lte: new Date(endDate),
       };
     }
+    console.log("MATCH QUERY",matchQuery)
     const milestones = await PaymentRequestModel.aggregate([
       {
         $match: matchQuery,
@@ -817,6 +818,14 @@ export const getrecievablesInternal = async (
           'MilestoneDetails.utilisedbySeller': { $eq: 0 }, // Exclude milestones where utilisedbySeller > 0
         },
       },
+      {
+        $lookup: {
+        from: 'userkycs',
+        localField: 'paidBy',
+        foreignField: 'user',
+        as: 'userkyc',
+      },
+    },
       // {
       //   $addFields: {
       //     'MilestoneDetails.isFDAllowed': {
@@ -835,10 +844,17 @@ export const getrecievablesInternal = async (
       // },
       {
         $project: {
-          _id: 0,
-          date: '$MilestoneDetails.date',
+          _id: '$_id',
+          orderID: 1,
+          paidBy: 1,
+          proposalCreatedDate:1,
+          recievingDate: '$MilestoneDetails.date', 
+          utilisedbySeller: '$MilestoneDetails.utilisedbySeller',
+          ApFees: '$MilestoneDetails.ApFees',
+          ApproxInterest: '$MilestoneDetails.ApproxInterest',
           amount: '$MilestoneDetails.amount',
-          isFDAllowed: '$MilestoneDetails.isFDAllowed',
+          recievablewhichpr:'$MilestoneDetails.recievablewhichpr',
+          Legal_Name_of_Business: { $arrayElemAt: ['$userkyc.Legal_Name_of_Business', 0] },
         },
       },
     ]);
