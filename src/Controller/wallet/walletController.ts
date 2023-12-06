@@ -20,8 +20,6 @@ export async function getAllwallet(req: Request, res: Response) {
         res.status(500).json({ error: error.message });
     }
 };
-
-
 export async function getwalletbyid(req: Request, res: Response) {
     try {
         const wallet = await walletModel.findById(req.params.id);
@@ -30,7 +28,6 @@ export async function getwalletbyid(req: Request, res: Response) {
         res.status(500).json({ error: error.message });
     }
 }
-
 export async function updatewalletbyid(req: Request, res: Response) {
     try {
         const wallet = await walletModel.findByIdAndUpdate(req.params.id, req.body, { new: true });

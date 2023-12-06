@@ -1046,48 +1046,58 @@ export const getrecievablesdashboardInternal = async (
   userid: string,
 ): Promise<boolean | any> => {
   try {
-    const userIdObject = new mongoose.Types.ObjectId(userid)
-    const query = {
+    const userIdObject = new mongoose.Types.ObjectId(userid);
+    const upcomingMilestonesQuery = { "MilestoneDetails.date": { "$gte": new Date() } };
+
+    // Scenario 1: User as the creator (paidTo) and recipientStatus is "approved," and paymentIndentifier is "seller."
+    const queryCreator = {
       "paidTo": userIdObject,
       "recipientStatus": "approved",
-      "MilestoneDetails.date": { "$gte": new Date() } // Fetch upcoming milestones
-    }
-    console.log("QUERY", query)
-    const projection = {
-      "MilestoneDetails.amount": 1,
-      "MilestoneDetails.ApFees": 1,
-      "MilestoneDetails.utilisedbySeller": 1,
-      "MilestoneDetails.ApproxInterest": 1
+      "paymentIndentifier": "seller",
+      ...upcomingMilestonesQuery
     };
-    console.log("projection", projection)
-    const result = await PaymentRequestModel.find(query, projection)
-    console.log("RESULT", result)
+    const resultCreator = await PaymentRequestModel.find(queryCreator);
+    console.log("resultCreator",resultCreator)
+
+    // Scenario 2: User as the recipient and recipientStatus is "approved," and paymentIndentifier is "buyer."
+    const queryRecipient = {
+      "paidTo": userIdObject,
+      "recipientStatus": "approved",
+      "paymentIndentifier": "buyer",
+      ...upcomingMilestonesQuery
+    };
+    const resultRecipient = await PaymentRequestModel.find(queryRecipient);
+    console.log("resultRecipient",resultRecipient)
+
+    const combinedResult = [...resultCreator, ...resultRecipient];
 
     let totalMilestones = 0;
     let totalReceivable = 0;
 
-    result.forEach((paymentRequest) => {
-      paymentRequest.MilestoneDetails.forEach((milestone) => {
+    combinedResult.forEach(({ MilestoneDetails }) => {
+      MilestoneDetails.forEach(({ amount, utilisedbySeller, ApFees }) => {
         totalMilestones++;
-        totalReceivable += milestone.amount - milestone.utilisedbySeller - milestone.ApFees;
+        totalReceivable += amount - utilisedbySeller - ApFees;
       });
     });
 
     console.log("Total Number of Milestones:", totalMilestones);
     console.log("Total Receivable Amount:", totalReceivable);
 
-    return [true, {totalMilestones,totalReceivable}];
+    return [true, { totalMilestones, totalReceivable }];
   } catch (err) {
     console.error(err);
+    return [false, err]; 
   }
 };
+
 export const getacceptpaymentdashboardInternal = async (
   userid: string,
 ): Promise<boolean | any> => {
   try {
     const userIdObject = new mongoose.Types.ObjectId(userid)
     const query = {
-      "paidTo": userIdObject,
+      "paidBy": userIdObject,
       "recipientStatus": "pending",
       "paymentIndentifier": "buyer", // Add this condition to filter by paymentIndentifier
     }
@@ -1106,6 +1116,82 @@ export const getacceptpaymentdashboardInternal = async (
     return [true, {sumOrderAmount,documentCount,}];
   } catch (err) {
     console.error(err);
+  }
+};
+export const getWalletBalanceInternal = async (
+  userId: string,
+): Promise<any | any> => {
+  try {
+    const wallet = await walletModel.findOne({ userId:userId }).select('amount');
+    console.log("Wallet",wallet)
+    if (wallet) {
+      const balance = wallet.get('amount');
+      return [true,{availableBalance:balance}];
+    } else {
+      return [false,"Requested wallet Balance not Found"];
+    }
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+};
+// export const getbookedpaymentdashboardInternal = async (
+//   userid: string,
+// ): Promise<boolean | any> => {
+//   try {
+//     const userIdObject = new mongoose.Types.ObjectId(userid)
+//     const query = {
+//       "paidBy": userIdObject,
+//       "recipientStatus": "accepted",
+//       "recipient": userIdObject || "", // Add this condition to filter by paymentIndentifier
+//     }
+//     console.log("QUERY", query)
+//     const projection = {
+//       "orderAmount": 1,
+//       "paymentIndentifier": 1,
+//     };
+//     console.log("projection", projection)
+//     const result = await PaymentRequestModel.find(query, projection)
+//     console.log("RESULT", result)
+
+//     // Calculate the sum and count
+//     const sumOrderAmount = result.reduce((sum, item) => sum + item.orderAmount, 0);
+//     const documentCount = result.length;
+//     return [true, {sumOrderAmount,documentCount,}];
+//   } catch (err) {
+//     console.error(err);
+//   }
+// };
+
+export const getbookedpaymentdashboardInternal = async (
+  userid: string,
+): Promise<boolean | any> => {
+  try {
+    const userIdObject = new mongoose.Types.ObjectId(userid);
+
+    // Scenario 1: User as the creator (paidBy) and recipientStatus is "approved," and paymentIndentifier is "buyer."
+    const queryCreator = {
+      "paidBy": userIdObject,
+      "recipientStatus": "approved",
+      "paymentIndentifier": "buyer",
+    };
+    const resultCreator = await PaymentRequestModel.find(queryCreator);
+
+    // Scenario 2: User as the recipient and recipientStatus is "approved," and paymentIndentifier is "seller."
+    const queryRecipient = {
+      "recipient": userIdObject,
+      "recipientStatus": "approved",
+      "paymentIndentifier": "seller",
+    };
+    const resultRecipient = await PaymentRequestModel.find(queryRecipient);
+    const combinedResult = [...resultCreator, ...resultRecipient];
+    const sumOrderAmount = combinedResult.reduce((sum, item) => sum + item.orderAmount, 0);
+    const documentCount = combinedResult.length;
+
+    return [true, { sumOrderAmount, documentCount }];
+  } catch (err) {
+    console.error(err);
+    return [false, err]; 
   }
 };
 

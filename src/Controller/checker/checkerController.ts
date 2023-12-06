@@ -13,6 +13,8 @@ getAllPaymentOfCheckerInternal,
 getrecievablesInternal,
 getrecievablesdashboardInternal,
 getacceptpaymentdashboardInternal,
+getWalletBalanceInternal,
+getbookedpaymentdashboardInternal
 } from "./checkerHandler";
 
 import { sendDynamicMail } from "../../services/sendEmail";
@@ -200,6 +202,51 @@ export async function getmakerrequest(req: Request, res: Response) {
     }
   }
   export async function getacceptpaymentdashboard(req: Request, res: Response) {
+    try { 
+      const userid=(req as any).userId
+      console.log("USERID",userid)
+      const [success, result] = await getacceptpaymentdashboardInternal(userid);
+      if (success) {
+        res.status(200).send({ result });
+      } else {
+        res.status(404).send({ error: result });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: "Internal Server Error" });
+    }
+  }
+  export async function getWalletBalance(req: Request, res: Response) {
+    try { 
+      const userid=(req as any).userId
+      console.log("USERID",userid)
+      const [success, result] = await getWalletBalanceInternal(userid);
+      if (success) {
+        res.status(200).send({ result });
+      } else {
+        res.status(404).send({ error: result });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: "Internal Server Error" });
+    }
+  }
+  export async function getbookedpaymentdashboard(req: Request, res: Response) {
+    try { 
+      const userid=(req as any).userId
+      console.log("USERID",userid)
+      const [success, result] = await getbookedpaymentdashboardInternal(userid);
+      if (success) {
+        res.status(200).send({ result });
+      } else {
+        res.status(404).send({ error: result });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: "Internal Server Error" });
+    }
+  }
+  export async function getpaymentrequestdashboard(req: Request, res: Response) {
     try { 
       const userid=(req as any).userId
       console.log("USERID",userid)
