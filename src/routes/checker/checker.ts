@@ -5,7 +5,7 @@ import verifyTokenUsers from '../../middlewares/verifyTokenUsers';
 getmakerrequest,
 checkeraction,
 viewparticularrequest,
-getpaymentrequest,
+getPaymentToAccept,
 actionPaymentRequest,
 businessActionOnPaymentRequest,
 getAllMyMaker,
@@ -18,16 +18,16 @@ getacceptpaymentdashboard,
 getbookedpaymentdashboard,
 getWalletBalance,
 getpaymentrequestdashboard,
+getPaymentToPay,
+getBookedPaymentRequest
 } from '../../Controller/checker/checkerController';
 
 const router: Router = Router();
 router.post('/createpaymentchecker',verifyTokenUsers,createPaymentChecker) 
-router.get('/getallpaymentofchecker',verifyTokenUsers,getAllPaymentOfChecker)
+router.get('/getallpaymentofchecker',verifyTokenUsers,getAllPaymentOfChecker)// landing page
 router.post('/businessactiononpaymentrequest',verifyTokenUsers,businessActionOnPaymentRequest) // 
 router.get('/viewparticularrequest',verifyTokenUsers,viewparticularrequest)
-router.get('/getpaymentrequest',verifyTokenUsers,getpaymentrequest)
-// Payment Request
-router.get('/getrecievables',verifyTokenUsers,getrecievables) 
+router.get('/getrecievables',verifyTokenUsers,getrecievables) // Action Page available RC and Fetch RC while configuring
 
 //dashboard
 router.get('/getwalletbalance',verifyTokenUsers,getWalletBalance) 
@@ -36,6 +36,10 @@ router.get('/getrecievablesdashboard',verifyTokenUsers,getrecievablesdashboard)
 router.get('/getacceptpaymentdashboard',verifyTokenUsers,getacceptpaymentdashboard) 
 router.get('/getpaymentrequestdashboard',verifyTokenUsers,getpaymentrequestdashboard) 
 
+// dashboard action page 
+router.get('/getpaymentrequest',verifyTokenUsers,getPaymentToAccept) // Paid TO ME
+router.get('/getsentpaymentrequest',verifyTokenUsers,getPaymentToPay)// Paid By ME
+router.get('/getbookedpaymentrequest',verifyTokenUsers,getBookedPaymentRequest)// Paid By ME
 
 // maker-checker
 router.get('/getmakerrequest',verifyTokenUsers,getmakerrequest)

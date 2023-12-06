@@ -201,25 +201,6 @@ export const viewparticularrequestInternal = async (
     console.error(err);
   }
 };
-export const getpaymentrequestInternal = async (userid: string): Promise<boolean | any> => {
-  try {
-
-    const paymentRequests = await PaymentRequestModel.find({
-      recipient: userid,
-      recipientStatus: 'pending'
-    })
-    let modelResults = [];
-    console.log("paymentRequests", paymentRequests)
-    const requester = (paymentRequests as any).requester;
-    const docId = (paymentRequests as any)._id;
-    const modelResult = await getRequestDetails(userid, requester);
-    modelResults.push(modelResult);
-    return [true, modelResults]
-  } catch (err) {
-
-    console.error(err);
-  }
-};
 // Get recievables between a date range
 export const getrecievablesInternal = async (
   userid: string,
@@ -447,6 +428,69 @@ export const getpaymentrequestdashboardInternal = async (
     console.error(err);
   }
 };
+
+//Dashboard Action page
+export const getpaymentrequestInternal = async (userid: string): Promise<boolean | any> => {
+  try {
+
+    const paymentRequests = await PaymentRequestModel.find({
+      paidTo:userid,
+      recipient: userid,
+      recipientStatus: 'pending'
+    })
+    let modelResults = [];
+    console.log("paymentRequests", paymentRequests)
+    const requester = (paymentRequests as any).requester;
+    const docId = (paymentRequests as any)._id;
+    const modelResult = await getRequestDetails(userid, requester);
+    modelResults.push(modelResult);
+    return [true, modelResults]
+  } catch (err) {
+
+    console.error(err);
+  }
+};
+export const getPaymentToPayInternal = async (userid: string): Promise<boolean | any> => {
+  try {
+
+    const paymentRequests = await PaymentRequestModel.find({
+      paidBy:userid,
+      recipient: userid,
+      recipientStatus: 'pending'
+    })
+    let modelResults = [];
+    console.log("paymentRequests", paymentRequests)
+    const requester = (paymentRequests as any).requester;
+    const docId = (paymentRequests as any)._id;
+    const modelResult = await getRequestDetails(userid, requester);
+    modelResults.push(modelResult);
+    return [true, modelResults]
+  } catch (err) {
+
+    console.error(err);
+  }
+};
+export const getBookedPaymentRequestInternal = async (userid: string): Promise<boolean | any> => {
+  try {
+
+    const paymentRequests = await PaymentRequestModel.find({
+      paidBy:userid,
+      recipientStatus: 'approved'
+    })
+    let modelResults = [];
+    console.log("paymentRequests", paymentRequests)
+    const requester = (paymentRequests as any).requester;
+    const docId = (paymentRequests as any)._id;
+    const modelResult = await getRequestDetails(userid, requester);
+    modelResults.push(modelResult);
+    return [true, modelResults]
+  } catch (err) {
+
+    console.error(err);
+  }
+};
+
+
 
 
 
@@ -764,56 +808,6 @@ export const getRequestDetails = async (userId, requester) => {
     const fuserid = new mongoose.Types.ObjectId(userId)
     console.log(fuserid)
     console.log(requester)
-
-    // const result = await PaymentRequestModel.aggregate([
-    //   {
-    //     $match: { "recipient": fuserid }
-    //   },
-    //   {
-    //     $lookup: {
-    //       from: "userkycs",
-    //       localField: "requester",
-    //       foreignField: "user",
-    //       as: "businessNetworkDetails"
-    //     }
-    //   },
-    //   {
-    //     $unwind: "$businessNetworkDetails"
-    //   },
-    //   {
-    //     $match: { "businessNetworkDetails.user": "$recipient.requester" }
-    //   },
-    //   {
-    //     $project: {
-
-    //       "requester":1,
-    //       "recipient":1,
-    //       "paymentType":1,
-    //      "recipientStatus":1,
-    //       "orderTitle":1,
-    //        "orderAmount": 1,
-    //       "paymentIndentifier":1,  
-    //       businessNetworkDetails: {
-    //         Legal_Name_of_Business: 1,
-    //         GSTIN_of_the_entity: 1,
-    //       }
-    //     }
-    //   },
-    //   {
-    //     $project: {
-    //       "Legal_Name_of_Business": "$Legal_Name_of_Business",
-    //       "GSTIN_of_the_entity":"$GSTIN_of_the_entity",
-    //       "recipient":"$recipient",
-    //       "requester": "$requester",
-    //       "paymentType": "$paymentType",
-    //       "recipientStatus": "$recipientStatus",
-    //       "orderTitle": "$orderTitle",
-    //       "orderAmount": "$orderAmount",
-    //       "paymentIndentifier": "$paymentIndentifier",
-    //     }
-    //   }
-    // ]);
-
     const result = await PaymentRequestModel.aggregate([
       {
         $match: { "recipient": fuserid }
@@ -839,7 +833,11 @@ export const getRequestDetails = async (userId, requester) => {
           "recipientStatus": 1,
           "orderTitle": 1,
           "orderAmount": 1,
-          "paymentIndentifier": 1
+          "paymentIndentifier": 1,
+          "MilestoneDetails":1,
+          "orderID":1,
+          "proposalCreatedDate":1,
+          "proposalStatus":1,
         }
       }
 

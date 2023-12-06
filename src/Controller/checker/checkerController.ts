@@ -15,7 +15,9 @@ getWalletBalanceInternal,
 getrecievablesdashboardInternal,
 getacceptpaymentdashboardInternal,
 getbookedpaymentdashboardInternal,
-getpaymentrequestdashboardInternal
+getpaymentrequestdashboardInternal,
+getPaymentToPayInternal,
+getBookedPaymentRequestInternal
 } from "./checkerHandler";
 
 import { sendDynamicMail } from "../../services/sendEmail";
@@ -75,21 +77,6 @@ export async function viewparticularrequest(req: Request, res: Response) {
   try {
     const { docId } = (req as any).query;
     const [success, result] = await viewparticularrequestInternal(docId);
-    if (success) {
-      res.status(200).send({ result });
-    } else {
-      res.status(404).send({ error: result });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-}
-export async function getpaymentrequest(req: Request, res: Response) {2
-  try {
-    const userid=(req as any).userId
-    const [success, result] = await getpaymentrequestInternal(userid);
-
     if (success) {
       res.status(200).send({ result });
     } else {
@@ -195,10 +182,54 @@ export async function getpaymentrequestdashboard(req: Request, res: Response) {
   }
 }
 
+// Dashboard Action Page
+export async function getPaymentToAccept(req: Request, res: Response) {2
+  try {
+    const userid=(req as any).userId
+    const [success, result] = await getpaymentrequestInternal(userid);
 
+    if (success) {
+      res.status(200).send({ result });
+    } else {
+      res.status(404).send({ error: result });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "Internal Server Error" });
+  }
+}
+export async function getPaymentToPay(req: Request, res: Response) {2
+  try {
+    const userid=(req as any).userId
+    const [success, result] = await getPaymentToPayInternal(userid);
+
+    if (success) {
+      res.status(200).send({ result });
+    } else {
+      res.status(404).send({ error: result });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "Internal Server Error" });
+  }
+}
+export async function getBookedPaymentRequest(req: Request, res: Response) {2
+  try {
+    const userid=(req as any).userId
+    const [success, result] = await getBookedPaymentRequestInternal(userid);
+
+    if (success) {
+      res.status(200).send({ result });
+    } else {
+      res.status(404).send({ error: result });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "Internal Server Error" });
+  }
+}
 
 //MAker checker
-
 
 export async function getmakerrequest(req: Request, res: Response) {
     try {
