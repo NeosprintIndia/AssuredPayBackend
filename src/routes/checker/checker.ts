@@ -28,10 +28,6 @@ router.get('/getrecievablesdashboard',verifyTokenUsers,getrecievablesdashboard)
 router.get('/getacceptpaymentdashboard',verifyTokenUsers,getacceptpaymentdashboard) 
 
 
-
-
-
-
 router.get('/getmakerrequest',verifyTokenUsers,getmakerrequest)
 router.get('/getpaymentrequest',verifyTokenUsers,getpaymentrequest)
 router.get('/getallmymaker',verifyTokenUsers,getAllMyMaker)

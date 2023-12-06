@@ -950,7 +950,7 @@ export const createPaymentRequestHandler = async (
     console.log("Wallet order amopunt", walletres.amount)
     if (orderAmount > walletres.amount) {
       console.log("After order amopunt")
-      return [true, "You don't have sufficient balance in your account to create payment request"]
+      return [false, "You don't have sufficient balance in your account to create payment request"]
     }
  
     const isBuyerPayment = paymentIndentifier === "buyer";
