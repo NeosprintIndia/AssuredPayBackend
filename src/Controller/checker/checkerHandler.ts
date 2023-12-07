@@ -411,6 +411,7 @@ export const getpaymentrequestdashboardInternal = async (
     const userIdObject = new mongoose.Types.ObjectId(userid)
     const query = {
       "paidBy": userIdObject,
+      "recipient":userIdObject,
       "recipientStatus": "pending",
     }
     console.log("QUERY", query)
