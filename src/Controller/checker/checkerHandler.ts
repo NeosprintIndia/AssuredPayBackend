@@ -211,6 +211,7 @@ export const getrecievablesInternal = async (
     const userIdObject = new mongoose.Types.ObjectId(userid)
     let matchQuery = {
       'paidTo': userIdObject,
+      "recipientStatus":"approved"
     };
     if (startDate && endDate) {
       matchQuery['MilestoneDetails.date'] = {
