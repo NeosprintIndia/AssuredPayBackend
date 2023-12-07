@@ -555,16 +555,15 @@ export const getBookedPaymentRequestInternal = async (userid: string): Promise<b
       paidBy: userid,
       recipientStatus: 'approved'
     });
+    console.log("paymentRequests",paymentRequests)
 
     console.log("paymentRequests", paymentRequests);
 
     let modelResults = [];
-
     for (const paymentRequest of paymentRequests) {
       const requester = paymentRequest.paidTo;
       const docId = paymentRequest._id;
-
-      const modelResult = await getRequestDetails(userid, requester);
+      const modelResult = await getRequestDetailsofBookedPayments(userid, requester);
       modelResults.push(modelResult);
     }
 
@@ -885,6 +884,54 @@ export const getBusinessDetails = async (userId, businessName, createdby, docId)
     // result[0].AddedBydetails = addedby.business_email;
     // result[0].docId = docId;
     // return result;
+  } catch (error) {
+    return error.message;
+  }
+}
+export const getRequestDetailsofBookedPayments = async (userId, requester) => {
+  try {
+    // Continue with the existing aggregation pipeline
+    const fuserid = new mongoose.Types.ObjectId(userId)
+    const businessDetail = new mongoose.Types.ObjectId(requester)
+    console.log("fuserid",fuserid)
+    console.log("requester",businessDetail)
+    const result = await PaymentRequestModel.aggregate([
+      {
+        $match: { "paidBy": fuserid }
+      },
+      {
+        $lookup: {
+          from: "userkycs",
+          localField: "paidTo",
+          foreignField: "user",
+          as: "businessNetworkDetails"
+        }
+      },
+      {
+        $unwind: "$businessNetworkDetails"
+      },
+      {
+        $project: {
+          "Legal_Name_of_Business": "$businessNetworkDetails.Legal_Name_of_Business",
+          "GSTIN_of_the_entity": "$businessNetworkDetails.GSTIN_of_the_entity",
+          "recipient": 1,
+          "requester": 1,
+          "paymentType": 1,
+          "recipientStatus": 1,
+          "orderTitle": 1,
+          "orderAmount": 1,
+          "paymentIndentifier": 1,
+          "MilestoneDetails":1,
+          "orderID":1,
+          "proposalCreatedDate":1,
+          "proposalStatus":1,
+        }
+      }
+
+    ]);
+
+
+    return result;
   } catch (error) {
     return error.message;
   }

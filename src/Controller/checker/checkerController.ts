@@ -216,6 +216,7 @@ export async function getPaymentToPay(req: Request, res: Response) {2
 export async function getBookedPaymentRequest(req: Request, res: Response) {2
   try {
     const userid=(req as any).userId
+    console.log("userid",userid)
     const [success, result] = await getBookedPaymentRequestInternal(userid);
     if (success) {
       res.status(200).send({ result });
