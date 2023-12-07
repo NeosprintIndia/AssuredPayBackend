@@ -430,44 +430,100 @@ export const getpaymentrequestdashboardInternal = async (
 };
 
 //Dashboard Action page
+// export const getpaymentrequestInternal = async (userid: string): Promise<boolean | any> => {
+//   try {
+
+//     const paymentRequests = await PaymentRequestModel.find({
+//       paidTo:userid,
+//       recipient: userid,
+//       recipientStatus: 'pending'
+//     })
+//     let modelResults = [];
+//     console.log("paymentRequests", paymentRequests)
+//     const requester = (paymentRequests as any).requester;
+//     const docId = (paymentRequests as any)._id;
+//     const modelResult = await getRequestDetails(userid, requester);
+//     modelResults.push(modelResult);
+//     return [true, modelResults]
+//   } catch (err) {
+
+//     console.error(err);
+//   }
+// };
 export const getpaymentrequestInternal = async (userid: string): Promise<boolean | any> => {
   try {
-
     const paymentRequests = await PaymentRequestModel.find({
       paidTo:userid,
       recipient: userid,
       recipientStatus: 'pending'
     })
-    let modelResults = [];
-    console.log("paymentRequests", paymentRequests)
-    const requester = (paymentRequests as any).requester;
-    const docId = (paymentRequests as any)._id;
-    const modelResult = await getRequestDetails(userid, requester);
-    modelResults.push(modelResult);
-    return [true, modelResults]
-  } catch (err) {
 
+    console.log("paymentRequests", paymentRequests);
+
+    let modelResults = [];
+
+    for (const paymentRequest of paymentRequests) {
+      const requester = paymentRequest.paidBy;
+      const docId = paymentRequest._id;
+
+      const modelResult = await getRequestDetails(userid, requester);
+      modelResults.push(modelResult);
+    }
+
+    console.log("modelResults", modelResults);
+
+    return [true, modelResults];
+  } catch (err) {
     console.error(err);
+    return [false, err]; // Handle error appropriately
   }
 };
+// export const getPaymentToPayInternal = async (userid: string): Promise<boolean | any> => {
+//   try {
+
+//     const paymentRequests = await PaymentRequestModel.find({
+//       paidBy:userid,
+//       recipient: userid,
+//       recipientStatus: 'pending'
+//     })
+//     let modelResults = [];
+//     console.log("paymentRequests", paymentRequests)
+//     const requester = (paymentRequests as any).requester;
+//     const docId = (paymentRequests as any)._id;
+//     const modelResult = await getRequestDetails(userid, requester);
+//     modelResults.push(modelResult);
+//     return [true, modelResults]
+//   } catch (err) {
+
+//     console.error(err);
+//   }
+// };
 export const getPaymentToPayInternal = async (userid: string): Promise<boolean | any> => {
   try {
-
     const paymentRequests = await PaymentRequestModel.find({
       paidBy:userid,
       recipient: userid,
       recipientStatus: 'pending'
     })
-    let modelResults = [];
-    console.log("paymentRequests", paymentRequests)
-    const requester = (paymentRequests as any).requester;
-    const docId = (paymentRequests as any)._id;
-    const modelResult = await getRequestDetails(userid, requester);
-    modelResults.push(modelResult);
-    return [true, modelResults]
-  } catch (err) {
 
+    console.log("paymentRequests", paymentRequests);
+
+    let modelResults = [];
+
+    for (const paymentRequest of paymentRequests) {
+      const requester = paymentRequest.paidTo;
+      const docId = paymentRequest._id;
+
+      const modelResult = await getRequestDetails(userid, requester);
+      modelResults.push(modelResult);
+    }
+
+    console.log("modelResults", modelResults);
+
+    return [true, modelResults];
+  } catch (err) {
     console.error(err);
+    return [false, err]; // Handle error appropriately
   }
 };
 // export const getBookedPaymentRequestInternal = async (userid: string): Promise<boolean | any> => {
