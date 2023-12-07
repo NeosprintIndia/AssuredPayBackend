@@ -387,6 +387,7 @@ export const getacceptpaymentdashboardInternal = async (
     const query = {
       "paidTo": userIdObject,
       "recipientStatus": "pending",
+      "recipient":userIdObject
     }
     console.log("QUERY", query)
     const projection = {
@@ -455,31 +456,31 @@ export const getpaymentrequestdashboardInternal = async (
 export const getpaymentrequestInternal = async (userid: string): Promise<boolean | any> => {
   try {
     const paymentRequests = await PaymentRequestModel.find({
-      paidTo:userid,
+      paidTo: userid,
       recipient: userid,
-      recipientStatus: 'pending'
-    })
+      recipientStatus: "pending"
+    }).select('_id paidBy'); // Only retrieve necessary fields
 
     console.log("paymentRequests", paymentRequests);
-
     let modelResults = [];
 
     for (const paymentRequest of paymentRequests) {
       const requester = paymentRequest.paidBy;
       const docId = paymentRequest._id;
 
-      const modelResult = await getRequestDetails(userid, requester);
+      // You can now directly use docId and requester without additional filtering
+      const modelResult = await getRequestDetails(userid, requester, docId);
       modelResults.push(modelResult);
     }
 
-    console.log("modelResults", modelResults);
-
+    // console.log("modelResults", modelResults);
     return [true, modelResults];
   } catch (err) {
     console.error(err);
     return [false, err]; // Handle error appropriately
   }
 };
+
 // export const getPaymentToPayInternal = async (userid: string): Promise<boolean | any> => {
 //   try {
 
@@ -506,7 +507,7 @@ export const getPaymentToPayInternal = async (userid: string): Promise<boolean |
       paidBy:userid,
       recipient: userid,
       recipientStatus: 'pending'
-    })
+    }).select('_id paidBy')
 
     console.log("paymentRequests", paymentRequests);
 
@@ -516,7 +517,7 @@ export const getPaymentToPayInternal = async (userid: string): Promise<boolean |
       const requester = paymentRequest.paidTo;
       const docId = paymentRequest._id;
 
-      const modelResult = await getRequestDetails(userid, requester);
+      const modelResult = await getRequestDetails(userid, requester,docId);
       modelResults.push(modelResult);
     }
 
@@ -936,17 +937,18 @@ export const getRequestDetailsofBookedPayments = async (userId, requester) => {
     return error.message;
   }
 }
-export const getRequestDetails = async (userId, requester) => {
+export const getRequestDetails = async (userId, requester,docId) => {
   try {
     // Continue with the existing aggregation pipeline
-
     const fuserid = new mongoose.Types.ObjectId(userId)
     const businessDetail = new mongoose.Types.ObjectId(requester)
+    const paymentRequestDetail = new mongoose.Types.ObjectId(docId);
     console.log("fuserid",fuserid)
     console.log("requester",businessDetail)
     const result = await PaymentRequestModel.aggregate([
       {
-        $match: { "recipient": fuserid }
+        $match: { "_id": paymentRequestDetail, // Match the specific payment request
+        "recipient": fuserid }
       },
       {
         $lookup: {
