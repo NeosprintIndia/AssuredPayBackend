@@ -36,8 +36,8 @@ export const createPaymentRequestHandler = async (
       throw new Error("Missing required input parameters.");
     }
     const walletres = await walletModel.findOne({ "userId": userId })
-    console.log("Before order amopunt",orderAmount)
-    console.log("Wallet order amopunt", walletres.amount)
+    console.log("Before order amount",orderAmount)
+    console.log("Wallet order amount", walletres.amount)
     if (orderAmount > walletres.amount) {
       console.log("After order amopunt")
       return [false, "You don't have sufficient balance in your account to create payment request"]
@@ -470,25 +470,55 @@ export const getPaymentToPayInternal = async (userid: string): Promise<boolean |
     console.error(err);
   }
 };
+// export const getBookedPaymentRequestInternal = async (userid: string): Promise<boolean | any> => {
+//   try {
+
+//     const paymentRequests = await PaymentRequestModel.find({
+//       paidBy:userid,
+//       recipientStatus: 'approved'
+//     })
+//     console.log("paymentRequests",paymentRequests)
+//     let modelResults = [];
+//     console.log("paymentRequests", paymentRequests)
+//     const requester = await (paymentRequests as any).paidTo;
+//     console.log("Before AWAIT",requester)
+//     const docId = (paymentRequests as any)._id;
+//     const modelResult = await getRequestDetails(userid, requester);
+//     modelResults.push(modelResult);
+//     return [true, modelResults]
+//   } catch (err) {
+
+//     console.error(err);
+//   }
+// };
 export const getBookedPaymentRequestInternal = async (userid: string): Promise<boolean | any> => {
   try {
-
     const paymentRequests = await PaymentRequestModel.find({
-      paidBy:userid,
+      paidBy: userid,
       recipientStatus: 'approved'
-    })
-    let modelResults = [];
-    console.log("paymentRequests", paymentRequests)
-    const requester = (paymentRequests as any).requester;
-    const docId = (paymentRequests as any)._id;
-    const modelResult = await getRequestDetails(userid, requester);
-    modelResults.push(modelResult);
-    return [true, modelResults]
-  } catch (err) {
+    });
 
+    console.log("paymentRequests", paymentRequests);
+
+    let modelResults = [];
+
+    for (const paymentRequest of paymentRequests) {
+      const requester = paymentRequest.paidTo;
+      const docId = paymentRequest._id;
+
+      const modelResult = await getRequestDetails(userid, requester);
+      modelResults.push(modelResult);
+    }
+
+    console.log("modelResults", modelResults);
+
+    return [true, modelResults];
+  } catch (err) {
     console.error(err);
+    return [false, err]; // Handle error appropriately
   }
 };
+
 
 
 
@@ -806,8 +836,9 @@ export const getRequestDetails = async (userId, requester) => {
     // Continue with the existing aggregation pipeline
 
     const fuserid = new mongoose.Types.ObjectId(userId)
-    console.log(fuserid)
-    console.log(requester)
+    const businessDetail = new mongoose.Types.ObjectId(requester)
+    console.log("fuserid",fuserid)
+    console.log("requester",businessDetail)
     const result = await PaymentRequestModel.aggregate([
       {
         $match: { "recipient": fuserid }

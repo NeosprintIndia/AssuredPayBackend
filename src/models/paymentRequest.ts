@@ -144,11 +144,11 @@ const paymentRequestSchema = new Schema<IPaymentRequest>({
       },
       days: {
         type: Number,
-        required: true,
+        required: false,
       },
       amount: {
         type: Number,
-        required: true,
+        required: false,
       },
       balancedUsed: {
         type: Number,
