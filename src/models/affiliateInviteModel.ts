@@ -1,6 +1,5 @@
 import mongoose, { Schema, Document, Model, Types } from 'mongoose';
 
-// Define the interface for the document
 
 interface IAffiliate extends Document {
   affiliateId : Types.ObjectId | IUser,

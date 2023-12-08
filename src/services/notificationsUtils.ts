@@ -16,10 +16,7 @@ export const postUserNotification = async (
   const { userId, message } = payload;
   const userNotification = new UserNotificationModel({ userId, message });
   await userNotification.save();
-
-  // Emit user-specific notification to the corresponding client
   await io.to(userId).emit(`userNotification`, userNotification);
-  // await io.to(userId).emit(`userNotification_${userId}`, userNotification);
 };
 
 export const markNotificationAsRead = async (
@@ -27,14 +24,11 @@ export const markNotificationAsRead = async (
   notificationId: string,
   io: Socket,
 ): Promise<void> => {
-  // Find the user notification by ID
   const userNotification = await UserNotificationModel.findOneAndUpdate(
     { _id: notificationId, userId },
     { isRead: true },
-    { new: true }, // Return the modified document
+    { new: true }, 
   );
-
-  // Emit the updated user notification to the corresponding client
   io.to(userId).emit('userNotification', userNotification);
 };
 
@@ -45,7 +39,5 @@ export const postGlobalNotification = async (
   const { message } = payload;
   const globalNotification = new GlobalNotificationModel({ message });
   await globalNotification.save();
-
-  // Emit global notification to all connected clients
   io.emit('globalNotification', globalNotification);
 };

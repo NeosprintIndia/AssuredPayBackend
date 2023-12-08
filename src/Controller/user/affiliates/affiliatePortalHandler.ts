@@ -270,22 +270,18 @@ export const get = async (userId, rowsPerPage, page, commission): Promise<any> =
     }
   };
   export const BankNamesInternal = async (
-    bankName?: string, // Make bankName optional
+    bankName?: string, 
   ): Promise<[boolean, any]> => {
     try {
       if (!bankName) {
-        // If bankName is not provided, return the full bank list
         const allBanks = await bank.find({});
         const allBankNames = allBanks.map((bank) => bank.bankName);
         return [true, allBankNames];
       }
-  
-      // Perform a case-insensitive partial search using a regular expression
       const regex = new RegExp(bankName, 'i');
       const matchingBanks = await bank.find({ bankName: regex });
   
       if (matchingBanks.length > 0) {
-        // Extract the names of matching banks into an array of objects
         const matchingBankNames = matchingBanks.map((bank) => bank.bankName);
         return [true, matchingBankNames];
       } else {

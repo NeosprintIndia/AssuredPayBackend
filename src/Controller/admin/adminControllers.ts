@@ -14,8 +14,6 @@ import {
 
 } from "./adminHandlers";
 
-// Route handler Function to update various limits and settings in the global admin configuration
-
 export const setAllLimits = async (
   req: Request,
   res: Response
@@ -65,7 +63,6 @@ export const setAllLimits = async (
   }
 };
 
-// Route handler Function to retrieve all configuration settings from the global admin configuration
 
 export const getconfiguration = async (
   req: Request,
@@ -88,7 +85,6 @@ export const getconfiguration = async (
   }
 };
 
-//Route handler Function to retrieve all KYC records based on sorting
 
 export const getAllKYCRecords = async (
   req: Request,

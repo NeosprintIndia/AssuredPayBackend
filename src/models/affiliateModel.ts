@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, Model, Types } from 'mongoose';
 
-// Define the interface for the document
+
 interface ISettlement {
   bankAccountNumber: string;
   paymentMode: string;
@@ -9,7 +9,7 @@ interface ISettlement {
   date: Date;
   transactionId: string;
 }
-// Define the interface for the Bank Account details
+
 interface BankACDetail {
   bankAccountNumber: number;
   ifsc: string;

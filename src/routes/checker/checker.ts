@@ -19,7 +19,8 @@ getbookedpaymentdashboard,
 getWalletBalance,
 getpaymentrequestdashboard,
 getPaymentToPay,
-getBookedPaymentRequest
+getBookedPaymentRequest,
+updatePaymentRequest
 } from '../../Controller/checker/checkerController';
 
 const router: Router = Router();
@@ -28,11 +29,12 @@ router.get('/getallpaymentofchecker',verifyTokenUsers,getAllPaymentOfChecker)// 
 router.post('/businessactiononpaymentrequest',verifyTokenUsers,businessActionOnPaymentRequest) // 
 router.get('/viewparticularrequest',verifyTokenUsers,viewparticularrequest)
 router.get('/getrecievables',verifyTokenUsers,getrecievables) // Action Page available RC and Fetch RC while configuring
+router.post('/updatepaymentrequest',verifyTokenUsers,updatePaymentRequest)
 
 //dashboard
-router.get('/getwalletbalance',verifyTokenUsers,getWalletBalance) 
-router.get('/getbookedpaymentdashboard',verifyTokenUsers,getbookedpaymentdashboard) 
-router.get('/getrecievablesdashboard',verifyTokenUsers,getrecievablesdashboard) 
+router.get('/getwalletbalance',verifyTokenUsers,getWalletBalance) //clear
+router.get('/getbookedpaymentdashboard',verifyTokenUsers,getbookedpaymentdashboard) //clear
+router.get('/getrecievablesdashboard',verifyTokenUsers,getrecievablesdashboard) // Need Work
 router.get('/getacceptpaymentdashboard',verifyTokenUsers,getacceptpaymentdashboard) 
 router.get('/getpaymentrequestdashboard',verifyTokenUsers,getpaymentrequestdashboard) 
 

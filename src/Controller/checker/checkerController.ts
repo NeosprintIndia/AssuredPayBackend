@@ -17,7 +17,8 @@ getacceptpaymentdashboardInternal,
 getbookedpaymentdashboardInternal,
 getpaymentrequestdashboardInternal,
 getPaymentToPayInternal,
-getBookedPaymentRequestInternal
+getBookedPaymentRequestInternal,
+updatePaymentRequestInternal
 } from "./checkerHandler";
 
 import { sendDynamicMail } from "../../services/sendEmail";
@@ -93,6 +94,24 @@ export async function getrecievables(req: Request, res: Response) {
     const userid=(req as any).userId
     console.log("USERID",userid)
     const [success, result] = await getrecievablesInternal(userid, startDate,endDate);
+    if (success) {
+      res.status(200).send({ result });
+    } else {
+      res.status(404).send({ error: result });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "Internal Server Error" });
+  }
+} 
+export async function updatePaymentRequest(req: Request, res: Response) {
+  try { 
+
+    const { paymentRequestId } = req.params;
+    const updatedMilestonesData = req.body;
+    const userid=(req as any).userId
+    console.log("USERID",userid)
+    const [success, result] = await updatePaymentRequestInternal(userid,paymentRequestId,updatedMilestonesData);
     if (success) {
       res.status(200).send({ result });
     } else {

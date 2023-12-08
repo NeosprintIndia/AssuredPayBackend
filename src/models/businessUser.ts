@@ -1,8 +1,8 @@
 import mongoose, { Schema, Document, Model,Types } from 'mongoose';
 
-// Define the interface for the BusinessUser document
+
 interface IBusinessUser extends Document {
-  userId: mongoose.Types.ObjectId | IUser; // Replace 'IUser' with the correct user interface
+  userId: mongoose.Types.ObjectId | IUser; 
   kycId: mongoose.Types.ObjectId | IUser;
   refferedBy: string;
   PAN_Attempt: number;
@@ -14,13 +14,13 @@ interface IBusinessUser extends Document {
   isemailotpverified:boolean;
   ismobileotpverified:boolean;
   updated_at:Date;
-  // Additional business user-specific fields
+  
 }
-// Define the reference interface for the user field
+
 interface IUser extends Document {
   _id: Types.ObjectId;
 }
-// Create the schema for the BusinessUser
+
 const BusinessUserSchema: Schema<IBusinessUser> = new Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'RegisterUsers' },
   kycId: { type: mongoose.Schema.Types.ObjectId, ref: 'UserKYC' },
@@ -44,10 +44,10 @@ const BusinessUserSchema: Schema<IBusinessUser> = new Schema({
     default: false,
   },
   updated_at: { type: Date, default: Date.now },
-  // Additional business user-specific fields
+  
 });
 
-// Create the model for BusinessUser
+
 const BusinessUser: Model<IBusinessUser> = mongoose.model<IBusinessUser>('BusinessUser', BusinessUserSchema);
 
 export default BusinessUser;

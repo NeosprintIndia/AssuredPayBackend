@@ -2,11 +2,11 @@ import { Schema, Document, Model, model, Types } from "mongoose";
 
 interface IPaymentRequest extends Document {
   createdby: Types.ObjectId | IUser;
-  requester: Types.ObjectId | IUser; // Reference to the user making the request
+  requester: Types.ObjectId | IUser; 
   paidTo: Types.ObjectId | IUser;
   paidBy: Types.ObjectId | IUser;
-  recipient: Types.ObjectId | IUser; // Reference to the user receiving the payment
-  orderID: string; // Reference to the order associated with the payment
+  recipient: Types.ObjectId | IUser; 
+  orderID: string;
   paymentType: "full" | "partial";
   checkerStatus: "pending" | "approved" | "rejected";
   recipientStatus: "pending" | "approved" | "rejected";
@@ -20,24 +20,24 @@ interface IPaymentRequest extends Document {
   proposalValidity: number;
   proposalExpireDate: Number;
   paymentIndentifier: "buyer" | "seller";
-  paymentDays?: number; // Number of days for full payment
+  paymentDays?: number; 
   MilestoneDetails?: Array<{
-    date: Number; // Date when the partial payment should be made
+    date: Number; 
     days: Number
     isFDAllowed: string
     ApproxInterest: number
-    amount: number; // Amount to be paid on that date
-    balancedUsed: number; //Bank balance if used
+    amount: number;
+    balancedUsed: number; 
     balancedUsedStatus: string; 
-    recievableUsed: number; // Amount of recievable used
-    recievablewhichpr: Types.ObjectId | IUser; // recievable of which payment request // think from Paidby user
-    recievablewhichms: Types.ObjectId | IUser; // recievable of which milestone of above payment request //think from Paidby user
+    recievableUsed: number; 
+    recievablewhichpr: Types.ObjectId | IUser; 
+    recievablewhichms: Types.ObjectId | IUser;
     recievableUsedStatus: string;
     walletBalanceUsed: number;
     ApFees: number;
     utilisedbySeller: number;
-    utilisedforpr: Types.ObjectId | IUser; // If this recievable is used by any other pr//think from Paidto user
-    utilisedforms: Types.ObjectId | IUser; // If this recievable is used by any other milestone//think from Paidto user
+    utilisedforpr: Types.ObjectId | IUser;
+    utilisedforms: Types.ObjectId | IUser;
     isBBFDAllowed: String
     isBBFDCreated: String
     isRCFDAllowed: String
@@ -45,7 +45,7 @@ interface IPaymentRequest extends Document {
   }>;
 }
 
-// Define the reference interface for the user field 
+
 interface IUser extends Document {
   _id: Types.ObjectId;
 }
@@ -53,7 +53,7 @@ interface IUser extends Document {
 const paymentRequestSchema = new Schema<IPaymentRequest>({
   createdby: {
     type: Types.ObjectId,
-    ref: "RegisterUsers", // Assuming your User model is named 'User'
+    ref: "RegisterUsers", 
     required: true,
   },
   requester: {
@@ -63,7 +63,7 @@ const paymentRequestSchema = new Schema<IPaymentRequest>({
   },
   paidTo: {
     type: Types.ObjectId,
-    ref: "RegisterUsers", // Assuming your User model is named 'User'
+    ref: "RegisterUsers", 
     required: true,
   },
   paidBy: {

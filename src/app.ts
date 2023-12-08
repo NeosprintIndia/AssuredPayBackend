@@ -66,13 +66,11 @@ mongoose
 // Socket.io connection handling
 io.on('connection', (socket: Socket) => {
   console.log('Client connected');
-
   // // Handle socket events if needed
   // socket.on('disconnect', () => {
   //   console.log('Client disconnected');
   // });
 });
-
 // Run cron Jobs
 UpdateProposalStatus();
 

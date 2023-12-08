@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, Model, Types } from 'mongoose';
 
-// Define the interface for the document
+
 interface IReferralCode extends Document {
   userId : Types.ObjectId | IUser,
   businessId: Types.ObjectId | IUser,
@@ -12,7 +12,7 @@ interface IReferralCode extends Document {
   updated_at:Date;
 }
 interface IUser extends Document {_id: Types.ObjectId }
-// Define the schema
+
 const BusinessNetworkSchema: Schema<IReferralCode> = new Schema<IReferralCode>({
   userId: {
     type: Schema.Types.ObjectId,
