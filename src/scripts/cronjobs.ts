@@ -10,6 +10,7 @@ function UpdateProposalStatus() {cron.schedule('26 21 * * *', async () => {
       await Promise.all(
         paymentRequestsToUpdate.map(async (paymentRequest) => {
           paymentRequest.proposalStatus = 'expired';
+          paymentRequest.orderStatus = 'expired';
           await paymentRequest.save();
         })
       );

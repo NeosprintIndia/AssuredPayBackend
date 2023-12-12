@@ -30,10 +30,9 @@ export const getGSTDetailsInternal = async (
         Message_slug: "API_Limits_Exceeded",
         VariablesMessage: ["GST","www.assuredpay.in"],
       };
-  
       await sendDynamicMail(reqData);
       await sendSMS(reqData);
-      return [true, "Your GST Verification Attempt exceeded"];
+      return [false, "Your GST Verification Attempt exceeded"];
     }
     const newAttempt = user.GST_Attempt - 1;
     const GSTresult = await GST_KYC_SB({ id_number: gst,userlog:userId });

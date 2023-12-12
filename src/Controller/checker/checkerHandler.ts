@@ -147,7 +147,8 @@ export const businessActionOnPaymentRequestInternal = async (
         }
       },
       { new: true })
-    if (action !== "Approve") {
+    if (action !== "approved") {
+      actionResult.orderStatus=="rejected"
       return [true, actionResult]
     }
     const paymentRequest = await PaymentRequestModel.findOne({ _id: docId });
@@ -156,7 +157,7 @@ export const businessActionOnPaymentRequestInternal = async (
         item.date = updateDate(item.days);
       });
       const finalactionResult = await paymentRequest.save();
-      if ((action as "Approve") === "Approve" && (paymentRequest.paymentIndentifier as "buyer") === "buyer") {
+      if ((action as "approved") === "approved" && (paymentRequest.paymentIndentifier as "buyer") === "buyer") {
         await createBBFDRecords(docId);
         await createRCFDRecords(docId);
       }
@@ -284,12 +285,42 @@ export const updatePaymentRequestInternal = async (
       const paymentstatus = "hold"
       await createWalletTransaction(walletid, paidby, paidto, paymenttype, paymentstatus,milestones.orderAmount)
       if (milestones.paymentType !== "full")
-        await cascadeUpdateMilestoneAndPaymentRequest(milestones._id);
+       await cascadeUpdateMilestoneAndPaymentRequest(milestones._id);
        await createBBFDRecords(milestones._id);
        await createRCFDRecords(milestones._id);
     return [true, milestones]
   } catch (err) {
     console.error(err);
+  }
+};
+export const cancelPaymentRequestInternal = async (
+  docId: string,
+  userId: string, 
+): Promise<boolean | any> => {
+  try {
+    const actionResult = await PaymentRequestModel.findOneAndUpdate(
+      { _id: docId },
+      {
+        $set: {
+          orderStatus: "withdraw",
+        },
+      },
+      { new: true }
+    );
+
+    if (
+      (actionResult.paymentIndentifier as "buyer") === "buyer"
+    ) {
+      const walletres = await walletModel.findOne({ userid: userId });
+      const walletid = walletres._id;
+      await RevertHoldWalletAmount(walletid);
+      await RevertRCRecordfinal(docId);
+      return [true, actionResult];
+    } else {
+      return [false, 'Payment request not found'];
+    }
+  } catch (err) {
+    return [false, err];
   }
 };
 

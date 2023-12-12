@@ -7,6 +7,8 @@ interface IPaymentRequest extends Document {
   paidBy: Types.ObjectId | IUser;
   recipient: Types.ObjectId | IUser; 
   orderID: string;
+  orderStatus:"inProcess"|"withdraw"|"rejected"|"complete"|"expired";
+  paymentCombination:"BB"|"RC"|"MIX";
   paymentType: "full" | "partial";
   checkerStatus: "pending" | "approved" | "rejected";
   recipientStatus: "pending" | "approved" | "rejected";
@@ -23,7 +25,8 @@ interface IPaymentRequest extends Document {
   paymentDays?: number; 
   MilestoneDetails?: Array<{
     date: Number; 
-    days: Number
+    days: Number;
+    milestoneStatus:"inProcess"|"completed"
     isFDAllowed: string
     ApproxInterest: number
     amount: number;
@@ -91,6 +94,15 @@ const paymentRequestSchema = new Schema<IPaymentRequest>({
     enum: ["full", "partial"],
     required: true,
   },
+  paymentCombination: {
+    type: String,
+    enum: ["BB", "RC","MIX"],
+  },
+  orderStatus: {
+    type: String,
+    enum: ["inProcess", "rejected","complete","expired"],
+    deafult: "inProcess",
+  },
   checkerStatus: {
     type: String,
     enum: ["pending", "approved", "rejected"],
@@ -157,6 +169,11 @@ const paymentRequestSchema = new Schema<IPaymentRequest>({
       balancedUsedStatus: {
         type: String,
 
+      },
+     milestoneStatus: {
+        type: String,
+        enum: ["inProcess", "completed"],
+        default: "inProcess",
       },
       walletBalanceUsed: { type: Number, default: 0 },
       recievableUsed: {

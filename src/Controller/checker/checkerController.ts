@@ -18,7 +18,8 @@ getbookedpaymentdashboardInternal,
 getpaymentrequestdashboardInternal,
 getPaymentToPayInternal,
 getBookedPaymentRequestInternal,
-updatePaymentRequestInternal
+updatePaymentRequestInternal,
+cancelPaymentRequestInternal
 } from "./checkerHandler";
 
 import { sendDynamicMail } from "../../services/sendEmail";
@@ -122,6 +123,22 @@ export async function updatePaymentRequest(req: Request, res: Response) {
     res.status(500).send({ message: "Internal Server Error" });
   }
 } 
+export async function cancelPaymentRequest(req: Request, res: Response) {
+  try {
+    const {docId}=req.body
+    const userId=(req as any).userId
+    const [success, result] = await cancelPaymentRequestInternal(docId,userId);
+
+    if (success) {
+      res.status(200).send({ result });
+    } else {
+      res.status(404).send({ error: result });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "Internal Server Error" });
+  }
+}
 
 //Dashboard
 
