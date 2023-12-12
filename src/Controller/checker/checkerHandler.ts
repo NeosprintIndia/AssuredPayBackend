@@ -108,16 +108,19 @@ export const createPaymentRequestHandler = async (
     return [false, "Error creating payment request. Please try again."];
   }
 };
+// Controller Function
 export const getAllPaymentOfCheckerInternal = async (userid: string, paymentIndentifier: any): Promise<any[]> => {
   try {
     const paymentRequests = await PaymentRequestModel.find({ requester: userid, paymentIndentifier })
-      .select("recipient orderID proposalCreatedDate orderAmount MilestoneDetails paymentIndentifier");
+      .select("recipient orderID proposalCreatedDate orderAmount MilestoneDetails paymentIndentifier orderStatus");
     const paymentsWithTotalApFees = await Promise.all(paymentRequests.map(async (payment) => {
       const { MilestoneDetails, ...paymentWithoutMilestones } = payment.toObject();
       const totalApFees = MilestoneDetails.reduce((sum, milestone) => sum + milestone.ApFees, 0);
+
+      // Fetch Legal_Name_of_Business from userkycs collection using the recipient's ObjectId
       const recipientUserKyc = await userKYCs.findOne({ user: payment.recipient });
       console.log("recipientUserKyc", recipientUserKyc);
-      const legalNameOfBusiness = recipientUserKyc?.Legal_Name_of_Business || null; 
+      const legalNameOfBusiness = recipientUserKyc?.Legal_Name_of_Business || null; // Adjust the default value as needed
       return {
         ...paymentWithoutMilestones,
         totalApFees,
@@ -128,9 +131,10 @@ export const getAllPaymentOfCheckerInternal = async (userid: string, paymentInde
     return [true, paymentsWithTotalApFees];
   } catch (err) {
     console.error(err);
-    throw new Error(err.message); 
+    throw new Error(err.message); // Throw an exception instead of returning an array
   }
 };
+
 export const businessActionOnPaymentRequestInternal = async (
   docId: string,
   action: string,
@@ -147,25 +151,33 @@ export const businessActionOnPaymentRequestInternal = async (
         }
       },
       { new: true })
-    if (action !== "approved") {
-      actionResult.orderStatus=="rejected"
+    if (action !== "Approve") {
       return [true, actionResult]
     }
     const paymentRequest = await PaymentRequestModel.findOne({ _id: docId });
     if (paymentRequest) {
+      // Update the date in each milestoneDetails object
       (paymentRequest as any).milestoneDetails.forEach(item => {
         item.date = updateDate(item.days);
       });
+
+      // Save the updated document
       const finalactionResult = await paymentRequest.save();
-      if ((action as "approved") === "approved" && (paymentRequest.paymentIndentifier as "buyer") === "buyer") {
+
+      // Hold the amount if payment requester is buyer.
+      if ((action as "Approve") === "Approve" && (paymentRequest.paymentIndentifier as "buyer") === "buyer") {
+        // Create Bank FD
         await createBBFDRecords(docId);
+        // Create RC FD
         await createRCFDRecords(docId);
       }
 
       if ((action as "Reject") === "Reject" && (paymentRequest.paymentIndentifier as "buyer") === "buyer") {
+        // Revert Wallet Amount
         const walletres = await walletModel.findOne({ "userid": userId })
         const walletid = walletres._id
         await RevertHoldWalletAmount(walletid);
+        // Create RC FD
         await RevertRCRecordfinal(docId);
       }
       return [true, finalactionResult]
@@ -173,6 +185,9 @@ export const businessActionOnPaymentRequestInternal = async (
       return [false, 'Payment request not found']
 
     }
+
+
+
   } catch (err) {
     return [false, err]
   }

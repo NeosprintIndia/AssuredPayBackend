@@ -20,7 +20,7 @@ interface IPaymentRequest extends Document {
   updated_at: Date;
   proposalStatus: string,
   proposalValidity: number;
-  proposalExpireDate: Number;
+  proposalExpireDate: Date;
   paymentIndentifier: "buyer" | "seller";
   paymentDays?: number; 
   MilestoneDetails?: Array<{
@@ -142,7 +142,7 @@ const paymentRequestSchema = new Schema<IPaymentRequest>({
 
   },
   proposalExpireDate: {
-    type: Number,
+    type: Date,
     default: Date.now
 
   },
