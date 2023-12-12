@@ -151,7 +151,7 @@ export const businessActionOnPaymentRequestInternal = async (
         }
       },
       { new: true })
-    if (action !== "Approve") {
+    if (action !== "approved") {
       return [true, actionResult]
     }
     const paymentRequest = await PaymentRequestModel.findOne({ _id: docId });
@@ -165,14 +165,14 @@ export const businessActionOnPaymentRequestInternal = async (
       const finalactionResult = await paymentRequest.save();
 
       // Hold the amount if payment requester is buyer.
-      if ((action as "Approve") === "Approve" && (paymentRequest.paymentIndentifier as "buyer") === "buyer") {
+      if ((action as "approved") === "approved" && (paymentRequest.paymentIndentifier as "buyer") === "buyer") {
         // Create Bank FD
         await createBBFDRecords(docId);
         // Create RC FD
         await createRCFDRecords(docId);
       }
 
-      if ((action as "Reject") === "Reject" && (paymentRequest.paymentIndentifier as "buyer") === "buyer") {
+      if ((action as "rejected") === "rejected" && (paymentRequest.paymentIndentifier as "buyer") === "buyer") {
         // Revert Wallet Amount
         const walletres = await walletModel.findOne({ "userid": userId })
         const walletid = walletres._id
