@@ -151,7 +151,7 @@ export const businessActionOnPaymentRequestInternal = async (
         }
       },
       { new: true })
-    if (action !== "approved") {
+    if (action !== "Approve") {
       return [true, actionResult]
     }
     const paymentRequest = await PaymentRequestModel.findOne({ _id: docId });
@@ -165,14 +165,14 @@ export const businessActionOnPaymentRequestInternal = async (
       const finalactionResult = await paymentRequest.save();
 
       // Hold the amount if payment requester is buyer.
-      if ((action as "approved") === "approved" && (paymentRequest.paymentIndentifier as "buyer") === "buyer") {
+      if ((action as "Approve") === "Approve" && (paymentRequest.paymentIndentifier as "buyer") === "buyer") {
         // Create Bank FD
         await createBBFDRecords(docId);
         // Create RC FD
         await createRCFDRecords(docId);
       }
 
-      if ((action as "rejected") === "rejected" && (paymentRequest.paymentIndentifier as "buyer") === "buyer") {
+      if ((action as "Reject") === "Reject" && (paymentRequest.paymentIndentifier as "buyer") === "buyer") {
         // Revert Wallet Amount
         const walletres = await walletModel.findOne({ "userid": userId })
         const walletid = walletres._id
@@ -185,8 +185,6 @@ export const businessActionOnPaymentRequestInternal = async (
       return [false, 'Payment request not found']
 
     }
-
-
 
   } catch (err) {
     return [false, err]
@@ -1226,8 +1224,6 @@ const createBBFDRecords = async (paymentRequestId) => {
     if (!paymentRequest) {
       throw new Error('Payment request not found');
     }
-
-
     for (const milestone of paymentRequest.MilestoneDetails) {
       const newBBFDRecord = new bbFDSchema({
         paymentRequest: paymentRequest._id,
