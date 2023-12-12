@@ -12,7 +12,6 @@ function sendResponse(res: Response, success: Boolean, result: any){
   if(success)  res.send({result, Active:true});
   else res.status(500).send({message: result, Active:false});
 }
-
 export const createAffiliate = async (req: Request, res: Response): Promise<void> => {
   const affiliateDetails = req.body;
   const [success,result] = await findAndInsert(affiliateDetails);
@@ -80,7 +79,6 @@ export const updateAffiliate = async (req: Request, res: Response): Promise<void
   const [success,result] = await findAndUpdate(affiliateId, affiliateDetails);
   sendResponse(res,success,result);
 };
-
 export const SettleSpecificAffiliateAccountInvitee = async (req: Request, res: Response): Promise<void> => {
   const {bankAccountNumber,paymentMode,amount,Paidto,Paidfor,utrRef,remark,transactionId} = req.body;
   const userId = (req as any).userId 

@@ -16,7 +16,7 @@ interface IPaymentRequest extends Document {
   orderTitle: string;
   POPI: string;
   orderAmount: number;
-  proposalCreatedDate: Number;
+  proposalCreatedDate: Date;
   updated_at: Date;
   proposalStatus: string,
   proposalValidity: number;
@@ -101,7 +101,7 @@ const paymentRequestSchema = new Schema<IPaymentRequest>({
   orderStatus: {
     type: String,
     enum: ["inProcess", "rejected","complete","expired"],
-    deafult: "inProcess",
+    default: "inProcess",
   },
   checkerStatus: {
     type: String,
@@ -134,7 +134,7 @@ const paymentRequestSchema = new Schema<IPaymentRequest>({
     required: true,
   },
   proposalCreatedDate: {
-    type: Number,
+    type: Date,
     default: Date.now
   },
   proposalValidity: {

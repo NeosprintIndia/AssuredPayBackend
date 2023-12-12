@@ -168,11 +168,9 @@ export const verifyAadharNumberOTPInternal = async (
     const refId = result1.aadhar_ref_id;
     const result = await Aadhaar_KYC_S2({ otp, refId });
     const data = (result as any).body.data;
-
     const base64String = data.photo_link;
-  
     const base64Data = base64String.replace(/^data:image\/\w+;base64,/, "");
- 
+    
     const imageBuffer = Buffer.from(base64Data, "base64");
     const s3ObjectUrl = await uploadtos3(refId, imageBuffer);
     const results = {

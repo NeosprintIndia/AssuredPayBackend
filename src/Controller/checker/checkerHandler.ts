@@ -999,7 +999,6 @@ export const getRequestDetailsOFPaymentToAccept = async (userId, requester,docId
     return error.message;
   }
 }
-
 export const createWalletTransaction = async (
   walletID: string,
   paidBy: string,
@@ -1097,13 +1096,9 @@ const RevertRCRecordfinal = async (paymentRequestId) => {
     
       const { recievableUsed, recievablewhichpr, recievablewhichms } = milestone;
       const milestoneId = (milestone as any)._id;
-
-     
       const relatedPaymentRequests = await PaymentRequestModel.find({
         '_id': recievablewhichpr,
       });
-
-      
       for (const relatedPaymentRequest of relatedPaymentRequests) {
         const relatedMilestone = relatedPaymentRequest.MilestoneDetails.find(
           (m) => (m as any)._id.toString() === recievablewhichms
