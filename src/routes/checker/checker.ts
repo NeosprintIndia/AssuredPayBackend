@@ -11,7 +11,7 @@ businessActionOnPaymentRequest,
 getAllMyMaker,
 manageMyMaker,
 createPaymentChecker,
-//getAllPaymentOfChecker,
+getAllPaymentOfChecker,
 getrecievables,
 getrecievablesdashboard,
 getacceptpaymentdashboard,
@@ -26,7 +26,7 @@ cancelPaymentRequest
 
 const router: Router = Router();
 router.post('/createpaymentchecker',verifyTokenUsers,createPaymentChecker) 
-//router.get('/getallpaymentofchecker',verifyTokenUsers,getAllPaymentOfChecker)// landing page
+router.get('/getallpaymentofchecker',verifyTokenUsers,getAllPaymentOfChecker)// landing page
 router.post('/businessactiononpaymentrequest',verifyTokenUsers,businessActionOnPaymentRequest) // 
 router.get('/viewparticularrequest',verifyTokenUsers,viewparticularrequest)
 router.get('/getrecievables',verifyTokenUsers,getrecievables) // Action Page available RC and Fetch RC while configuring
