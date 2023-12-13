@@ -134,7 +134,6 @@ export const getAllPaymentOfCheckerInternal = async (userid: string, paymentInde
     throw new Error(err.message); // Throw an exception instead of returning an array
   }
 };
-
 export const businessActionOnPaymentRequestInternal = async (
   docId: string,
   action: string,
@@ -156,28 +155,20 @@ export const businessActionOnPaymentRequestInternal = async (
     }
     const paymentRequest = await PaymentRequestModel.findOne({ _id: docId });
     if (paymentRequest) {
-      // Update the date in each milestoneDetails object
       (paymentRequest as any).milestoneDetails.forEach(item => {
         item.date = updateDate(item.days);
       });
-
-      // Save the updated document
       const finalactionResult = await paymentRequest.save();
-
-      // Hold the amount if payment requester is buyer.
       if ((action as "approved") === "approved" && (paymentRequest.paymentIndentifier as "buyer") === "buyer") {
-        // Create Bank FD
         await createBBFDRecords(docId);
-        // Create RC FD
         await createRCFDRecords(docId);
       }
 
       if ((action as "rejected") === "rejected" && (paymentRequest.paymentIndentifier as "buyer") === "buyer") {
-        // Revert Wallet Amount
         const walletres = await walletModel.findOne({ "userid": userId })
         const walletid = walletres._id
-        await RevertHoldWalletAmount(walletid);
-        // Create RC FD
+        const revertamount=actionResult.orderAmount
+        await RevertHoldWalletAmount(walletid,revertamount);
         await RevertRCRecordfinal(docId);
       }
       return [true, finalactionResult]
@@ -320,16 +311,20 @@ export const cancelPaymentRequestInternal = async (
       },
       { new: true }
     );
-
-    if (
-      (actionResult.paymentIndentifier as "buyer") === "buyer"
-    ) {
-      const walletres = await walletModel.findOne({ userid: userId });
+console.log("actionResult",actionResult)
+    if ((actionResult.paymentIndentifier as "buyer") === "buyer")
+     {
+      console.log("INNN BUYER")
+      const walletres = await walletModel.findOne({ userId: userId });
+      console.log("walletres",walletres)
       const walletid = walletres._id;
-      await RevertHoldWalletAmount(walletid);
+      console.log("walletid",walletid)
+      const revertamount=actionResult.orderAmount
+      await RevertHoldWalletAmount(walletid,revertamount);
       await RevertRCRecordfinal(docId);
       return [true, actionResult];
-    } else {
+    } 
+    else {
       return [false, 'Payment request not found'];
     }
   } catch (err) {
@@ -1103,8 +1098,6 @@ const RevertRCRecordfinal = async (paymentRequestId) => {
         milestone.recievablewhichms
 
     );
-
-
     for (const milestone of milestonesToUpdate) {
     
       const { recievableUsed, recievablewhichpr, recievablewhichms } = milestone;
@@ -1141,24 +1134,24 @@ const updateDate = (days) => {
   currentDate.setDate(currentDate.getDate() + days);
   return currentDate.toLocaleDateString('en-GB'); 
 };
-const RevertHoldWalletAmount = async (walletId) => {
+const RevertHoldWalletAmount = async (walletId,revertamount) => {
   try {
-    
     const walletTransaction = await Wallettransaction.findOneAndUpdate(
-      { wallet: walletId, paymentStatus: 'hold' },
-      { $set: { paymentStatus: 'rejected' } },
+      { walletID: walletId, paymentstatus: 'hold',BankBalanceAmount:revertamount },
+      { $set: { paymentstatus: 'rejected' } },
       { new: true }
     );
+    console.log("walletTransaction",walletTransaction)
 
     if (!walletTransaction) {
       throw new Error('Wallet transaction not found or already updated');
     }
-
     const wallet = await walletModel.findOneAndUpdate(
       { _id: walletId },
       { $inc: { amount: walletTransaction.BankBalanceAmount } },
       { new: true }
     );
+    console.log("wallet",wallet)
 
     if (!wallet) {
       throw new Error('Wallet not found');
@@ -1232,10 +1225,8 @@ const createBBFDRecords = async (paymentRequestId) => {
         amount: milestone.balancedUsed,
       });
       await newBBFDRecord.save();
-
       console.log(`BBFD record created for milestone ${(milestone as any)._id}`);
     }
-
     console.log('BBFD records creation completed successfully');
   } catch (error) {
     console.error('Error creating BBFD records:', error.message);

@@ -128,7 +128,6 @@ export async function cancelPaymentRequest(req: Request, res: Response) {
     const {docId}=req.body
     const userId=(req as any).userId
     const [success, result] = await cancelPaymentRequestInternal(docId,userId);
-
     if (success) {
       res.status(200).send({ result });
     } else {

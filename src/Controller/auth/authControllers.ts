@@ -78,7 +78,6 @@ console.log("RESULT",result[1])
 
 // Controller function to handle OTP verification
 export const verifyEmailAndMobile = async (req: Request, res: Response): Promise<void> => {
-  // Extract data from the request body
   const { otpVerifyType, otp, business_email_or_mobile, username } = req.body;
 
   // Validate user sign-up using provided OTP and data
