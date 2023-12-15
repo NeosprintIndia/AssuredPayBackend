@@ -5,9 +5,9 @@ import {
  viewparticularrequestInternal,
  getpaymentrequestInternal,
 actionPaymentRequestInternal,
- businessActionOnPaymentRequestInternal,
- getAllMyMakerInternal,
- manageMyMakerInternal,
+businessActionOnPaymentRequestInternal,
+getAllMyMakerInternal,
+manageMyMakerInternal,
 createPaymentRequestHandler,
 getAllPaymentOfCheckerInternal,
 getrecievablesInternal,
@@ -64,7 +64,6 @@ export async function businessActionOnPaymentRequest(req: Request, res: Response
     const {action,docId ,remark}=req.body
     const userId=(req as any).userId
     const [success, result] = await businessActionOnPaymentRequestInternal(docId,action,remark,userId);
-
     if (success) {
       res.status(200).send({ result });
     } else {
@@ -107,7 +106,6 @@ export async function getrecievables(req: Request, res: Response) {
 } 
 export async function updatePaymentRequest(req: Request, res: Response) {
   try { 
-
     const { paymentRequestId } = req.params;
     const updatedMilestonesData = req.body;
     const userid=(req as any).userId
@@ -123,6 +121,7 @@ export async function updatePaymentRequest(req: Request, res: Response) {
     res.status(500).send({ message: "Internal Server Error" });
   }
 } 
+
 export async function cancelPaymentRequest(req: Request, res: Response) {
   try {
     const {docId}=req.body

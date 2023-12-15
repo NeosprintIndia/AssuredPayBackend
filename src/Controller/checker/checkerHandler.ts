@@ -150,6 +150,7 @@ export const businessActionOnPaymentRequestInternal = async (
         }
       },
       { new: true })
+      console.log("actionResult",actionResult)
     if (action !== "approved") {
       return [true, actionResult]
     }
@@ -1040,15 +1041,12 @@ const cascadeUpdateMilestoneAndPaymentRequest = async (paymentRequestId) => {
       throw new Error('Payment request not found');
     }
     const utilisedforpr = paymentRequest._id
-  
     const milestonesToUpdate = paymentRequest.MilestoneDetails.filter(
       (milestone) =>
         milestone.recievablewhichpr &&
         milestone.recievablewhichms
 
     );
-
-   
     for (const milestone of milestonesToUpdate) {
       
       const { recievableUsed, recievablewhichpr, recievablewhichms } = milestone;
@@ -1069,8 +1067,6 @@ const cascadeUpdateMilestoneAndPaymentRequest = async (paymentRequestId) => {
           relatedMilestone.utilisedbySeller = recievableUsed;
           relatedMilestone.utilisedforpr = utilisedforpr;
           relatedMilestone.utilisedforms = milestoneId;
-
-       
           await relatedPaymentRequest.save();
 
           console.log(`Updated utilisedbySeller for milestone ${milestoneId} in payment request ${relatedPaymentRequest._id}`);
@@ -1115,8 +1111,6 @@ const RevertRCRecordfinal = async (paymentRequestId) => {
           relatedMilestone.utilisedbySeller = 0;
           relatedMilestone.utilisedforpr = null;
           relatedMilestone.utilisedforms = null;
-
-       
           await relatedPaymentRequest.save();
 
           console.log(`Updated utilisedbySeller for milestone ${milestoneId} in payment request ${relatedPaymentRequest._id}`);
@@ -1137,7 +1131,7 @@ const updateDate = (days) => {
 const RevertHoldWalletAmount = async (walletId,revertamount) => {
   try {
     const walletTransaction = await Wallettransaction.findOneAndUpdate(
-      { walletID: walletId, paymentstatus: 'hold',BankBalanceAmount:revertamount },
+      { walletID: walletId, paymentstatus: 'hold', BankBalanceAmount:revertamount },
       { $set: { paymentstatus: 'rejected' } },
       { new: true }
     );
@@ -1165,12 +1159,9 @@ const RevertHoldWalletAmount = async (walletId,revertamount) => {
 const createRCFDRecords = async (paymentRequestId) => {
   try {
     const paymentRequest = await PaymentRequestModel.findById(paymentRequestId);
-
     if (!paymentRequest) {
       throw new Error('Payment request not found');
     }
-
- 
     for (const milestone of paymentRequest.MilestoneDetails) {
     
       if (!milestone.recievablewhichpr) {
@@ -1178,7 +1169,6 @@ const createRCFDRecords = async (paymentRequestId) => {
         continue;
       }
 
-   
       const relatedPaymentRequest = await PaymentRequestModel.findById(milestone.recievablewhichpr);
 
       if (!relatedPaymentRequest) {
@@ -1198,13 +1188,9 @@ const createRCFDRecords = async (paymentRequestId) => {
         amount: milestone.utilisedbySeller,
         eliglibleforInterest: 'your_eligible_for_interest_value',
       });
-
-     
       await newRCFDRecord.save();
-
       console.log(`RCFD record created for milestone ${(milestone as any)._id}`);
     }
-
     console.log('RCFD records creation completed successfully');
   } catch (error) {
     console.error('Error creating RCFD records:', error.message);
@@ -1213,7 +1199,6 @@ const createRCFDRecords = async (paymentRequestId) => {
 const createBBFDRecords = async (paymentRequestId) => {
   try {
     const paymentRequest = await PaymentRequestModel.findById(paymentRequestId);
-
     if (!paymentRequest) {
       throw new Error('Payment request not found');
     }

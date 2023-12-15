@@ -55,7 +55,7 @@ router.post('/verifyadharotp',[VerifyToken],verifyAadharNumberOTP)
 router.post("/setglobalstatus",[VerifyToken],setglobalstatus) 
 router.get("/getglobalstatus",[VerifyToken],getglobalstatus)
 router.post("/kycRedoRequested",[VerifyToken],kycRedoRequested)
-router.post("/getrejecteddocuments",[VerifyToken],getRejectedDocuments)
+router.get("/getrejecteddocuments",[VerifyToken],getRejectedDocuments)
 
 // buinessNetworkRoutes
 router.get("/getBusinessDetails",[VerifyToken],getBusinessDetails)
