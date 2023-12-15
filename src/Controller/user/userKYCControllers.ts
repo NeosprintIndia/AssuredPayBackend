@@ -219,8 +219,9 @@ export const kycRedoRequested = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { timestamp,latitude ,longitude,accuracy ,id,key} = req.body;
-  const [success, result] = await kycRedoRequestedInternal(timestamp,latitude,longitude,accuracy,id,key);
+  const { timestamp,latitude ,longitude,accuracy} = req.body;
+  const userId = (req as any).userId;
+  const [success, result] = await kycRedoRequestedInternal(timestamp,latitude,longitude,accuracy,userId);
   if (success) {
     res.send({ result, Active: true });
   } else {

@@ -362,11 +362,10 @@ export const kycRedoRequestedInternal = async (
   latitude: string,
   longitude:string,
   accuracy:string,
-  id:string,
-  key:string
+  userId:any
 ): Promise<any> => {
   try {
-    const user = await UserKYC1.findOne({ user: id })
+    const user = await UserKYC1.findOne({ user: userId })
     if (!user) {
       return { success: false, error: "User not found." };
     }
@@ -381,9 +380,9 @@ export const kycRedoRequestedInternal = async (
     "accuracy": accuracy,
   };
   (user as any).activities.push(update)
-  user.due=key;
+  user.due="reUpload";
   const result =await user.save();
-    return ([ true , "result" ]);
+    return ([ true , result]);
   } catch (error) {
     return { success: false, error: "An error occurred during the update." };
   }

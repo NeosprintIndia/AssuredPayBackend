@@ -111,8 +111,6 @@ export const getuserbusinessdetail = async (
 ): Promise<void> => {
   try {
     const { id } = req.query;
-
-  
     const [success, result] = await getuserbusinessdetailInternal(id);
     if (success) {
       res.status(200).send({ result, Active: true });
@@ -146,10 +144,7 @@ export const getbusinessrepresentativedetail = async (
 export const approveDocument = async (req: Request, res: Response): Promise<void> => {
   try {
     const {_flag,status,id } = req.body;
-
- 
     const [success, result] = await approveDocumentInternal(_flag,status,id);
-
     if (success) {
       res.status(200).send({Active:true});
     } else {
@@ -164,10 +159,7 @@ export const approveDocument = async (req: Request, res: Response): Promise<void
 export const rejectDocument = async (req: Request, res: Response): Promise<void> => {
   try {
     const {filename,status,id,docNameKey,clarification } = req.body;
-
-
     const [success, result] = await rejectDocumentInternal(filename,status,id,docNameKey,clarification);
-
     if (success) {
       res.status(200).send({Active:true});
     } else {
@@ -202,8 +194,6 @@ export const allActivities = async (
 ): Promise<void> => {
   try {
     const {id}= (req as any).query 
-
-   
     const [success, result] = await getAllActivitiesInternal(id);
     if (success) {
       res.status(200).send({ result, Active: true });
@@ -219,10 +209,8 @@ export const updateBusinessStatus = async (req: Request, res: Response): Promise
   const { user,status } = req.body;
     const [success,result] = await updateBusinessStatusInternal(user,status);
     if (success) {
-      res.send({result,Active:true});
+      res.status(200).send({result,Active:true});
     } else {
-      res.status(500).send({
-        message: result,Active:false
-      });
+      res.status(500).send({ message: result,Active:false});
     }
 };
