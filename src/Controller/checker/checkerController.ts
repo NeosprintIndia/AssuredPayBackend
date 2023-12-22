@@ -4,273 +4,38 @@ import {
  checkeractionInternal,
  viewparticularrequestInternal,
  getpaymentrequestInternal,
-actionPaymentRequestInternal,
-businessActionOnPaymentRequestInternal,
-getAllMyMakerInternal,
-manageMyMakerInternal,
+ actionPaymentRequestInternal,
+ businessActionOnPaymentRequestInternal,
+ getAllMyMakerInternal,
+ manageMyMakerInternal,
 createPaymentRequestHandler,
 getAllPaymentOfCheckerInternal,
-getrecievablesInternal,
-getWalletBalanceInternal,
-getrecievablesdashboardInternal,
-getacceptpaymentdashboardInternal,
-getbookedpaymentdashboardInternal,
-getpaymentrequestdashboardInternal,
-getPaymentToPayInternal,
-getBookedPaymentRequestInternal,
-updatePaymentRequestInternal,
-cancelPaymentRequestInternal
+getrecievablesInternal
 } from "./checkerHandler";
 
 import { sendDynamicMail } from "../../services/sendEmail";
 import { sendSMS } from "../../services/sendSMS";
-
-export async function createPaymentChecker(req: Request, res: Response) {
-  try {
-    const { business_id, paymentType, POPI,orderAmount,paymentIndentifier,paymentDays,MilestoneDetails,orderTitle,remark} = req.body;
-    const userid=(req as any).userId
-    const [success, result] = await createPaymentRequestHandler(
-      orderTitle,  business_id, paymentType, POPI,orderAmount,paymentIndentifier,paymentDays,MilestoneDetails,userid,remark
-    );
-
-    if (success) {
-      res.status(200).send({ result });
-    } else {
-      res.status(404).send({ error: result });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-}
-export async function getAllPaymentOfChecker(req: Request, res: Response) {
-  try { 
-    const { paymentIndentifier } = req.query;
-    const userid=(req as any).userId
-    console.log("USERID",userid)
-    const [success, result] = await getAllPaymentOfCheckerInternal(userid,paymentIndentifier);
-    if (success) {
-      res.status(200).send({ result });
-    } else {
-      res.status(404).send({ error: result });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-}
-export async function businessActionOnPaymentRequest(req: Request, res: Response) {
-  try {
-    const {action,docId ,remark}=req.body
-    const userId=(req as any).userId
-    const [success, result] = await businessActionOnPaymentRequestInternal(docId,action,remark,userId);
-    if (success) {
-      res.status(200).send({ result });
-    } else {
-      res.status(404).send({ error: result });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-}
-export async function viewparticularrequest(req: Request, res: Response) {
-  try {
-    const { docId } = (req as any).query;
-    const [success, result] = await viewparticularrequestInternal(docId);
-    if (success) {
-      res.status(200).send({ result });
-    } else {
-      res.status(404).send({ error: result });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-}
-export async function getrecievables(req: Request, res: Response) {
-  try { 
-    const { startDate, endDate } = req.query;
-    const userid=(req as any).userId
-    console.log("USERID",userid)
-    const [success, result] = await getrecievablesInternal(userid, startDate,endDate);
-    if (success) {
-      res.status(200).send({ result });
-    } else {
-      res.status(404).send({ error: result });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-} 
-export async function updatePaymentRequest(req: Request, res: Response) {
-  try { 
-    const { paymentRequestId } = req.params;
-    const updatedMilestonesData = req.body;
-    const userid=(req as any).userId
-    console.log("USERID",userid)
-    const [success, result] = await updatePaymentRequestInternal(userid,paymentRequestId,updatedMilestonesData);
-    if (success) {
-      res.status(200).send({ result });
-    } else {
-      res.status(404).send({ error: result });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-} 
-
-export async function cancelPaymentRequest(req: Request, res: Response) {
-  try {
-    const {docId}=req.body
-    const userId=(req as any).userId
-    const [success, result] = await cancelPaymentRequestInternal(docId,userId);
-    if (success) {
-      res.status(200).send({ result });
-    } else {
-      res.status(404).send({ error: result });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-}
-
-//Dashboard
-
-export async function getWalletBalance(req: Request, res: Response) {
-  try { 
-    const userid=(req as any).userId
-    console.log("USERID",userid)
-    const [success, result] = await getWalletBalanceInternal(userid);
-    if (success) {
-      res.status(200).send({ result });
-    } else {
-      res.status(404).send({ error: result });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-}
-export async function getbookedpaymentdashboard(req: Request, res: Response) {
-  try { 
-    const userid=(req as any).userId
-    console.log("USERID",userid)
-    const [success, result] = await getbookedpaymentdashboardInternal(userid);
-    if (success) {
-      res.status(200).send({ result });
-    } else {
-      res.status(404).send({ error: result });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-}
-export async function getrecievablesdashboard(req: Request, res: Response) {
-  try { 
-    const userid=(req as any).userId
-    console.log("USERID",userid)
-    const [success, result] = await getrecievablesdashboardInternal(userid);
-    if (success) {
-      res.status(200).send({ result });
-    } else {
-      res.status(404).send({ error: result });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-}
-export async function getacceptpaymentdashboard(req: Request, res: Response) {
-  try { 
-    const userid=(req as any).userId
-    console.log("USERID",userid)
-    const [success, result] = await getacceptpaymentdashboardInternal(userid);
-    if (success) {
-      res.status(200).send({ result });
-    } else {
-      res.status(404).send({ error: result });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-}
-export async function getpaymentrequestdashboard(req: Request, res: Response) {
-  try { 
-    const userid=(req as any).userId
-    console.log("USERID",userid)
-    const [success, result] = await getpaymentrequestdashboardInternal(userid);
-    if (success) {
-      res.status(200).send({ result });
-    } else {
-      res.status(404).send({ error: result });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-}
-
-// Dashboard Action Page
-export async function getPaymentToAccept(req: Request, res: Response) {2
-  try {
-    const userid=(req as any).userId
-    const [success, result] = await getpaymentrequestInternal(userid);
-
-    if (success) {
-      res.status(200).send({ result });
-    } else {
-      res.status(404).send({ error: result });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-}
-export async function getPaymentToPay(req: Request, res: Response) {2
-  try {
-    const userid=(req as any).userId
-    const [success, result] = await getPaymentToPayInternal(userid);
-
-    if (success) {
-      res.status(200).send({ result });
-    } else {
-      res.status(404).send({ error: result });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-}
-export async function getBookedPaymentRequest(req: Request, res: Response) {2
-  try {
-    const userid=(req as any).userId
-    console.log("userid",userid)
-    const [success, result] = await getBookedPaymentRequestInternal(userid);
-    if (success) {
-      res.status(200).send({ result });
-    } else {
-      res.status(404).send({ error: result });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-}
-
-//MAker checker
-
 
 export async function getmakerrequest(req: Request, res: Response) {
     try {
       const userid=(req as any).userId
       console.log("USERID",userid)
       const [success, result] = await getMakerRequestInternal(userid);
+      if (success) {
+        res.status(200).send({ result });
+      } else {
+        res.status(404).send({ error: result });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: "Internal Server Error" });
+    }
+  }
+  export async function getpaymentrequest(req: Request, res: Response) {2
+    try {
+      const userid=(req as any).userId
+      const [success, result] = await getpaymentrequestInternal(userid);
+  
       if (success) {
         res.status(200).send({ result });
       } else {
@@ -296,11 +61,42 @@ export async function getmakerrequest(req: Request, res: Response) {
       res.status(500).send({ message: "Internal Server Error" });
     }
   }
+  export async function viewparticularrequest(req: Request, res: Response) {
+    try {
+      const userid=(req as any).userId
+      const { docId,gst,businessName } = (req as any).query;
+      const [success, result] = await viewparticularrequestInternal(docId,gst,userid,businessName);
+      if (success) {
+        res.status(200).send({ result });
+      } else {
+        res.status(404).send({ error: result });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: "Internal Server Error" });
+    }
+  }
   export async function actionPaymentRequest(req: Request, res: Response) {
     try {
       const {action,docId ,remark}=req.body
       const userid=(req as any).userId
       const [success, result] = await actionPaymentRequestInternal(docId,action,remark,userid);
+      if (success) {
+        res.status(200).send({ result });
+      } else {
+        res.status(404).send({ error: result });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: "Internal Server Error" });
+    }
+  }
+  export async function businessActionOnPaymentRequest(req: Request, res: Response) {
+    try {
+      const {action,docId ,remark}=req.body
+      const userId=(req as any).userId
+      const [success, result] = await businessActionOnPaymentRequestInternal(docId,action,remark,userId);
+  
       if (success) {
         res.status(200).send({ result });
       } else {
@@ -337,8 +133,56 @@ export async function getmakerrequest(req: Request, res: Response) {
         });
       }
   };
- 
- 
- 
+  export async function createPaymentChecker(req: Request, res: Response) {
+    try {
+      const { business_id, paymentType, POPI,orderAmount,paymentIndentifier,paymentDays,MilestoneDetails,orderTitle,remark} = req.body;
+      const userid=(req as any).userId
+      const [success, result] = await createPaymentRequestHandler(
+        orderTitle,  business_id, paymentType, POPI,orderAmount,paymentIndentifier,paymentDays,MilestoneDetails,userid,remark
+      );
+  
+      if (success) {
+        res.status(200).send({ result });
+      } else {
+        res.status(404).send({ error: result });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: "Internal Server Error" });
+    }
+  }
+  export async function getAllPaymentOfChecker(req: Request, res: Response) {
+    try { 
+      const { paymentIndentifier } = req.query;
+      const userid=(req as any).userId
+      console.log("USERID",userid)
+      const [success, result] = await getAllPaymentOfCheckerInternal(userid,paymentIndentifier);
+      if (success) {
+        res.status(200).send({ result });
+      } else {
+        res.status(404).send({ error: result });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: "Internal Server Error" });
+    }
+  }
 
+  export async function getrecievables(req: Request, res: Response) {
+    try { 
+      const { startDate, endDate } = req.query;
+      const userid=(req as any).userId
+      console.log("USERID",userid)
+      const [success, result] = await getrecievablesInternal(userid, startDate,endDate);
+      if (success) {
+        res.status(200).send({ result });
+      } else {
+        res.status(404).send({ error: result });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: "Internal Server Error" });
+    }
+  }
 
+  getrecievables

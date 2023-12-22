@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document, Model, Types } from 'mongoose';
 
+// Define the interface for the document
 interface IReferralCode extends Document {
   code: String;
   description: String;
@@ -14,7 +15,7 @@ interface IReferralCode extends Document {
   updated_at:Date;
 }
 
-
+// Define the schema
 const CouponCodeSchema: Schema<IReferralCode> = new Schema<IReferralCode>({
   code: {
     type: String,

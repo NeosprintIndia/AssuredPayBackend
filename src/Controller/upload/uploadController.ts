@@ -3,7 +3,7 @@ import {  handledocsInternal} from './uploadHandler';
 
  export const uploaddoc = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = (req as any).userId; 
+      const userId = (req as any).userId; // Use type casting to access userId
       const originalName = (req as any).file.originalname as string;
       const buffer =(req as any).file.buffer as Buffer;
       const {filename}=req.query

@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, Model, Types } from 'mongoose';
 
-
+// Define the interface for the document
 interface IReferralCode extends Document {
   categoryName: String;
   industryIds: String[];
@@ -8,7 +8,7 @@ interface IReferralCode extends Document {
   updated_at:Date;
 }
 
-
+// Define the schema
 const CategorySchema: Schema<IReferralCode> = new Schema<IReferralCode>({
     categoryName: {
     type: String,

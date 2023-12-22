@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
+// Define a custom Request type with the added userId property
 interface CustomRequest extends Request {
   userId?: string; 
 }

@@ -206,7 +206,7 @@ export const uploadTemplateFromCsv = async (req: Request, res: Response): Promis
                     res.status(500).json({ code: 500, message: 'Internal server error', err });
                 }
             })
-            .end(fileBuffer); 
+            .end(fileBuffer); // Pass the fileBuffer to the parser
     } catch (error) {
         console.error(error);
         res.status(500).json({ code: 500, message: 'Internal server error', err: error });

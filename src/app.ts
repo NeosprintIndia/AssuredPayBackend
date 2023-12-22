@@ -22,7 +22,6 @@ import affiliate from './routes/affiliate/affiliate';
 import uploadRoutes from './routes/upload/uploadRoute';
 import makerRoutes from './routes/maker/makerRouters';
 import checkerRoutes from './routes/checker/checker';
-import accountWallet from './routes/wallet/wallet';
 
 // Import Cron Jobs
 import UpdateProposalStatus from './scripts/cronjobs';
@@ -48,7 +47,6 @@ app.use('/affiliate', affiliate);
 app.use('/uploadRoutes', uploadRoutes);
 app.use('/makerRoutes', makerRoutes);
 app.use('/checkerRoutes', checkerRoutes);
-app.use('/accountwallet', accountWallet);
 
 // Define the port number for the server
 const port: number = 3010;
@@ -66,11 +64,13 @@ mongoose
 // Socket.io connection handling
 io.on('connection', (socket: Socket) => {
   console.log('Client connected');
+
   // // Handle socket events if needed
   // socket.on('disconnect', () => {
   //   console.log('Client disconnected');
   // });
 });
+
 // Run cron Jobs
 UpdateProposalStatus();
 

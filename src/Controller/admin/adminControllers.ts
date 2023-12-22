@@ -14,6 +14,8 @@ import {
 
 } from "./adminHandlers";
 
+// Route handler Function to update various limits and settings in the global admin configuration
+
 export const setAllLimits = async (
   req: Request,
   res: Response
@@ -63,6 +65,7 @@ export const setAllLimits = async (
   }
 };
 
+// Route handler Function to retrieve all configuration settings from the global admin configuration
 
 export const getconfiguration = async (
   req: Request,
@@ -85,6 +88,7 @@ export const getconfiguration = async (
   }
 };
 
+//Route handler Function to retrieve all KYC records based on sorting
 
 export const getAllKYCRecords = async (
   req: Request,
@@ -111,6 +115,8 @@ export const getuserbusinessdetail = async (
 ): Promise<void> => {
   try {
     const { id } = req.query;
+
+  
     const [success, result] = await getuserbusinessdetailInternal(id);
     if (success) {
       res.status(200).send({ result, Active: true });
@@ -144,7 +150,10 @@ export const getbusinessrepresentativedetail = async (
 export const approveDocument = async (req: Request, res: Response): Promise<void> => {
   try {
     const {_flag,status,id } = req.body;
+
+ 
     const [success, result] = await approveDocumentInternal(_flag,status,id);
+
     if (success) {
       res.status(200).send({Active:true});
     } else {
@@ -159,7 +168,10 @@ export const approveDocument = async (req: Request, res: Response): Promise<void
 export const rejectDocument = async (req: Request, res: Response): Promise<void> => {
   try {
     const {filename,status,id,docNameKey,clarification } = req.body;
+
+
     const [success, result] = await rejectDocumentInternal(filename,status,id,docNameKey,clarification);
+
     if (success) {
       res.status(200).send({Active:true});
     } else {
@@ -194,6 +206,8 @@ export const allActivities = async (
 ): Promise<void> => {
   try {
     const {id}= (req as any).query 
+
+   
     const [success, result] = await getAllActivitiesInternal(id);
     if (success) {
       res.status(200).send({ result, Active: true });
@@ -209,8 +223,10 @@ export const updateBusinessStatus = async (req: Request, res: Response): Promise
   const { user,status } = req.body;
     const [success,result] = await updateBusinessStatusInternal(user,status);
     if (success) {
-      res.status(200).send({result,Active:true});
+      res.send({result,Active:true});
     } else {
-      res.status(500).send({ message: result,Active:false});
+      res.status(500).send({
+        message: result,Active:false
+      });
     }
 };

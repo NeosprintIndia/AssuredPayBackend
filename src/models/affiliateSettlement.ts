@@ -15,10 +15,11 @@ interface IAffiliate extends Document {
   updated_at:Date
 }
 
+// Define the reference interface for the user field
 interface IUser extends Document {
   _id: Types.ObjectId;
 }
-
+// Define the schema
 const AffiliateSettlementSchema: Schema<IAffiliate> = new Schema<IAffiliate>({
     Paidby: { type: Types.ObjectId,
         ref: "RegisterUser",

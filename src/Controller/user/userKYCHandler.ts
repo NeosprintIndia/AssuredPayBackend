@@ -13,6 +13,7 @@ import {
 import { sendDynamicMail } from "../../services/sendEmail";
 import { sendSMS } from "../../services/sendSMS";
 
+// Function to get GST details
 export const getGSTDetailsInternal = async (
   gst: string,
   userId: string
@@ -30,9 +31,10 @@ export const getGSTDetailsInternal = async (
         Message_slug: "API_Limits_Exceeded",
         VariablesMessage: ["GST","www.assuredpay.in"],
       };
+  
       await sendDynamicMail(reqData);
       await sendSMS(reqData);
-      return [false, "Your GST Verification Attempt exceeded"];
+      return [true, "Your GST Verification Attempt exceeded"];
     }
     const newAttempt = user.GST_Attempt - 1;
     const GSTresult = await GST_KYC_SB({ id_number: gst,userlog:userId });
@@ -65,7 +67,7 @@ export const getGSTDetailsInternal = async (
     return [false, error];
   }
 };
-
+// Function to save GST Details
 export const saveGSTDetailsInternal = async (
   Constitution_of_Business: string,
   Taxpayer_Type: string,
@@ -82,7 +84,7 @@ export const saveGSTDetailsInternal = async (
   isGSTDetailSaveManually: string
 ): Promise<any> => {
   try {
-    const filter = { user: userId }; 
+    const filter = { user: userId }; // Filter by userId to find existing document
     const bUser = await businessUser.findOne({ userId: userId }).select('userId');
     console.log("BusinessUser",bUser)
     const update = {
@@ -112,7 +114,7 @@ export const saveGSTDetailsInternal = async (
     return [false, error];
   }
 };
-
+// Function to get saved GST Details
 export const getGSTDetailsInternalsaved = async (
   userId: string
 ): Promise<any> => {
@@ -123,7 +125,7 @@ export const getGSTDetailsInternalsaved = async (
     return [false, error];
   }
 };
-
+// Function to verify Aadhar number and update the reference ID
 export const verifyAadharNumberInternal = async (
   userId: string,
   AadharNumber: string
@@ -157,7 +159,7 @@ export const verifyAadharNumberInternal = async (
     return [false, error];
   }
 };
-
+// Function to verify Aadhar number OTP and Save details
 export const verifyAadharNumberOTPInternal = async (
   userId: string,
   aadharNum: string,
@@ -168,9 +170,11 @@ export const verifyAadharNumberOTPInternal = async (
     const refId = result1.aadhar_ref_id;
     const result = await Aadhaar_KYC_S2({ otp, refId });
     const data = (result as any).body.data;
+
     const base64String = data.photo_link;
+    // Remove the data:image/png;base64 header if present
     const base64Data = base64String.replace(/^data:image\/\w+;base64,/, "");
-    
+    // Create a buffer from the base64 data
     const imageBuffer = Buffer.from(base64Data, "base64");
     const s3ObjectUrl = await uploadtos3(refId, imageBuffer);
     const results = {
@@ -203,7 +207,7 @@ const resultSendImage = {aadharPhotoLink: s3ObjectUrl, };
     return [false, error];
   }
 };
-
+// Function to upload Aadhar Photo base 64 to S3 after converting it to url and send that url to frontend
 const uploadtos3 = async (refId: string, imageBuffer: any): Promise<any> => {
   const { params, s3 } = await awsinitialise(refId, imageBuffer);
   return new Promise<any>((resolve, reject) => {
@@ -218,7 +222,7 @@ const uploadtos3 = async (refId: string, imageBuffer: any): Promise<any> => {
     });
   });
 };
-
+// Function to verify PAN details
 export const verifyPANDetails = async (
   PanNumber: string,
   id: string
@@ -229,6 +233,12 @@ export const verifyPANDetails = async (
     });
     if (!user) {
       return [false, "User not found"];
+    }
+    if (user.isAadharDetailSave != true) {
+      return [false, "User Aadhar details not Found"];
+    }
+    if ((user as any).isPANVerified != true) {
+      return [false, "User Aadhar details not Found"];
     }
    
     const userRemain = await businessUser.findOne({ userId: id });
@@ -362,10 +372,11 @@ export const kycRedoRequestedInternal = async (
   latitude: string,
   longitude:string,
   accuracy:string,
-  userId:any
+  id:string,
+  key:string
 ): Promise<any> => {
   try {
-    const user = await UserKYC1.findOne({ user: userId })
+    const user = await UserKYC1.findOne({ user: id })
     if (!user) {
       return { success: false, error: "User not found." };
     }
@@ -380,9 +391,9 @@ export const kycRedoRequestedInternal = async (
     "accuracy": accuracy,
   };
   (user as any).activities.push(update)
-  user.due="reUpload";
+  user.due=key;
   const result =await user.save();
-    return ([ true , result]);
+    return ([ true , "result" ]);
   } catch (error) {
     return { success: false, error: "An error occurred during the update." };
   }

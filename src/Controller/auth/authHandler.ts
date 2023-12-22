@@ -242,10 +242,9 @@ console.log(updateStatus)
       refferal_code: Refer_code,
     });
 
-    const result=await walletModel.create({
-      userId: newUser._id
+    await walletModel.create({
+      user: newUser._id
     })
-    console.log("result",result)
     const reqData = {
       Email_slug: "User_Login_OTP",
       email: business_email,
@@ -517,9 +516,12 @@ export const resendOtpInternal = async (
 
 export const getlegaldocumentsInternal = async (): Promise<any[]> => {
   try {
-    const result = await globalSetting.find().exec();
+    
+    const result = await globalSetting.find().select('privacyPolicy termsOfService disclaimer').exec();
+    
     return [true, result];
   } catch (error) {
+   
     return error;
   }
 };

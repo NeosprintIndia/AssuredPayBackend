@@ -246,7 +246,7 @@ const UserKYCSchema: Schema<IUserKYC> = new Schema<IUserKYC>(
     due: {
       type: String,
       default: "New",
-      enum: ["New", "Approved","Rejected","reUpload"] 
+      enum: ["New", "Approved","Rejected","reAsked"] 
     },
   },
   {

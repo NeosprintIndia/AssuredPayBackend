@@ -55,7 +55,7 @@ router.post('/verifyadharotp',[VerifyToken],verifyAadharNumberOTP)
 router.post("/setglobalstatus",[VerifyToken],setglobalstatus) 
 router.get("/getglobalstatus",[VerifyToken],getglobalstatus)
 router.post("/kycRedoRequested",[VerifyToken],kycRedoRequested)
-router.get("/getrejecteddocuments",[VerifyToken],getRejectedDocuments)
+router.post("/getrejecteddocuments",[VerifyToken],getRejectedDocuments)
 
 // buinessNetworkRoutes
 router.get("/getBusinessDetails",[VerifyToken],getBusinessDetails)
@@ -73,5 +73,15 @@ router.get("/getCategory",[VerifyToken],getCategory)
 // productRoutes
 router.post("/addProduct",[VerifyToken],addProduct)
 router.get("/getProduct",[VerifyToken],getProduct)
+
+
+// // affiliatePortal
+// router.post("/invite",[VerifyToken],addIvite)
+// router.get("/getInvite",[VerifyToken],getInvite)
+//Payment Request Related Routes
+//get all payment request
+// Accept Payment request
+// Reject Payment request
+/// Notification route
 
 export default router;

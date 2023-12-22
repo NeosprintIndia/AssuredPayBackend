@@ -19,6 +19,7 @@ export const findAndInsert = async (productDetails): Promise<any> => {
     return  [false, error.message];
   }
 };
+
 export const find = async (searchBy: any, categoryId: any, page, rowsLimitInPage): Promise<[boolean, any]> => {
   try {
     let query;
@@ -44,6 +45,7 @@ export const find = async (searchBy: any, categoryId: any, page, rowsLimitInPage
     return [false, error.message];
   }
 };
+
 export const findAndUpdate = async (productId, productDetails): Promise<any> => {
   try {
     if(!productId) throw({message: "Cannot update product as product id is not valid."})

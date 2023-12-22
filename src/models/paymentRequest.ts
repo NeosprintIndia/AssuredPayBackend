@@ -2,13 +2,11 @@ import { Schema, Document, Model, model, Types } from "mongoose";
 
 interface IPaymentRequest extends Document {
   createdby: Types.ObjectId | IUser;
-  requester: Types.ObjectId | IUser; 
+  requester: Types.ObjectId | IUser; // Reference to the user making the request
   paidTo: Types.ObjectId | IUser;
   paidBy: Types.ObjectId | IUser;
-  recipient: Types.ObjectId | IUser; 
-  orderID: string;
-  orderStatus:"inProcess"|"withdraw"|"rejected"|"complete"|"expired";
-  paymentCombination:"BB"|"RC"|"MIX";
+  recipient: Types.ObjectId | IUser; // Reference to the user receiving the payment
+  orderID: string; // Reference to the order associated with the payment
   paymentType: "full" | "partial";
   checkerStatus: "pending" | "approved" | "rejected";
   recipientStatus: "pending" | "approved" | "rejected";
@@ -16,31 +14,30 @@ interface IPaymentRequest extends Document {
   orderTitle: string;
   POPI: string;
   orderAmount: number;
-  proposalCreatedDate: Date;
+  proposalCreatedDate: Number;
   updated_at: Date;
   proposalStatus: string,
   proposalValidity: number;
-  proposalExpireDate: Date;
+  proposalExpireDate: Number;
   paymentIndentifier: "buyer" | "seller";
-  paymentDays?: number; 
+  paymentDays?: number; // Number of days for full payment
   MilestoneDetails?: Array<{
-    date: Number; 
-    days: Number;
-    milestoneStatus:"inProcess"|"completed"
+    date: Number; // Date when the partial payment should be made
+    days: Number
     isFDAllowed: string
     ApproxInterest: number
-    amount: number;
-    balancedUsed: number; 
+    amount: number; // Amount to be paid on that date
+    balancedUsed: number; //Bank balance if used
     balancedUsedStatus: string; 
-    recievableUsed: number; 
-    recievablewhichpr: Types.ObjectId | IUser; 
-    recievablewhichms: Types.ObjectId | IUser;
+    recievableUsed: number; // Amount of recievable used
+    recievablewhichpr: Types.ObjectId | IUser; // recievable of which payment request
+    recievablewhichms: Types.ObjectId | IUser; // recievable of which milestone of above payment request 
     recievableUsedStatus: string;
     walletBalanceUsed: number;
     ApFees: number;
     utilisedbySeller: number;
-    utilisedforpr: Types.ObjectId | IUser;
-    utilisedforms: Types.ObjectId | IUser;
+    utilisedforpr: Types.ObjectId | IUser; // If this recievable is used by any other pr
+    utilisedforms: Types.ObjectId | IUser; // If this recievable is used by any other milestone
     isBBFDAllowed: String
     isBBFDCreated: String
     isRCFDAllowed: String
@@ -48,7 +45,7 @@ interface IPaymentRequest extends Document {
   }>;
 }
 
-
+// Define the reference interface for the user field 
 interface IUser extends Document {
   _id: Types.ObjectId;
 }
@@ -56,7 +53,7 @@ interface IUser extends Document {
 const paymentRequestSchema = new Schema<IPaymentRequest>({
   createdby: {
     type: Types.ObjectId,
-    ref: "RegisterUsers", 
+    ref: "RegisterUsers", // Assuming your User model is named 'User'
     required: true,
   },
   requester: {
@@ -66,7 +63,7 @@ const paymentRequestSchema = new Schema<IPaymentRequest>({
   },
   paidTo: {
     type: Types.ObjectId,
-    ref: "RegisterUsers", 
+    ref: "RegisterUsers", // Assuming your User model is named 'User'
     required: true,
   },
   paidBy: {
@@ -93,15 +90,6 @@ const paymentRequestSchema = new Schema<IPaymentRequest>({
     type: String,
     enum: ["full", "partial"],
     required: true,
-  },
-  paymentCombination: {
-    type: String,
-    enum: ["BB", "RC","MIX"],
-  },
-  orderStatus: {
-    type: String,
-    enum: ["inProcess", "rejected","complete","expired"],
-    default: "inProcess",
   },
   checkerStatus: {
     type: String,
@@ -134,7 +122,7 @@ const paymentRequestSchema = new Schema<IPaymentRequest>({
     required: true,
   },
   proposalCreatedDate: {
-    type: Date,
+    type: Number,
     default: Date.now
   },
   proposalValidity: {
@@ -142,7 +130,7 @@ const paymentRequestSchema = new Schema<IPaymentRequest>({
 
   },
   proposalExpireDate: {
-    type: Date,
+    type: Number,
     default: Date.now
 
   },
@@ -156,11 +144,11 @@ const paymentRequestSchema = new Schema<IPaymentRequest>({
       },
       days: {
         type: Number,
-        required: false,
+        required: true,
       },
       amount: {
         type: Number,
-        required: false,
+        required: true,
       },
       balancedUsed: {
         type: Number,
@@ -170,14 +158,9 @@ const paymentRequestSchema = new Schema<IPaymentRequest>({
         type: String,
 
       },
-     milestoneStatus: {
-        type: String,
-        enum: ["inProcess", "completed"],
-        default: "inProcess",
-      },
       walletBalanceUsed: { type: Number, default: 0 },
       recievableUsed: {
-        type: String,
+        type: Number,
 
       },
       recievablewhichpr: {

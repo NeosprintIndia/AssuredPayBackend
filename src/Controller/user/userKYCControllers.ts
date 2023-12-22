@@ -16,7 +16,7 @@ import {
 } from "./userKYCHandler";
 
 
-
+// Route handler function for getting GST details
 export const getGSTDetails = async (
   req: Request,
   res: Response
@@ -35,7 +35,7 @@ export const getGSTDetails = async (
     res.status(500).send({ message: "An error occurred", Active: false });
   }
 };
-
+//Route handler function to save GST details
 export const saveGSTDetails = async (
   req: Request,
   res: Response
@@ -80,7 +80,7 @@ export const saveGSTDetails = async (
     });
   }
 };
-
+////Route handler function to retrieve saved GST details
 export const getsavedgstdetail = async (
   req: Request,
   res: Response
@@ -98,7 +98,7 @@ export const getsavedgstdetail = async (
     res.status(500).json({ error: "An error occurred", Active: false });
   }
 };
-
+// Route handler function for verifying Aadhar number
 export const verifyAadharNumber = async (
   req: Request,
   res: Response
@@ -122,7 +122,7 @@ export const verifyAadharNumber = async (
     res.status(500).json({ error: "An error occurred", Active: false });
   }
 };
-
+// Route handler function for verifying Aadhar number OTP
 export const verifyAadharNumberOTP = async (
   req: Request,
   res: Response
@@ -146,7 +146,7 @@ export const verifyAadharNumberOTP = async (
     res.status(500).json({ error: "Wrong Aadhar Number OTP", Active: false });
   }
 };
-
+// Route handler function for verifying PAN
 export const verifyPAN = async (req: Request, res: Response): Promise<void> => {
   try {
     const PanNumber = req.body.PanNumber as string;
@@ -219,9 +219,8 @@ export const kycRedoRequested = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { timestamp,latitude ,longitude,accuracy} = req.body;
-  const userId = (req as any).userId;
-  const [success, result] = await kycRedoRequestedInternal(timestamp,latitude,longitude,accuracy,userId);
+  const { timestamp,latitude ,longitude,accuracy ,id,key} = req.body;
+  const [success, result] = await kycRedoRequestedInternal(timestamp,latitude,longitude,accuracy,id,key);
   if (success) {
     res.send({ result, Active: true });
   } else {

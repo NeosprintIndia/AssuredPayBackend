@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document, Model, Types } from 'mongoose';
 
+// Define the interface for the document
 interface IReferralCode extends Document {
     gstLimit: number;
     aadharLimit: number;
@@ -19,9 +20,10 @@ interface IReferralCode extends Document {
 
 }
 
+// Define the reference interface for the user field
 interface IUser extends Document { _id: Types.ObjectId; }
 
-
+// Define the schema
 const globalSettingSchema: Schema<IReferralCode> = new Schema<IReferralCode>({
     updated_at: { type: Date, default: Date.now },
 
