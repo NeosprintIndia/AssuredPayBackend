@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "tsc && node dist/app.js",
+    "start:prod": "npx ts-node src/app.ts",
     "lint": "eslint . --ext .ts"
   },
   "keywords": [],
@@ -23,6 +24,7 @@
   "dependencies": {
     "aws-sdk": "^2.1446.0",
     "axios": "^1.5.0",
+    "babel-preset-env": "^1.7.0",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
